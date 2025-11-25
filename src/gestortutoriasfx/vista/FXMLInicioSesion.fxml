@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLInicioSesionController">
+   <children>
+      <Pane layoutX="299.0" prefHeight="450.0" prefWidth="349.0">
+         <children>
+            <Label layoutX="102.0" layoutY="57.0" text="Bienvenido(a)">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="39.0" layoutY="98.0" text="Por favor ingresa tu usuario y contraseña" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
+            <TextField fx:id="tfUsuario" layoutX="48.0" layoutY="181.0" prefHeight="31.0" prefWidth="228.0" />
+            <Label layoutX="48.0" layoutY="160.0" text="Usuario:" />
+            <Label layoutX="48.0" layoutY="251.0" text="Contraseña:" />
+            <TextField fx:id="tfPassword" layoutX="48.0" layoutY="273.0" prefHeight="31.0" prefWidth="228.0" />
+            <Label fx:id="lbErrorPassword" layoutX="48.0" layoutY="304.0" prefHeight="19.0" prefWidth="144.0" textFill="RED">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbErrorUsuario" layoutX="48.0" layoutY="212.0" prefHeight="19.0" prefWidth="174.0" textFill="RED">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Button layoutX="121.0" layoutY="375.0" mnemonicParsing="false" onAction="#clicIniciarSesion" style="-fx-background-color: #364396;" text="Iniciar Sesion" textFill="WHITE" />
+         </children>
+      </Pane>
+      <Pane layoutX="-9.0" prefHeight="450.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;">
+         <children>
+            <ImageView fitHeight="424.0" fitWidth="291.0" layoutX="5.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../recurso/iniciosesion.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
