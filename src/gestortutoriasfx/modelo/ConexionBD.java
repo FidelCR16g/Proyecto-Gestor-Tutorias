@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gestortutoriasfx.modelo;
 
 import java.io.IOException;
@@ -12,9 +8,20 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
+ * Nombre de la Clase: ConexionBD
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 25/11/2025
+ *
+ * Descripción:
+ * Clase encargada de establecer y cerrar conexion con la base de datos.
  */
+
 public class ConexionBD {
     private static final String ARCHIVO_PROPIEDADES = "/gestortutoriasfx/recurso/database.properties";
     

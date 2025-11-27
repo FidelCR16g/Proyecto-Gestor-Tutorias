@@ -7,9 +7,21 @@ package gestortutoriasfx.modelo;
 import gestortutoriasfx.modelo.pojo.Usuario;
 
 /**
+ * Nombre de la Clase: Sesion
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 25/11/2025
+ *
+ * Descripción:
+ * Clase encargada de administrar a los usuarios que hayan hecho login en la
+ * aplicacion, su funcion principal es distinguir a los tutores.
  */
+
 public class Sesion {
     private static Usuario usuarioSesion;
     private static int idTutor;
@@ -28,5 +40,10 @@ public class Sesion {
 
     public static void setIdTutor(int idTutor) {
         Sesion.idTutor = idTutor;
+    }
+    
+    public static void cerrarSesion() {
+        usuarioSesion = null;
+        idTutor = 0;
     }
 }
