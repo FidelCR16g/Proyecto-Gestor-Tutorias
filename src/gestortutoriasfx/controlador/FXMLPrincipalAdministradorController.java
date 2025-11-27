@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package gestortutoriasfx.controlador;
 
 import gestortutoriasfx.interfaz.IPrincipalControlador;
@@ -11,10 +7,20 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
 /**
- * FXML Controller class
+ * Nombre de la Clase: FXMLPrincipalAdministradorController
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 25/11/2025
+ *
+ * Descripción:
+ * Se encarga de controlar los distintos elementos de la pantalla principal del administrador
  */
+
 public class FXMLPrincipalAdministradorController implements Initializable, IPrincipalControlador{
 
     /**
