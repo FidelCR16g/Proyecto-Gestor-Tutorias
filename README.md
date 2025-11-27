@@ -19,7 +19,7 @@ El sistema permite a los Tutores Académicos gestionar sus sesiones, registrar a
 
 El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) estricta, complementada con patrones de diseño para garantizar la escalabilidad y mantenibilidad.
 
-* Lenguaje:** Java 8 (JDK 1.8.0_202).
+* Lenguaje: Java 8 (JDK 1.8.0_202).
 * Interfaz Gráfica: JavaFX con FXML.
 * Base de Datos: MySQL 8.0.
 * Patrones de Diseño:
