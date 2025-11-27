@@ -22,7 +22,7 @@ El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) estricta, comp
 * Lenguaje:** Java 8 (JDK 1.8.0_202).
 * Interfaz Gráfica: JavaFX con FXML.
 * Base de Datos: MySQL 8.0.
-* Patrones de Diseño:**
+* Patrones de Diseño:
     * DAO (Data Access Object):** Para la persistencia de datos.
     * Singleton: Para el manejo de Sesión y Conexión a BD.
     * RBAC: Control de Acceso Basado en Roles (Seguridad a nivel de aplicación).
