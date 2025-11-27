@@ -32,14 +32,14 @@ El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) estricta, comp
 🚀 Funcionalidades (Casos de Uso)
 
 👤 Rol: Tutor Académico
-- CU-03 Registrar Horario de Tutoría:** Generación automática de bloques de horarios (intervalos de 20 min) con validación de fechas y periodos.
+- CU-03 Registrar Horario de Tutoría: Generación automática de bloques de horarios (intervalos de 20 min) con validación de fechas y periodos.
 - CU-04 Registrar Asistencia: (En desarrollo) Listado dinámico para marcar asistencia.
 - CU-06 Gestionar Evidencia: (En desarrollo) Carga de archivos probatorios.
 - CU-08 Enviar Reporte de Tutoría: (En desarrollo).
 
 👔 Rol: Coordinador
-- CU-15 Gestionar Planeación: Configuración de periodos y fechas límite.
-- CU-17 Revisar Reporte de Tutoría: Validación de entregas de tutores.
+- CU-15 Gestionar Planeación: (En desarollo) Configuración de periodos y fechas límite.
+- CU-17 Revisar Reporte de Tutoría: (En desarrollo) Validación de entregas de tutores.
 
 ---
 
