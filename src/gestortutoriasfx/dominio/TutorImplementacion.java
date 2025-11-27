@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
@@ -13,9 +9,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
+ * Nombre de la Clase: TutorImplementacion
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 25/11/2025
+ *
+ * Descripción:
+ * Se encarga de administrar la informacion de los distintos metodos de recuperacion de informacion del 
+ * tutor de la base de datos.
  */
+
 public class TutorImplementacion {
     
     public static HashMap<String, Object> obtenerIdTutor(int idUsuario){
@@ -28,7 +36,7 @@ public class TutorImplementacion {
             
             if(resultado.next()) {
                 respuesta.put("error", false);
-                respuesta.put("idTutor", resultado.getInt("id_tutor"));
+                respuesta.put("idTutor", resultado.getInt("idTutor"));
             }else {
                 respuesta.put("error", true);
                 respuesta.put("mensaje", "No se encontró información del tutor asociado.");

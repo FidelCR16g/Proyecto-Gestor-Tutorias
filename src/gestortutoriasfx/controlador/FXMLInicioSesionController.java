@@ -22,9 +22,18 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
+ * Nombre de la Clase: FXMLInicioSesionController
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 25/11/2025
+ *
+ * Descripción:
+ * Se encarga de controlar los distintos elementos del inicio de sesion
  */
 public class FXMLInicioSesionController implements Initializable{
 
