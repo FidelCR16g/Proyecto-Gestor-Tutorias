@@ -145,10 +145,13 @@ public class FXMLRegistrarHorarioController implements Initializable {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
+                
                 boolean fueraDeRangoBD = date.isBefore(minDateBD) || date.isAfter(maxDateBD);
                 boolean esPasado = date.isBefore(hoy);
+                boolean esFinDeSemana = (date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY ||
+                        date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY);
                 
-                if (empty || fueraDeRangoBD || esPasado) {
+                if (empty || fueraDeRangoBD || esPasado || esFinDeSemana) {
                     setDisable(true);
                     setStyle("-fx-background-color: #ffebee;");
                 }
@@ -241,7 +244,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
     
     private boolean validarCampos() {
         boolean valido = true;
-        String mensajeError = "Se encontraron los siguientes errores: \n";
+        String mensajeError = "";
         if(cbNumeroSesion.getSelectionModel().isEmpty()){
             valido = false;
             mensajeError += "Debe seleccionar un número de sesión.\n";
@@ -268,7 +271,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         }
         if (!valido) {
             Utilidades.mostrarAlertaSimple("Datos Inválidos", 
-                    "Por favor corrija los siguientes errores:\n" + mensajeError.toString(), 
+                    "Se encontraron los siguientes errores:\n" + mensajeError.toString(), 
                     Alert.AlertType.WARNING);
         }
         return valido;
