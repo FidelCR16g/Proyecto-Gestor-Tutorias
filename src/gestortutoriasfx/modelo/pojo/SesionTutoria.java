@@ -25,11 +25,16 @@ public class SesionTutoria {
     private String horaInicio;
     private String horaFin;
     private String estado;
+    
+    private String nombreEstudiante; 
+    private String periodo;
+    
+    private boolean asistencia;
 
     public SesionTutoria() {
     }
 
-    public SesionTutoria(int idSesion, int idPeriodo, int idTutor, String matriculaEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado) {
+    public SesionTutoria(int idSesion, int idPeriodo, int idTutor, String matriculaEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado, String nombreEstudiante, String periodo, boolean asistencia) {
         this.idSesion = idSesion;
         this.idPeriodo = idPeriodo;
         this.idTutor = idTutor;
@@ -39,6 +44,17 @@ public class SesionTutoria {
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.estado = estado;
+        this.nombreEstudiante = nombreEstudiante;
+        this.periodo = periodo;
+        this.asistencia = asistencia;
+    }
+
+    public boolean isAsistencia() {
+        return asistencia;
+    }
+
+    public void setAsistencia(boolean asistencia) {
+        this.asistencia = asistencia;
     }
 
     public int getIdSesion() {
@@ -63,6 +79,14 @@ public class SesionTutoria {
 
     public void setIdTutor(int idTutor) {
         this.idTutor = idTutor;
+    }
+
+    public String getNombreEstudiante() {
+        return nombreEstudiante;
+    }
+
+    public void setNombreEstudiante(String nombreEstudiante) {
+        this.nombreEstudiante = nombreEstudiante;
     }
 
     public String getMatriculaEstudiante() {
@@ -112,6 +136,17 @@ public class SesionTutoria {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(String periodo) {
+        this.periodo = periodo;
+    }
     
-    
+    @Override
+    public String toString() {
+        return this.nombreEstudiante + " | Matricula: " + this.matriculaEstudiante;
+    }
 }

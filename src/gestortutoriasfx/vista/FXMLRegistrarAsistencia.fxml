@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLRegistrarAsistenciaController">
+   <children>
+      <VBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="900.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Control de Asistencia" textFill="WHITE">
+               <font><Font name="System Bold" size="22.0" /></font>
+               <VBox.margin><Insets left="25.0" /></VBox.margin>
+            </Label>
+            <Label text="Arrastre a los alumnos de la lista de Faltas a la lista de Asistencias." textFill="#e1f5fe">
+               <font><Font size="13.0" /></font>
+               <VBox.margin><Insets left="25.0" /></VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+
+      <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="90.0" spacing="15.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="90.0">
+         <children>
+            <Label text="Sesión a evaluar:" textFill="#546e7a">
+               <font><Font name="System Bold" size="14.0" /></font>
+            </Label>
+            <ComboBox fx:id="cbSesion" prefHeight="35.0" prefWidth="318.0" promptText="Seleccione la sesion..." />
+         </children>
+      </HBox>
+
+      <HBox alignment="CENTER" layoutX="25.0" layoutY="150.0" spacing="40.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="150.0">
+         <children>
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="NO Asistieron" textFill="#c62828">
+                     <font><Font name="System Bold" size="16.0" /></font>
+                  </Label>
+                  <ListView fx:id="lvFaltas" style="-fx-border-color: #c62828; -fx-border-width: 2;" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="SÍ Asistieron" textFill="#2e7d32">
+                     <font><Font name="System Bold" size="16.0" /></font>
+                  </Label>
+                  <ListView fx:id="lvAsistencias" style="-fx-border-color: #2e7d32; -fx-border-width: 2;" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <HBox alignment="CENTER_RIGHT" layoutX="25.0" layoutY="540.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="25.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar" />
+            <Button fx:id="btnGuardar" disable="true" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Guardar Listas" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
