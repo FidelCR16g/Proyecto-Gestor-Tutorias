@@ -73,8 +73,7 @@ public class FechaTutoria {
         this.fechaCierre = fechaCierre;
     }
     
-    @Override
     public String toString() {
-        return numSesion + ". Sesión (" + fechaInicio + " al " + fechaCierre + ")";
+        return numSesion + ". Sesión (" + fechaInicio + " - " + fechaCierre + ")";
     }
 }

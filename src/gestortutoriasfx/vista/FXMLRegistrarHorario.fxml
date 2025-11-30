@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -22,7 +24,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="520.0" prefWidth="650.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLRegistrarHorarioController">
    <children>
-      <VBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="650.0" style="-fx-background-color: #0277bd;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="650.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label text="Generación Automática de Horarios" textFill="WHITE">
                <font>
@@ -118,18 +120,10 @@
                </graphic>
                <font><Font size="13.0" /></font>
             </Label>
-            <Label fx:id="lbTotalEstudiantes" text="Se detectaron X estudiantes activos." textFill="#00695c">
-               <font>
-                  <Font name="System Italic" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </Label>
          </children>
       </VBox>
 
-      <Label fx:id="lbError" alignment="CENTER" layoutX="50.0" layoutY="435.0" textFill="#d32f2f" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+            <Label fx:id="lbError" layoutX="50.0" layoutY="431.0" textFill="#d32f2f" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -142,7 +136,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
                <font>
                   <Font size="14.0" />
                </font>

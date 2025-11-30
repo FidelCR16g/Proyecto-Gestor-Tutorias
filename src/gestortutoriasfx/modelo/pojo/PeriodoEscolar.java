@@ -41,8 +41,6 @@ public class PeriodoEscolar {
         this.nombre = nombre;
     }
     
-    
-
     public int getIdPeriodo() {
         return idPeriodo;
     }
