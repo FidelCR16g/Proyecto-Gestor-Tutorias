@@ -53,19 +53,19 @@
                </VBox.margin>
             </Label>
             
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicRegistrarHorarios" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Agendar Fechas (CU-03)" textFill="#252525">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicRegistrarHorarios" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Agendar Fechas" textFill="#252525">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
             
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="47.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicRegistrarAsistencia" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Pasar Asistencia (CU-04)">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="47.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicRegistrarAsistencia" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Pasar Asistencia">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
             
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="92.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicGestionarEvidencia" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Subir Evidencia (CU-06)">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="92.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicGestionarEvidencia" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Subir Evidencia">
                <font>
                   <Font size="14.0" />
                </font>
@@ -81,13 +81,13 @@
                </VBox.margin>
             </Label>
 
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="137.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicLlenarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Llenar Reporte (CU-07)">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="137.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicLlenarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Llenar Reporte">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
             
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="182.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicEnviarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Enviar Reporte (CU-08)">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="182.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicEnviarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Enviar Reporte ">
                <font>
                   <Font size="14.0" />
                </font>
