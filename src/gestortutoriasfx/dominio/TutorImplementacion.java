@@ -3,7 +3,6 @@ package gestortutoriasfx.dominio;
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.TutorDAO;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,27 +25,32 @@ import java.util.LinkedHashMap;
 
 public class TutorImplementacion {
     
-    public static HashMap<String, Object> obtenerIdTutor(int idUsuario){
+    public static HashMap<String, Object> obtenerIdTutor(int idUsuario) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        Connection conexion = null;
+        respuesta.put("error", true);
+        Connection conexion = ConexionBD.abrirConexionBD();
         
-        try{
-            conexion = ConexionBD.abrirConexionBD();
-            ResultSet resultado = TutorDAO.obtenerIdTutor(conexion, idUsuario);
-            
-            if(resultado.next()) {
-                respuesta.put("error", false);
-                respuesta.put("idTutor", resultado.getInt("idTutor"));
-            }else {
-                respuesta.put("error", true);
-                respuesta.put("mensaje", "No se encontró información del tutor asociado.");
+        if (conexion != null) {
+            try {
+                int idTutor = TutorDAO.obtenerIdTutor(conexion, idUsuario);
+                
+                if (idTutor > 0) {
+                    respuesta.put("error", false);
+                    respuesta.put("idTutor", idTutor);
+                } else {
+                    respuesta.put("mensaje", "No se encontró información del tutor asociado a este usuario.");
+                }
+                
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error BD: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
             }
-        }catch (SQLException e) {
-            respuesta.put("error", true);
-            respuesta.put("mensaje", "Error BD: " + e.getMessage());
-        }finally {
-            ConexionBD.cerrarConexion(conexion);
+        } else {
+            respuesta.put("mensaje", "No hay conexión con la base de datos.");
         }
+        
         return respuesta;
     }
 }

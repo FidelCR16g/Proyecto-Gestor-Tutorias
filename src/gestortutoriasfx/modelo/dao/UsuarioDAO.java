@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gestortutoriasfx.modelo.dao;
 
+import gestortutoriasfx.modelo.pojo.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,13 +22,28 @@ import java.sql.SQLException;
  */
 
 public class UsuarioDAO {
-    public static ResultSet obtenerUsuario(Connection conexionBD, String usuario) throws SQLException{
-        if(conexionBD != null){
-            String consulta = "SELECT * FROM usuario WHERE nombreUsuario= ?";
-            PreparedStatement sentencia = conexionBD.prepareStatement(consulta);
-            sentencia.setString(1, usuario);
-            return sentencia.executeQuery();
+    public static Usuario obtenerUsuario(Connection conexion, String nombreUsuario) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        Usuario usuarioEncontrado = null;
+        String consulta = "SELECT * FROM usuario WHERE nombreUsuario = ?";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
+            sentencia.setString(1, nombreUsuario);
+            
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                if (resultado.next()) {
+                    usuarioEncontrado = new Usuario();
+                    usuarioEncontrado.setIdUsuario(resultado.getInt("idUsuario"));
+                    usuarioEncontrado.setUsuario(resultado.getString("nombreUsuario")); 
+                    usuarioEncontrado.setPassword(resultado.getString("password"));
+                    usuarioEncontrado.setNombre(resultado.getString("nombre"));
+                    usuarioEncontrado.setApellidoPaterno(resultado.getString("apellidoPaterno"));
+                    usuarioEncontrado.setApellidoMaterno(resultado.getString("apellidoMaterno"));
+                    usuarioEncontrado.setEmail(resultado.getString("email"));
+                    usuarioEncontrado.setIdRol(resultado.getInt("idRol"));
+                }
+            }
         }
-        throw new SQLException ("No hay conexion con la base de datos."); 
+        return usuarioEncontrado;
     }
 }

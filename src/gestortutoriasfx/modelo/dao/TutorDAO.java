@@ -21,13 +21,22 @@ import java.sql.SQLException;
  */
 
 public class TutorDAO {
-    public static ResultSet obtenerIdTutor(Connection conexion, int idUsuario) throws SQLException{
-        if(conexion != null){
-            String consulta = "SELECT idTutor FROM tutor WHERE idUsuario = ?";
-            PreparedStatement sentencia = conexion.prepareStatement(consulta);
+    public static int obtenerIdTutor(Connection conexion, int idUsuario) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        int idTutor = 0;
+        String consulta = "SELECT idTutor FROM tutor WHERE idUsuario = ?";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idUsuario);
-            return sentencia.executeQuery();
+            
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                if (resultado.next()) {
+                    idTutor = resultado.getInt("idTutor");
+                }
+            }
         }
-        throw new SQLException ("No hay conexion con la base de datos.");
+        
+        return idTutor;
     }
 }

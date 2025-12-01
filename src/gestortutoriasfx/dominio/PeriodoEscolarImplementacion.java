@@ -4,7 +4,6 @@ import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.PeriodoEscolarDAO;
 import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,34 +25,32 @@ import java.util.LinkedHashMap;
  */
 
 public class PeriodoEscolarImplementacion {
-    public static HashMap<String, Object> obtenerPeriodoActual(){
+    public static HashMap<String, Object> obtenerPeriodoActual() {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        Connection conexion = null;
+        respuesta.put("error", true);
+        Connection conexion = ConexionBD.abrirConexionBD();
         
-        try{
-            PeriodoEscolar periodo = null;
-            conexion = ConexionBD.abrirConexionBD();
-            ResultSet resultado = PeriodoEscolarDAO.obtenerPeriodoActual(conexion);
-            
-            if(resultado.next()) {
-                periodo = new PeriodoEscolar();
-                periodo.setIdPeriodo(resultado.getInt("idPeriodo"));
-                periodo.setNombre(resultado.getString("nombre"));
-                periodo.setFechaInicio(resultado.getString("fechaInicio"));
-                periodo.setFechaFin(resultado.getString("fechaFin"));
+        if (conexion != null) {
+            try {
+                PeriodoEscolar periodo = PeriodoEscolarDAO.obtenerPeriodoActual(conexion);
                 
-                respuesta.put("error", false);
-                respuesta.put("periodo", periodo);
-            }else {
-                respuesta.put("error", true);
-                respuesta.put("mensaje", "No se encontró información del periodo actual.");
+                if (periodo != null) {
+                    respuesta.put("error", false);
+                    respuesta.put("periodo", periodo);
+                } else {
+                    respuesta.put("mensaje", "No hay ningún periodo escolar activo configurado en el sistema.");
+                }
+                
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error en BD al obtener periodo: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
             }
-        }catch (SQLException e) {
-            respuesta.put("error", true);
-            respuesta.put("mensaje", "Error BD: " + e.getMessage());
-        }finally {
-            ConexionBD.cerrarConexion(conexion);
+        } else {
+            respuesta.put("mensaje", "No hay conexión con la base de datos.");
         }
+        
         return respuesta;
     }
 }

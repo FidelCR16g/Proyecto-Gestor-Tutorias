@@ -1,12 +1,10 @@
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
-import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.dao.SesionTutoriaDAO;
 import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,11 +27,10 @@ import java.util.List;
  * sesion de tutoria de la base de datos.
  */
 
-public class SesionTutoriaImplementacion { 
+public class SesionTutoriaImplementacion {
     public static HashMap<String, Object> cargarHorarioGenerado(ArrayList<SesionTutoria> horarios) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
-        
         Connection conexion = ConexionBD.abrirConexionBD();
         
         if (conexion != null) {
@@ -51,6 +48,7 @@ public class SesionTutoriaImplementacion {
                 ex.printStackTrace();
                 try { conexion.rollback(); } catch (SQLException e) { e.printStackTrace(); }
             } finally {
+                try { conexion.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
                 ConexionBD.cerrarConexion(conexion);
             }
         } else {
@@ -82,6 +80,7 @@ public class SesionTutoriaImplementacion {
                 ex.printStackTrace();
                 try { conexion.rollback(); } catch (SQLException e) { e.printStackTrace(); }
             } finally {
+                try { conexion.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
                 ConexionBD.cerrarConexion(conexion);
             }
         } else {
@@ -90,7 +89,7 @@ public class SesionTutoriaImplementacion {
         return respuesta;
     }
     
-     public static HashMap<String, Object> obtenerEstudiantesDelTutor(int idTutor) {
+    public static HashMap<String, Object> obtenerEstudiantesDelTutor(int idTutor) {
         return EstudianteImplementacion.obtenerTutoradosPorTutor(idTutor);
     }
     
@@ -100,19 +99,7 @@ public class SesionTutoriaImplementacion {
 
         try {
             conexion = ConexionBD.abrirConexionBD();
-            ResultSet resultado = SesionTutoriaDAO.obtenerFechasPorPeriodo(conexion, idPeriodo);
-            
-            ArrayList<FechaTutoria> listaFechas = new ArrayList<>();
-            
-            while (resultado.next()) {
-                FechaTutoria fecha = new FechaTutoria();
-                fecha.setIdFechaTutoria(resultado.getInt("idFechaTutoria"));
-                fecha.setIdPeriodo(resultado.getInt("idPeriodo"));
-                fecha.setNumSesion(resultado.getInt("numSesion"));
-                fecha.setFechaInicio(resultado.getString("fechaInicio"));
-                fecha.setFechaCierre(resultado.getString("fechaCierre"));
-                listaFechas.add(fecha);
-            }
+            ArrayList<FechaTutoria> listaFechas = SesionTutoriaDAO.obtenerFechasPorPeriodo(conexion, idPeriodo);
             
             respuesta.put("error", false);
             respuesta.put("fechas", listaFechas);
@@ -134,24 +121,7 @@ public class SesionTutoriaImplementacion {
         Connection conexion = ConexionBD.abrirConexionBD();
         
         try {
-            ResultSet resultado = SesionTutoriaDAO.obtenerAlumnosPorSesion(conexion, idTutor, numSesion);
-            ArrayList<SesionTutoria> lista = new ArrayList<>();
-            
-            while(resultado.next()){
-                SesionTutoria fila = new SesionTutoria();
-                fila.setIdSesion(resultado.getInt("idSesion"));
-                fila.setMatriculaEstudiante(resultado.getString("matriculaEstudiante"));
-                
-                String nombreCompleto = resultado.getString("nombre") + " " + 
-                                      resultado.getString("apellidoPaterno") + " " + 
-                                      resultado.getString("apellidoMaterno");
-                fila.setNombreEstudiante(nombreCompleto);
-                        
-                String estadoBD = resultado.getString("estado");
-                fila.setEstado(estadoBD); 
-                
-                lista.add(fila);
-            }
+            ArrayList<SesionTutoria> lista = SesionTutoriaDAO.obtenerAlumnosPorSesion(conexion, idTutor, numSesion);
             
             respuesta.put("error", false);
             respuesta.put("lista", lista);
@@ -170,15 +140,8 @@ public class SesionTutoriaImplementacion {
 
         try {
             conexion = ConexionBD.abrirConexionBD();
-            int idTutor = Sesion.getIdTutor();
-            
-            ResultSet resultado = SesionTutoriaDAO.obtenerSesionesOcupadas(conexion, idTutor, idPeriodo);
-            ArrayList<Integer> sesionesOcupadas = new ArrayList<>();
-            
-            while (resultado.next()) {
-                sesionesOcupadas.add(resultado.getInt("numSesion"));
-            }
-            
+            ArrayList<Integer> sesionesOcupadas = 
+                    SesionTutoriaDAO.obtenerSesionesOcupadas(conexion, gestortutoriasfx.modelo.Sesion.getIdTutor(), idPeriodo);
             respuesta.put("error", false);
             respuesta.put("ocupadas", sesionesOcupadas);
 
@@ -199,17 +162,7 @@ public class SesionTutoriaImplementacion {
         
         try {
             conexion = ConexionBD.abrirConexionBD();
-            ResultSet rs = SesionTutoriaDAO.obtenerSesionesAgrupadasPorTutor(conexion, idTutor);
-            
-            List<SesionTutoria> listaSesiones = new ArrayList<>();
-            
-            while (rs.next()) {
-                SesionTutoria sesion = new SesionTutoria();
-                sesion.setNumSesion(rs.getInt("numSesion"));
-                sesion.setPeriodo(rs.getString("nombrePeriodo"));
-                sesion.setFecha(rs.getString("fecha"));
-                listaSesiones.add(sesion);
-            }
+            ArrayList<SesionTutoria> listaSesiones = SesionTutoriaDAO.obtenerSesionesAgrupadasPorTutor(conexion, idTutor);
             
             respuesta.put("error", false);
             respuesta.put("sesiones", listaSesiones);

@@ -1,5 +1,6 @@
 package gestortutoriasfx.modelo.dao;
 
+import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,12 +22,23 @@ import java.sql.SQLException;
  */
 
 public class PeriodoEscolarDAO {
-    public static ResultSet obtenerPeriodoActual(Connection conexion) throws SQLException{
-        if(conexion != null){
-            String consulta = "SELECT * FROM periodoEscolar WHERE estado = 'Actual' LIMIT 1";
-            PreparedStatement sentencia = conexion.prepareStatement(consulta);
-            return sentencia.executeQuery();
+    public static PeriodoEscolar obtenerPeriodoActual(Connection conexion) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        PeriodoEscolar periodo = null;
+        
+        String consulta = "SELECT * FROM periodoEscolar WHERE estado = 'Actual' ORDER BY idPeriodo DESC LIMIT 1";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)){
+            ResultSet resultado = sentencia.executeQuery();
+            if (resultado.next()) {
+                periodo = new PeriodoEscolar();
+                periodo.setIdPeriodo(resultado.getInt("idPeriodo"));
+                periodo.setNombre(resultado.getString("nombre"));
+                periodo.setFechaInicio(resultado.getString("fechaInicio"));
+                periodo.setFechaFin(resultado.getString("fechaFin"));
+            }
+            return periodo;
         }
-        throw new SQLException ("No hay conexion con la base de datos.");
     }
 }

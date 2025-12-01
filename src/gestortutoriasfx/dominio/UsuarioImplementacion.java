@@ -1,16 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.UsuarioDAO;
 import gestortutoriasfx.modelo.pojo.Usuario;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -31,37 +25,31 @@ import java.util.LinkedHashMap;
  */
 
 public class UsuarioImplementacion {
-    public static HashMap<String, Object> obtenerUsuarios(String nombreUsuario){
+    public static HashMap<String, Object> obtenerUsuarios(String nombreUsuario) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
         Connection conexion = null;
-        try{
+        
+        try {
             conexion = ConexionBD.abrirConexionBD();
-            ResultSet resultado = UsuarioDAO.obtenerUsuario(conexion, nombreUsuario);
-            Usuario usuario = null;
-            while (resultado.next()){
-                usuario = new Usuario();
-                usuario.setIdUsuario(resultado.getInt("idUsuario"));
-                usuario.setUsuario(resultado.getString("nombreUsuario"));
-                usuario.setPassword(resultado.getString("password"));
-                usuario.setNombre(resultado.getString("nombre"));
-                usuario.setApellidoPaterno(resultado.getString("apellidoPaterno"));
-                usuario.setApellidoMaterno(resultado.getString("apellidoMaterno"));
-                usuario.setEmail(resultado.getString("email"));
-                usuario.setIdRol(resultado.getInt("idRol"));
-            }
+            
+            Usuario usuario = UsuarioDAO.obtenerUsuario(conexion, nombreUsuario);
+            
             if (usuario != null) {
                 respuesta.put("error", false);
                 respuesta.put("usuario", usuario);
             } else {
-                respuesta.put("error", true);
-                respuesta.put("mensaje", "Usuario no encontrado.");
+                respuesta.put("mensaje", "Usuario no encontrado o credenciales incorrectas.");
             }
-        }catch (SQLException e){
-            respuesta.put("error", true);
-            respuesta.put("mensaje", e.getMessage());
-        }finally{
+            
+        } catch (SQLException e) {
+            respuesta.put("mensaje", "Error de conexión a BD: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            
             ConexionBD.cerrarConexion(conexion);
         }
+        
         return respuesta;
     }
 }
