@@ -39,25 +39,50 @@ public class SesionTutoriaDAO {
         }
         return filasAfectadas;
     }
+    
+    public static ArrayList<SesionTutoria> obtenerAlumnosPorSesion(Connection conexion, int idTutor, int numSesion) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        ArrayList<SesionTutoria> lista = new ArrayList<>();
+        
+        String consulta = "SELECT * FROM sesionTutoria WHERE idTutor = ? AND numSesion = ?";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
+            sentencia.setInt(1, idTutor);
+            sentencia.setInt(2, numSesion);
+            try (ResultSet rs = sentencia.executeQuery()) {
+                while(rs.next()){
+                    SesionTutoria fila = new SesionTutoria();
+                    fila.setIdSesion(rs.getInt("idSesion"));
+                    fila.setMatriculaEstudiante(rs.getString("matriculaEstudiante"));
+                    fila.setNombreEstudiante(rs.getString("nombreEstudiante"));
+                    fila.setEstado(rs.getString("estado"));
+                    lista.add(fila);
+                }
+            }
+        }
+        
+        return lista;
+    }
 
     public static ArrayList<FechaTutoria> obtenerFechasPorPeriodo(Connection conexion, int idPeriodo) throws SQLException {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
         
         ArrayList<FechaTutoria> fechas = new ArrayList<>();
         
-        String consulta = "SELECT * FROM fechaTutoria WHERE idPeriodo = ? ORDER BY numSesion ASC";
+        String consulta = "SELECT * FROM fechaTutoria WHERE idPeriodoEscolar = ? ORDER BY numSesion ASC";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idPeriodo);
-            try (ResultSet rs = sentencia.executeQuery()) {
-                while(rs.next()){
-                    FechaTutoria ft = new FechaTutoria();
-                    ft.setIdFechaTutoria(rs.getInt("idFechaTutoria"));
-                    ft.setIdPeriodo(rs.getInt("idPeriodo"));
-                    ft.setNumSesion(rs.getInt("numSesion"));
-                    ft.setFechaInicio(rs.getString("fechaInicio"));
-                    ft.setFechaCierre(rs.getString("fechaCierre"));
-                    fechas.add(ft);
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while(resultado.next()){
+                    FechaTutoria fechaTutoria = new FechaTutoria();
+                    fechaTutoria.setIdFechaTutoria(resultado.getInt("idFechaTutoria"));
+                    fechaTutoria.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
+                    fechaTutoria.setNumSesion(resultado.getInt("numSesion"));
+                    fechaTutoria.setFechaInicio(resultado.getString("fechaInicio"));
+                    fechaTutoria.setFechaCierre(resultado.getString("fechaCierre"));
+                    fechas.add(fechaTutoria);
                 }
             }
         }
@@ -69,14 +94,14 @@ public class SesionTutoriaDAO {
         ArrayList<Integer> ocupadas = new ArrayList<>();
         
         if(conexion != null){
-            String consulta = "SELECT DISTINCT numSesion FROM sesionTutoria WHERE idTutor = ? AND idPeriodo = ?";
+            String consulta = "SELECT DISTINCT numSesion FROM sesionTutoria WHERE idTutor = ? AND idPeriodoEscolar = ?";
             
             try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
                 sentencia.setInt(1, idTutor);
                 sentencia.setInt(2, idPeriodo);
-                try (ResultSet rs = sentencia.executeQuery()) {
-                    while(rs.next()){
-                        ocupadas.add(rs.getInt("numSesion"));
+                try (ResultSet resultado = sentencia.executeQuery()) {
+                    while(resultado.next()){
+                        ocupadas.add(resultado.getInt("numSesion"));
                     }
                 }
             }
@@ -91,58 +116,24 @@ public class SesionTutoriaDAO {
         
         ArrayList<SesionTutoria> lista = new ArrayList<>();
         
-        String consulta = "SELECT s.numSesion, p.nombre AS nombrePeriodo, MIN(s.fecha) AS fecha " +
+        String consulta = "SELECT s.numSesion, p.nombrePeriodoEscolar AS nombrePeriodo, MIN(s.fecha) AS fecha " +
                 "FROM sesionTutoria s " +
-                "INNER JOIN periodoEscolar p ON s.idPeriodo = p.idPeriodo " +
+                "INNER JOIN periodoEscolar p ON s.idPeriodoEscolar = p.idPeriodoEscolar " +
                 "WHERE s.idTutor = ? " +
-                "GROUP BY s.numSesion, p.nombre " +
+                "GROUP BY s.numSesion, p.nombrePeriodoEscolar " +
                 "ORDER BY s.numSesion ASC";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
-            try (ResultSet rs = sentencia.executeQuery()) {
-                while(rs.next()){
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while(resultado.next()){
                     SesionTutoria sesion = new SesionTutoria();
-                    sesion.setNumSesion(rs.getInt("numSesion"));
-                    sesion.setPeriodo(rs.getString("nombrePeriodo"));
-                    sesion.setFecha(rs.getString("fecha"));
+                    sesion.setNumSesion(resultado.getInt("numSesion"));
+                    sesion.setPeriodo(resultado.getString("nombrePeriodo"));
+                    sesion.setFecha(resultado.getString("fecha"));
                     lista.add(sesion);
                 }
             }
-        }
-        
-        return lista;
-    }
-
-    public static ArrayList<SesionTutoria> obtenerAlumnosPorSesion(Connection conexion, int idTutor, int numSesion) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-        
-        ArrayList<SesionTutoria> lista = new ArrayList<>();
-        
-        String consulta = "SELECT st.idSesion, st.matriculaEstudiante, st.estado, " +
-                "e.nombre, e.apellidoPaterno, e.apellidoMaterno, c.nombre AS carrera " +
-                "FROM sesionTutoria st " +
-                "INNER JOIN estudiante e ON st.matriculaEstudiante = e.matricula " +
-                "INNER JOIN carrera c ON e.idCarrera = c.idCarrera " +
-                "WHERE st.idTutor = ? AND st.numSesion = ?";
-        
-        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
-            sentencia.setInt(1, idTutor);
-            sentencia.setInt(2, numSesion);
-            
-            try (ResultSet rs = sentencia.executeQuery()) {
-                while(rs.next()){
-                    SesionTutoria fila = new SesionTutoria();
-                    fila.setIdSesion(rs.getInt("idSesion"));
-                    fila.setMatriculaEstudiante(rs.getString("matriculaEstudiante"));
-                    fila.setNombreEstudiante(rs.getString("nombre") + " " +
-                            rs.getString("apellidoPaterno") + " " +
-                            rs.getString("apellidoMaterno"));
-                    fila.setEstado(rs.getString("estado"));
-                    lista.add(fila);
-                }
-            }
-            
         }
         
         return lista;
@@ -154,11 +145,11 @@ public class SesionTutoriaDAO {
         int filas = 0;
         
         String consulta = "INSERT INTO sesionTutoria "
-                + "(idPeriodo, idTutor, matriculaEstudiante, numSesion, fecha, horaInicio, horaFin, estado) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + "(idPeriodoEscolar, idTutor, matriculaEstudiante, numSesion, fecha, horaInicio, horaFin, estado, idSalon, modalidad) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
-            sentencia.setInt(1, sesion.getIdPeriodo());
+            sentencia.setInt(1, sesion.getIdPeriodoEscolar());
             sentencia.setInt(2, sesion.getIdTutor());
             sentencia.setString(3, sesion.getMatriculaEstudiante());
             sentencia.setInt(4, sesion.getNumSesion());
@@ -166,6 +157,8 @@ public class SesionTutoriaDAO {
             sentencia.setString(6, sesion.getHoraInicio());
             sentencia.setString(7, sesion.getHoraFin());
             sentencia.setString(8, "Programada");
+            sentencia.setInt(9, sesion.getIdSalon());
+            sentencia.setString(10, sesion.getModalidad());
             filas = sentencia.executeUpdate();
         }
         

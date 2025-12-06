@@ -28,10 +28,10 @@ public class EstudianteDAO {
         
         ArrayList<Estudiante> listaEstudiantes = new ArrayList<>();
         
-        String consulta = "SELECT e.*, c.nombre AS nombreCarrera " + 
+        String consulta = "SELECT e.*, pe.nombre AS nombrePrograma " + 
                           "FROM estudiante e " +
                           "INNER JOIN asignacionTutorado a ON e.matricula = a.matriculaEstudiante " +
-                          "INNER JOIN carrera c ON e.idCarrera = c.idCarrera " +
+                          "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
                           "WHERE a.idTutor = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
@@ -44,9 +44,10 @@ public class EstudianteDAO {
                     estudiante.setApellidoPaterno(resultado.getString("apellidoPaterno"));
                     estudiante.setApellidoMaterno(resultado.getString("apellidoMaterno"));
                     estudiante.setCorreoInstitucional(resultado.getString("correoInstitucional"));
-                    estudiante.setCarrera(resultado.getString("nombreCarrera"));
                     estudiante.setSemestre(resultado.getInt("semestre"));
-                    estudiante.setIdCarrera(resultado.getInt("idCarrera"));
+                    estudiante.setIdProgramaEducativo(resultado.getInt("idProgramaEducativo"));
+                    estudiante.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
+                    estudiante.setSituacionRiesgo(resultado.getBoolean("situacionRiesgo"));
                     listaEstudiantes.add(estudiante);
                 }
             }

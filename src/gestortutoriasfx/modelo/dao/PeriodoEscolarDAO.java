@@ -27,16 +27,17 @@ public class PeriodoEscolarDAO {
         
         PeriodoEscolar periodo = null;
         
-        String consulta = "SELECT * FROM periodoEscolar WHERE estado = 'Actual' ORDER BY idPeriodo DESC LIMIT 1";
+        String consulta = "SELECT * FROM periodoEscolar WHERE estado = 1 ORDER BY idPeriodoEscolar DESC LIMIT 1";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)){
             ResultSet resultado = sentencia.executeQuery();
             if (resultado.next()) {
                 periodo = new PeriodoEscolar();
-                periodo.setIdPeriodo(resultado.getInt("idPeriodo"));
-                periodo.setNombre(resultado.getString("nombre"));
+                periodo.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
+                periodo.setNombrePeriodoEscolar(resultado.getString("nombrePeriodoEscolar"));
                 periodo.setFechaInicio(resultado.getString("fechaInicio"));
                 periodo.setFechaFin(resultado.getString("fechaFin"));
+                periodo.setEstado(resultado.getBoolean("estado"));
             }
             return periodo;
         }
