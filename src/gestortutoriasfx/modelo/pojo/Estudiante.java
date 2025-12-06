@@ -17,27 +17,44 @@ package gestortutoriasfx.modelo.pojo;
 
 public class Estudiante {
     private String matricula;
+    private int idProgramaEducativo;
+    private int idTutor;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
+    private String telefono;
+    private byte[] foto;
     private String correoInstitucional;
+    private int anioIngreso;
     private int semestre;
-    private int idCarrera;
-    private String carrera;
+    private int creditosObtenidos;
+    private boolean situacionRiesgo;
+    private int cambioTutor;
+    
+    private String nombreProgramaEducativo;
 
     public Estudiante() {
     }
 
-    public Estudiante(String matricula, String nombre, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, int semestre, int idCarrera, String carrera) {
+    public Estudiante(String matricula, int idProgramaEducativo, int idTutor, String nombre, String apellidoPaterno, String apellidoMaterno, String telefono, byte[] foto, String correoInstitucional, int anioIngreso, int semestre, int creditosObtenidos, boolean situacionRiesgo, int cambioTutor, String nombreProgramaEducativo) {
         this.matricula = matricula;
+        this.idProgramaEducativo = idProgramaEducativo;
+        this.idTutor = idTutor;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
+        this.telefono = telefono;
+        this.foto = foto;
         this.correoInstitucional = correoInstitucional;
+        this.anioIngreso = anioIngreso;
         this.semestre = semestre;
-        this.idCarrera = idCarrera;
-        this.carrera = carrera;
+        this.creditosObtenidos = creditosObtenidos;
+        this.situacionRiesgo = situacionRiesgo;
+        this.cambioTutor = cambioTutor;
+        this.nombreProgramaEducativo = nombreProgramaEducativo;
     }
+    
+    
 
     public String getMatricula() {
         return matricula;
@@ -47,6 +64,22 @@ public class Estudiante {
         this.matricula = matricula;
     }
 
+    public int getIdProgramaEducativo() {
+        return idProgramaEducativo;
+    }
+
+    public void setIdProgramaEducativo(int idProgramaEducativo) {
+        this.idProgramaEducativo = idProgramaEducativo;
+    }
+
+    public int getIdTutor() {
+        return idTutor;
+    }
+
+    public void setIdTutor(int idTutor) {
+        this.idTutor = idTutor;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -54,8 +87,6 @@ public class Estudiante {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    
-    
 
     public String getApellidoPaterno() {
         return apellidoPaterno;
@@ -73,12 +104,36 @@ public class Estudiante {
         this.apellidoMaterno = apellidoMaterno;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public byte[] getFoto() {
+        return foto;
+    }
+
+    public void setFoto(byte[] foto) {
+        this.foto = foto;
+    }
+
     public String getCorreoInstitucional() {
         return correoInstitucional;
     }
 
     public void setCorreoInstitucional(String correoInstitucional) {
         this.correoInstitucional = correoInstitucional;
+    }
+
+    public int getAnioIngreso() {
+        return anioIngreso;
+    }
+
+    public void setAnioIngreso(int anioIngreso) {
+        this.anioIngreso = anioIngreso;
     }
 
     public int getSemestre() {
@@ -89,19 +144,37 @@ public class Estudiante {
         this.semestre = semestre;
     }
 
-    public int getIdCarrera() {
-        return idCarrera;
+    public int getCreditosObtenidos() {
+        return creditosObtenidos;
     }
 
-    public void setIdCarrera(int idCarrera) {
-        this.idCarrera = idCarrera;
+    public void setCreditosObtenidos(int creditosObtenidos) {
+        this.creditosObtenidos = creditosObtenidos;
     }
 
-    public String getCarrera() {
-        return carrera;
+    public boolean isSituacionRiesgo() {
+        return situacionRiesgo;
     }
 
-    public void setCarrera(String carrera) {
-        this.carrera = carrera;
+    public void setSituacionRiesgo(boolean situacionRiesgo) {
+        this.situacionRiesgo = situacionRiesgo;
     }
+
+    public int getCambioTutor() {
+        return cambioTutor;
+    }
+
+    public void setCambioTutor(int cambioTutor) {
+        this.cambioTutor = cambioTutor;
+    }
+
+    public String getNombreProgramaEducativo() {
+        return nombreProgramaEducativo;
+    }
+
+    public void setNombreProgramaEducativo(String nombreProgramaEducativo) {
+        this.nombreProgramaEducativo = nombreProgramaEducativo;
+    }
+
+    
 }

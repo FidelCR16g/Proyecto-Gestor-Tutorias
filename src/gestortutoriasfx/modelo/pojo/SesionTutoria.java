@@ -17,43 +17,44 @@ package gestortutoriasfx.modelo.pojo;
 
 public class SesionTutoria {
     private int idSesion;
-    private int idPeriodo;
+    private int idPeriodoEscolar;
     private int idTutor;
+    private int idSalon;
     private String matriculaEstudiante;
+    
+    private String nombreTutor;
+    private String nombreSalon;
+    private String nombreEstudiante;
+    
     private int numSesion;
     private String fecha;
     private String horaInicio;
     private String horaFin;
     private String estado;
-    
-    private String nombreEstudiante; 
+    private String modalidad;
+
     private String periodo;
-    
     private boolean asistencia;
 
     public SesionTutoria() {
     }
 
-    public SesionTutoria(int idSesion, int idPeriodo, int idTutor, String matriculaEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado, String nombreEstudiante, String periodo, boolean asistencia) {
+    public SesionTutoria(int idSesion, int idPeriodoEscolar, int idTutor, int idSalon, String matriculaEstudiante, String nombreTutor, String nombreSalon, String nombreEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado, String modalidad, String periodo, boolean asistencia) {
         this.idSesion = idSesion;
-        this.idPeriodo = idPeriodo;
+        this.idPeriodoEscolar = idPeriodoEscolar;
         this.idTutor = idTutor;
+        this.idSalon = idSalon;
         this.matriculaEstudiante = matriculaEstudiante;
+        this.nombreTutor = nombreTutor;
+        this.nombreSalon = nombreSalon;
+        this.nombreEstudiante = nombreEstudiante;
         this.numSesion = numSesion;
         this.fecha = fecha;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.estado = estado;
-        this.nombreEstudiante = nombreEstudiante;
+        this.modalidad = modalidad;
         this.periodo = periodo;
-        this.asistencia = asistencia;
-    }
-
-    public boolean isAsistencia() {
-        return asistencia;
-    }
-
-    public void setAsistencia(boolean asistencia) {
         this.asistencia = asistencia;
     }
 
@@ -65,12 +66,12 @@ public class SesionTutoria {
         this.idSesion = idSesion;
     }
 
-    public int getIdPeriodo() {
-        return idPeriodo;
+    public int getIdPeriodoEscolar() {
+        return idPeriodoEscolar;
     }
 
-    public void setIdPeriodo(int idPeriodo) {
-        this.idPeriodo = idPeriodo;
+    public void setIdPeriodoEscolar(int idPeriodoEscolar) {
+        this.idPeriodoEscolar = idPeriodoEscolar;
     }
 
     public int getIdTutor() {
@@ -81,12 +82,12 @@ public class SesionTutoria {
         this.idTutor = idTutor;
     }
 
-    public String getNombreEstudiante() {
-        return nombreEstudiante;
+    public int getIdSalon() {
+        return idSalon;
     }
 
-    public void setNombreEstudiante(String nombreEstudiante) {
-        this.nombreEstudiante = nombreEstudiante;
+    public void setIdSalon(int idSalon) {
+        this.idSalon = idSalon;
     }
 
     public String getMatriculaEstudiante() {
@@ -95,6 +96,30 @@ public class SesionTutoria {
 
     public void setMatriculaEstudiante(String matriculaEstudiante) {
         this.matriculaEstudiante = matriculaEstudiante;
+    }
+
+    public String getNombreTutor() {
+        return nombreTutor;
+    }
+
+    public void setNombreTutor(String nombreTutor) {
+        this.nombreTutor = nombreTutor;
+    }
+
+    public String getNombreSalon() {
+        return nombreSalon;
+    }
+
+    public void setNombreSalon(String nombreSalon) {
+        this.nombreSalon = nombreSalon;
+    }
+
+    public String getNombreEstudiante() {
+        return nombreEstudiante;
+    }
+
+    public void setNombreEstudiante(String nombreEstudiante) {
+        this.nombreEstudiante = nombreEstudiante;
     }
 
     public int getNumSesion() {
@@ -137,6 +162,14 @@ public class SesionTutoria {
         this.estado = estado;
     }
 
+    public String getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(String modalidad) {
+        this.modalidad = modalidad;
+    }
+
     public String getPeriodo() {
         return periodo;
     }
@@ -144,6 +177,16 @@ public class SesionTutoria {
     public void setPeriodo(String periodo) {
         this.periodo = periodo;
     }
+
+    public boolean isAsistencia() {
+        return asistencia;
+    }
+
+    public void setAsistencia(boolean asistencia) {
+        this.asistencia = asistencia;
+    }
+
+    
     
     @Override
     public String toString() {
