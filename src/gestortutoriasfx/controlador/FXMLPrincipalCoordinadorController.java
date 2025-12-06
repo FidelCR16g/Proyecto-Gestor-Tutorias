@@ -33,7 +33,7 @@ public class FXMLPrincipalCoordinadorController implements Initializable, IPrinc
 
     @Override
     public void inicializarInformacion(Usuario usuario) {
-        System.out.println("Bienvenido Coordinador: " + usuario.getUsuario());
+        System.out.println("Bienvenido Coordinador: " + usuario.getNombre());
     }
     
 }

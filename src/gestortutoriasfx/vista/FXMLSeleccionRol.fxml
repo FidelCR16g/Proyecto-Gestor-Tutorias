@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="350.0" prefWidth="450.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-border-color: #009688; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLSeleccionRolController">
+   <children>
+      <Label text="Seleccionar Perfil" textFill="#0277bd">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Label>
+      
+      <Label text="Se han detectado múltiples roles para su usuario.&#10;Por favor, elija con cuál desea ingresar:" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      
+      <VBox fx:id="vbContenedorBotones" alignment="CENTER" spacing="15.0" VBox.vgrow="ALWAYS">
+         <padding>
+            <Insets bottom="20.0" left="60.0" right="60.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</VBox>
