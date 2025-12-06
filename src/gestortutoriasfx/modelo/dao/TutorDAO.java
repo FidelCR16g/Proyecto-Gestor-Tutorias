@@ -25,7 +25,7 @@ public class TutorDAO {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
         
         int idTutor = 0;
-        String consulta = "SELECT idTutor FROM tutor WHERE idUsuario = ?";
+        String consulta = "SELECT idTutor FROM rolTutor WHERE idUsuario = ?";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idUsuario);

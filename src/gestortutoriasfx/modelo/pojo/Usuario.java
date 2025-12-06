@@ -17,32 +17,42 @@ package gestortutoriasfx.modelo.pojo;
 
 public class Usuario {
     private int idUsuario;
-    private String usuario;
+    private String noPersonal;
     private String password;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String email;
-    private int idRol;
+    private String rol;
     
     public Usuario() {
     }
 
-    public Usuario(String usuario, String password, String apellidoPaterno, String apellidoMaterno, String email, int idRol) {
-        this.usuario = usuario;
+    public Usuario(int idUsuario, String noPersonal, String password, String nombre, String apellidoPaterno, String apellidoMaterno, String email, String rol) {
+        this.idUsuario = idUsuario;
+        this.noPersonal = noPersonal;
         this.password = password;
+        this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
         this.email = email;
-        this.idRol = idRol;
+        this.rol = rol;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getNoPersonal() {
+        return noPersonal;
+    }
+
+    public void setNoPersonal(String noPersonal) {
+        this.noPersonal = noPersonal;
     }
 
     public String getPassword() {
@@ -51,6 +61,14 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getApellidoPaterno() {
@@ -77,27 +95,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public int getIdRol() {
-        return idRol;
+    public String getRol() {
+        return rol;
     }
 
-    public void setIdRol(int idRol) {
-        this.idRol = idRol;
-    }
-
-    public int getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

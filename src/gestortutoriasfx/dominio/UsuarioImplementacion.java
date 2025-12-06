@@ -5,6 +5,7 @@ import gestortutoriasfx.modelo.dao.UsuarioDAO;
 import gestortutoriasfx.modelo.pojo.Usuario;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -25,29 +26,55 @@ import java.util.LinkedHashMap;
  */
 
 public class UsuarioImplementacion {
-    public static HashMap<String, Object> obtenerUsuarios(String nombreUsuario) {
+    public static HashMap<String, Object> validarLogin(String noPersonal, String password) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
-        Connection conexion = null;
+        Connection conexion = ConexionBD.abrirConexionBD(); 
         
-        try {
-            conexion = ConexionBD.abrirConexionBD();
-            
-            Usuario usuario = UsuarioDAO.obtenerUsuario(conexion, nombreUsuario);
-            
-            if (usuario != null) {
-                respuesta.put("error", false);
-                respuesta.put("usuario", usuario);
-            } else {
-                respuesta.put("mensaje", "Usuario no encontrado o credenciales incorrectas.");
+        if (conexion != null) {
+            try {
+                Usuario usuario = UsuarioDAO.iniciarSesion(conexion, noPersonal, password);
+                
+                if (usuario != null) {
+                    respuesta.put("error", false);
+                    respuesta.put("usuario", usuario);
+                    ConexionBD.establecerCredenciales(usuario.getRol());
+                    
+                } else {
+                    respuesta.put("mensaje", "Credenciales incorrectas.");
+                }
+                
+            } catch (SQLException ex) {
+                respuesta.put("mensaje", "Error BD: " + ex.getMessage());
+                ex.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
             }
-            
-        } catch (SQLException e) {
-            respuesta.put("mensaje", "Error de conexión a BD: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            
-            ConexionBD.cerrarConexion(conexion);
+        } else {
+            respuesta.put("mensaje", "No hay conexión con la base de datos.");
+        }
+        
+        return respuesta;
+    }
+    
+    public static HashMap<String, Object> obtenerRolesUsuario(int idUsuario) {
+        HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
+        Connection conexion = ConexionBD.abrirConexionBD();
+        
+        if (conexion != null) {
+            try {
+                ArrayList<String> roles = UsuarioDAO.obtenerRoles(conexion, idUsuario);
+                respuesta.put("error", false);
+                respuesta.put("roles", roles);
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error SQL al obtener roles: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
+            }
+        } else {
+            respuesta.put("mensaje", "No se pudo establecer conexión con la base de datos.");
         }
         
         return respuesta;
