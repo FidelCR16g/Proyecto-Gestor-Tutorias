@@ -32,6 +32,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 
+/**
+ * Nombre de la Clase: FXMLGestionarReporteDeTutoriaController
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 05/12/2025
+ *
+ * Descripción:
+ * Se encarga de controlar la gestion del reporte de la tutoria
+ */
+
 public class FXMLGestionarReporteDeTutoriaController implements Initializable {
 
     @FXML 
@@ -227,7 +242,7 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
                     + "-fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;");
         }
         
-        tarjeta.setStyle("-fx-background-color: #e0e0e0; -fx-border-color: #616161; -fx-border-width: 2; "
+        tarjeta.setStyle("-fx-background-color: #e3f2fd; -fx-border-color: #1565c0; -fx-border-width: 2; "
                 + "-fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;");
 
         if (reporte == null) {

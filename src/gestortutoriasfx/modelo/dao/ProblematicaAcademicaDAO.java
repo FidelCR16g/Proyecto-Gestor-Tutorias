@@ -7,6 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Nombre de la Clase: ProblematicaAcademicaDAO
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 05/12/2025
+ *
+ * Descripción:
+ * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
+ */
+
 public class ProblematicaAcademicaDAO {
 
     public static int registrarProblematica(Connection conexion, ProblematicaAcademica problematicaAcademica, int idReporte) throws SQLException {

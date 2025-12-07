@@ -21,6 +21,7 @@ public class Tutor {
     private int idUsuario;
     
     private int espaciosTutorados;
+    private String nombreCompleto;
 
     public Tutor() {
     }
@@ -46,6 +47,14 @@ public class Tutor {
 
     public void setNumPersonal(String numPersonal) {
         this.numPersonal = numPersonal;
+    }
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public int getIdUsuario() {

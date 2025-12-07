@@ -53,8 +53,6 @@ public class Estudiante {
         this.cambioTutor = cambioTutor;
         this.nombreProgramaEducativo = nombreProgramaEducativo;
     }
-    
-    
 
     public String getMatricula() {
         return matricula;
@@ -175,6 +173,19 @@ public class Estudiante {
     public void setNombreProgramaEducativo(String nombreProgramaEducativo) {
         this.nombreProgramaEducativo = nombreProgramaEducativo;
     }
-
     
+    public String getNombreCompleto() {
+        return nombre + " " + apellidoPaterno + " " + apellidoMaterno;
+    }
+    
+    public void setNombreCompleto(String nombre, String apellidoPaterno, String apellidoMaterno) {
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+    }
+
+    @Override
+    public String toString() {
+        return getNombreCompleto() + " | " + getMatricula() + " | " + getNombreProgramaEducativo();
+    }
 }

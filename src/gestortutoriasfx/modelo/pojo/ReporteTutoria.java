@@ -1,5 +1,20 @@
 package gestortutoriasfx.modelo.pojo;
 
+/**
+ * Nombre de la Clase: ReporteTutoria
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 05/11/2025
+ *
+ * Descripción:
+ * Clase encargada de contener los datos del periodo escolar.
+ */
+
 public class ReporteTutoria {
     private int idReporteTutoria;
     private int idTutor;

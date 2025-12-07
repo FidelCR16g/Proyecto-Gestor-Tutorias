@@ -12,6 +12,21 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+/**
+ * Nombre de la Clase: FXMLListadoTutoresDisponiblesController
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 04/12/2025
+ *
+ * Descripción:
+ * Se encarga de controlar la seleccion de los multiples roles disponibles
+ */
+
 public class FXMLSeleccionRolController implements Initializable {
 
     @FXML

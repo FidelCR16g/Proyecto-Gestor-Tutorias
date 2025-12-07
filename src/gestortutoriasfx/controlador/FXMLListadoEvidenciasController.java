@@ -185,8 +185,8 @@ public class FXMLListadoEvidenciasController implements Initializable {
                         + "-fx-cursor: hand;");
             }
         }
-        tarjetaSeleccionada.setStyle("-fx-background-color: #e0e0e0; "
-                + "-fx-border-color: #616161; "
+        tarjetaSeleccionada.setStyle("-fx-background-color: #e3f2fd; "
+                + "-fx-border-color: #1565c0; "
                 + "-fx-border-width: 2; "
                 + "-fx-background-radius: 5; "
                 + "-fx-border-radius: 5; "

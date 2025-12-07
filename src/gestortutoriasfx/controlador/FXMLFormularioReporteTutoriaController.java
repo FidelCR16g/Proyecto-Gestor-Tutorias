@@ -32,6 +32,21 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+/**
+ * Nombre de la Clase: FXMLFormularioReporteTutoriaController
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 05/11/2025
+ *
+ * Descripción:
+ * Se encarga de controlar el formualario del reporte del tutoria
+ */
+
 public class FXMLFormularioReporteTutoriaController implements Initializable {
     @FXML 
     private Label lbPeriodo;

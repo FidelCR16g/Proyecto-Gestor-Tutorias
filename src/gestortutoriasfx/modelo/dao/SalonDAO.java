@@ -8,9 +8,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Nombre de la Clase: ProblematicaAcademicaDAO
  *
- * @author fave6
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 06/12/2025
+ *
+ * Descripción:
+ * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
  */
+
 public class SalonDAO {
     public static ArrayList<Salon> obtenerTodosSalones(Connection conexion) throws SQLException {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");

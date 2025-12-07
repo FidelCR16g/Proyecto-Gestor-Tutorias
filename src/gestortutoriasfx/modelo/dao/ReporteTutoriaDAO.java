@@ -8,6 +8,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+/**
+ * Nombre de la Clase: ProblematicaAcademicaDAO
+ *
+ * Proyecto: Sistema de Gestión de Tutorías (SGT)
+ *
+ * Institución: Universidad Veracruzana
+ * Curso: Principios de Construcción de Software
+ *
+ * Autor: Fidel Cruz Reyes
+ * Fecha de Creación: 05/12/2025
+ *
+ * Descripción:
+ * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
+ */
+
 public class ReporteTutoriaDAO {
     public static ReporteTutoria obtenerReporte(Connection conexion, int idTutor, int idPeriodo, int numSesion) throws SQLException {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
