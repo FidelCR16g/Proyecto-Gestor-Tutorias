@@ -61,10 +61,10 @@
          </children>
       </HBox>
 
-      <HBox alignment="CENTER_RIGHT" layoutX="25.0" layoutY="540.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="25.0">
+      <HBox alignment="CENTER_RIGHT" layoutX="305.0" layoutY="540.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="305.0">
          <children>
-            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar" />
             <Button fx:id="btnGuardar" disable="true" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Guardar Listas" />
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar" />
          </children>
       </HBox>
    </children>
