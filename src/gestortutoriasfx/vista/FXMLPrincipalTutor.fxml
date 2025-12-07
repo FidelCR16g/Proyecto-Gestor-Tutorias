@@ -42,7 +42,7 @@
    </top>
 
    <left>
-      <VBox prefHeight="590.0" prefWidth="211.0" spacing="10.0" style="-fx-background-color: #E0E0E0;" BorderPane.alignment="CENTER">
+      <VBox prefHeight="590.0" prefWidth="171.0" spacing="10.0" style="-fx-background-color: #E0E0E0;" BorderPane.alignment="CENTER">
          <children>
             <Label text="NAVEGACIÓN" textFill="#5865c7">
                <font>
@@ -82,12 +82,6 @@
             </Label>
 
             <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="137.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicLlenarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Llenar Reporte">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            
-            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="10.0" layoutY="182.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicEnviarReporte" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Enviar Reporte ">
                <font>
                   <Font size="14.0" />
                </font>
