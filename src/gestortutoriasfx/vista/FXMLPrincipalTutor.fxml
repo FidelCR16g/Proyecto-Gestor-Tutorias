@@ -86,6 +86,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Pane prefHeight="200.0" prefWidth="200.0" />
             
             <Button mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="25.0" prefWidth="211.0" style="-fx-background-color: transparent; -fx-text-fill: red; -fx-cursor: hand;" text="Cerrar Sesión">
                <font>
