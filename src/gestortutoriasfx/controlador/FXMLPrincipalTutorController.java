@@ -42,9 +42,6 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
     @FXML
     private Label lbBienvenida;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -103,10 +100,7 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
     
     @FXML
     private void clicLlenarReporte(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicEnviarReporte(ActionEvent event) {
+        irVista("/gestortutoriasfx/vista/FXMLGestionarReporteDeTutoria.fxml");
     }
     
     private void irVista(String ruta) {
