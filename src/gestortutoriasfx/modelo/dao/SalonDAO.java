@@ -13,17 +13,21 @@ import java.util.ArrayList;
  */
 public class SalonDAO {
     public static ArrayList<Salon> obtenerTodosSalones(Connection conexion) throws SQLException {
-        ArrayList<Salon> salones = new ArrayList<>();
-        if (conexion != null) {
-            String sql = "SELECT idSalon, nombreSalon FROM salon ORDER BY nombreSalon ASC";
-            try (PreparedStatement sentencia = conexion.prepareStatement(sql);
-                 ResultSet resultado = sentencia.executeQuery()) {
-                while (resultado.next()) {
-                    Salon s = new Salon();
-                    s.setIdSalon(resultado.getInt("idSalon"));
-                    s.setNombreSalon(resultado.getString("nombreSalon"));
-                    salones.add(s);
-                }
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        ArrayList<Salon> salones = new ArrayList<>(); 
+        String consulta = "SELECT s.*, e.nombreEdificio FROM salon s " + 
+               "INNER JOIN edificio e ON s.idEdificio = e.idEdificio " +
+               "ORDER BY s.nombreSalon ASC";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
+            ResultSet resultado = sentencia.executeQuery()) {
+            while (resultado.next()) {
+                Salon salon = new Salon();
+                salon.setIdSalon(resultado.getInt("idSalon"));
+                salon.setNombreSalon(resultado.getString("nombreSalon") 
+                        + " (" + resultado.getString("nombreEdificio") + ")");
+                salones.add(salon);
             }
         }
         return salones;
