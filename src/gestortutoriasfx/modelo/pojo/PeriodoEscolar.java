@@ -82,6 +82,4 @@ public class PeriodoEscolar {
     public void setNombrePeriodoEscolar(String nombrePeriodoEscolar) {
         this.nombrePeriodoEscolar = nombrePeriodoEscolar;
     }
-    
-    
 }

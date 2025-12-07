@@ -39,7 +39,7 @@ public class SesionTutoria {
     public SesionTutoria() {
     }
 
-    public SesionTutoria(int idSesion, int idPeriodoEscolar, int idTutor, int idSalon, String matriculaEstudiante, String nombreTutor, String nombreSalon, String nombreEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado, String modalidad, String periodo, boolean asistencia) {
+    public SesionTutoria(int idSesion, int idPeriodoEscolar, int idTutor, int idSalon, String matriculaEstudiante, String nombreTutor, String nombreSalon, String nombreEstudiante, int numSesion, String fecha, String horaInicio, String horaFin, String estado, String modalidad, boolean asistencia) {
         this.idSesion = idSesion;
         this.idPeriodoEscolar = idPeriodoEscolar;
         this.idTutor = idTutor;
@@ -54,7 +54,6 @@ public class SesionTutoria {
         this.horaFin = horaFin;
         this.estado = estado;
         this.modalidad = modalidad;
-        this.periodo = periodo;
         this.asistencia = asistencia;
     }
 
@@ -158,8 +157,9 @@ public class SesionTutoria {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(String estado) { 
         this.estado = estado;
+        this.asistencia = "Asistio".equalsIgnoreCase(estado); 
     }
 
     public String getModalidad() {
@@ -170,6 +170,15 @@ public class SesionTutoria {
         this.modalidad = modalidad;
     }
 
+    public boolean isAsistencia() {
+        return "Asistio".equalsIgnoreCase(this.estado);
+    }
+
+    public void setAsistencia(boolean asistencia) {
+        this.asistencia = asistencia;
+        this.estado = asistencia ? "Asistio" : "No Asistio";
+    }
+
     public String getPeriodo() {
         return periodo;
     }
@@ -177,16 +186,6 @@ public class SesionTutoria {
     public void setPeriodo(String periodo) {
         this.periodo = periodo;
     }
-
-    public boolean isAsistencia() {
-        return asistencia;
-    }
-
-    public void setAsistencia(boolean asistencia) {
-        this.asistencia = asistencia;
-    }
-
-    
     
     @Override
     public String toString() {

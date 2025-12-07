@@ -1,5 +1,7 @@
 package gestortutoriasfx.modelo.pojo;
 
+import java.util.ArrayList;
+
 /**
  * Nombre de la Clase: Usuario
  *
@@ -30,7 +32,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(int idUsuario, String noPersonal, String password, String nombre, String apellidoPaterno, String apellidoMaterno, String email, String rol) {
+    public Usuario(int idUsuario, String noPersonal, String password, String nombre, String apellidoPaterno, String apellidoMaterno, String email, String rol, int idRolEspecifico) {
         this.idUsuario = idUsuario;
         this.noPersonal = noPersonal;
         this.password = password;
@@ -39,6 +41,7 @@ public class Usuario {
         this.apellidoMaterno = apellidoMaterno;
         this.email = email;
         this.rol = rol;
+        this.idRolEspecifico = idRolEspecifico;
     }
 
     public int getIdUsuario() {
@@ -112,4 +115,6 @@ public class Usuario {
     public void setIdRolEspecifico(int idRolEspecifico) {
         this.idRolEspecifico = idRolEspecifico;
     }
+
+    
 }
