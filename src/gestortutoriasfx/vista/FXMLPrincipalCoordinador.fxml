@@ -1,19 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
+<BorderPane fx:id="borderPanePrincipal" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLPrincipalCoordinadorController">
+   
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" style="-fx-background-color: #0277bd; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 2);" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="SGT - Gestión de Tutorías (Coordinador)" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+            
+            <Pane HBox.hgrow="ALWAYS" />
+            
+         </children>
+         <padding>
+            <Insets bottom="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </top>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="gestortutoriasfx.controlador.FXMLPrincipalCoordinadorController">
-   <children>
-      <Label layoutX="174.0" layoutY="181.0" text="PrincipalCoordinador">
-         <font>
-            <Font size="27.0" />
-         </font>
-      </Label>
-   </children>
-</AnchorPane>
+   <left>
+      <VBox prefHeight="590.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #E0E0E0;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="NAVEGACIÓN" textFill="#5865c7">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="15.0" top="20.0" />
+               </VBox.margin>
+            </Label>
+            
+            <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clicAsignarTutorado" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand; -fx-padding: 0 0 0 20;" text="Asignar Tutorados" textFill="#252525">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+
+            <Pane VBox.vgrow="ALWAYS" />
+            
+            <Button mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="25.0" prefWidth="211.0" style="-fx-background-color: transparent; -fx-text-fill: red; -fx-cursor: hand;" text="Cerrar Sesión">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                   <Insets bottom="20.0" />
+               </VBox.margin>
+            </Button>
+
+         </children>
+      </VBox>
+   </left>
+
+   <center>
+      <StackPane fx:id="panelContenido" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #eceff1;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Label fx:id="lbBienvenida" text="Bienvenido(a) Coordinador:  " textFill="#546e7a">
+                     <font>
+                        <Font name="System Bold" size="28.0" />
+                     </font>
+                  </Label>
+                  <Label text="Seleccione una opción del menú lateral para comenzar." textFill="#78909c">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

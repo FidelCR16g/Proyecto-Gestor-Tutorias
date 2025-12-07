@@ -54,4 +54,59 @@ public class EstudianteDAO {
         }
         return listaEstudiantes;
     }
+    
+    public static ArrayList<Estudiante> obtenerEstudiantesSinTutor(Connection conexion) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        ArrayList<Estudiante> estudiantes = new ArrayList<>();
+        
+        String consulta = "SELECT e.*, pe.nombre AS nombrePrograma " +
+                "FROM estudiante e " +
+                "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
+                "LEFT JOIN asignacionTutorado a ON e.matricula = a.matriculaEstudiante " +
+                "WHERE a.idAsignacionTutorado IS NULL " +
+                "ORDER BY e.semestre, e.apellidoPaterno";
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
+                ResultSet resultado = sentencia.executeQuery()) {
+            while (resultado.next()) {
+                Estudiante estudiante = new Estudiante();
+                estudiante.setMatricula(resultado.getString("matricula"));
+                estudiante.setNombre(resultado.getString("nombre"));
+                estudiante.setApellidoPaterno(resultado.getString("apellidoPaterno"));
+                estudiante.setApellidoMaterno(resultado.getString("apellidoMaterno"));
+                estudiante.setSemestre(resultado.getInt("semestre"));
+                estudiante.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
+                estudiantes.add(estudiante);
+                }
+            }
+        return estudiantes;
+    }
+    
+    public static int asignarTutor(Connection conexion, String matricula, int idTutor) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        String consulta = "INSERT INTO asignacionTutorado (idTutor, matriculaEstudiante) VALUES (?, ?)";
+        int filasAfectadas = 0;
+        
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
+            sentencia.setInt(1, idTutor);
+            sentencia.setString(2, matricula);
+            filasAfectadas = sentencia.executeUpdate();
+        }
+        return filasAfectadas;
+    }
+
+    public static int desasignarTutor(Connection conexion, String matricula, int idTutor) throws SQLException {
+        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        
+        int filasAfectadas = 0;
+        
+        String consulta = "DELETE FROM asignacionTutorado WHERE idTutor = ? AND matriculaEstudiante = ?";
+        try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
+            sentencia.setInt(1, idTutor);
+            sentencia.setString(2, matricula);
+            filasAfectadas = sentencia.executeUpdate();
+        }
+        return filasAfectadas;
+    }
 }
