@@ -48,6 +48,7 @@ public class PeriodoEscolarImplementacion {
                 ConexionBD.cerrarConexion(conexion);
             }
         } else {
+            System.out.println("ERROR CARGANDO PERIODO: " + respuesta.get("mensaje"));
             respuesta.put("mensaje", "No hay conexión con la base de datos.");
         }
         

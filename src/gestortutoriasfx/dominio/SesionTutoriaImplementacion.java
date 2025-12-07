@@ -67,7 +67,7 @@ public class SesionTutoriaImplementacion {
                 conexion.setAutoCommit(false);
                 
                 for(SesionTutoria sesion : lista){
-                    boolean asistio = "Asistio".equalsIgnoreCase(sesion.getEstado());
+                    boolean asistio = sesion.isAsistencia();
                     SesionTutoriaDAO.actualizarEstadoAsistencia(conexion, sesion.getIdSesion(), asistio);
                 }
                 
@@ -95,17 +95,15 @@ public class SesionTutoriaImplementacion {
     
     public static HashMap<String, Object> obtenerFechasPorPeriodo(int idPeriodo) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        Connection conexion = null;
+        respuesta.put("error", true);
+        Connection conexion = ConexionBD.abrirConexionBD();
 
         try {
-            conexion = ConexionBD.abrirConexionBD();
             ArrayList<FechaTutoria> listaFechas = SesionTutoriaDAO.obtenerFechasPorPeriodo(conexion, idPeriodo);
-            
             respuesta.put("error", false);
             respuesta.put("fechas", listaFechas);
 
         } catch (SQLException e) {
-            respuesta.put("error", true);
             respuesta.put("mensaje", "Error al cargar las fechas de tutoría: " + e.getMessage());
             e.printStackTrace();
         } finally {

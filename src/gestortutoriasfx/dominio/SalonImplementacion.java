@@ -12,12 +12,10 @@ import java.util.LinkedHashMap;
 public class SalonImplementacion {
     public static HashMap<String, Object> obtenerTodosSalones() {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        Connection conexion = null;
+        Connection conexion = ConexionBD.abrirConexionBD();
 
         try {
-            conexion = ConexionBD.abrirConexionBD();
             ArrayList<Salon> listaSalones = SalonDAO.obtenerTodosSalones(conexion);
-            
             respuesta.put("error", false);
             respuesta.put("salones", listaSalones);
 
