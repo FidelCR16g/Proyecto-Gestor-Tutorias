@@ -45,7 +45,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cbSesion" prefHeight="35.0" prefWidth="320.0" promptText="Seleccione la sesión..." style="-fx-font-size: 13px;" />
+            <ComboBox fx:id="cbSesion" prefHeight="35.0" prefWidth="320.0" promptText="Seleccione la sesión" style="-fx-font-size: 13px;" />
          </children>
       </HBox>
 
@@ -86,16 +86,16 @@
          </children>
       </VBox>
 
-      <HBox alignment="CENTER_RIGHT" layoutX="30.0" layoutY="590.0" spacing="20.0" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="30.0">
+      <HBox alignment="CENTER_RIGHT" layoutX="270.0" layoutY="590.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="270.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
             <Button fx:id="btnGuardar" disable="true" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1);" text="Guardar Cambios">
                <font>
                   <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
+               <font>
+                  <Font size="14.0" />
                </font>
             </Button>
          </children>
