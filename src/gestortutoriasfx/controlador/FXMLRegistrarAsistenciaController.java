@@ -128,8 +128,8 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
         
         if (!(boolean) respuestaPeriodo.get("error")) {
             PeriodoEscolar periodo = (PeriodoEscolar) respuestaPeriodo.get("periodo");
-            HashMap<String, Object> respuestaFechas = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(periodo.getIdPeriodo());
-            HashMap<String, Object> respuestaOcupadas = SesionTutoriaImplementacion.obtenerSesionesOcupadas(periodo.getIdPeriodo());
+            HashMap<String, Object> respuestaFechas = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(periodo.getIdPeriodoEscolar());
+            HashMap<String, Object> respuestaOcupadas = SesionTutoriaImplementacion.obtenerSesionesOcupadas(periodo.getIdPeriodoEscolar());
             
             if (!(boolean) respuestaFechas.get("error") && !(boolean) respuestaOcupadas.get("error")) {
                 ArrayList<FechaTutoria> todasLasFechas = (ArrayList<FechaTutoria>) respuestaFechas.get("fechas");
