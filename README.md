@@ -35,11 +35,10 @@ El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) estricta, comp
 - CU-03 Registrar Horario de Tutoría: Generación automática de bloques de horarios (intervalos de 20 min) con validación de fechas y periodos.
 - CU-04 Registrar Asistencia: Listado dinámico para marcar asistencia.
 - CU-06 Gestionar Evidencia: Carga de archivos de las evidencias.
-- CU-08 Enviar Reporte de Tutoría: (En desarrollo).
+- CU-07 Gestionar Reportes de Tutoría: Gestion de los reportes realizados de las tutorias.
 
 👔 Rol: Coordinador
-- CU-15 Gestionar Planeación: (En desarollo) Configuración de periodos y fechas límite.
-- CU-17 Revisar Reporte de Tutoría: (En desarrollo) Validación de entregas de tutores.
+- CU-14 Asignar Tutorado: Asignacion de tutorados por parte del coordinador hacia tutores disponibles.
 
 ---
 
