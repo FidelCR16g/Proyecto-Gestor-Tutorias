@@ -57,7 +57,25 @@ El sistema utiliza un archivo de propiedades para la conexión. Asegúrate de co
 `src/gestortutoriasfx/recurso/database.properties`
 
 ```properties
+db.url=jdbc:mysql://localhost:3306/gestion_tutorias?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=America/Mexico_City
 db.driver=com.mysql.cj.jdbc.Driver
-db.url=jdbc:mysql://localhost:3306/gestion_tutorias_final?useSSL=false...
-db.user=root
-db.password=TU_CONTRASEÑA
+
+#Credenciales para el usuario de login
+db.user.login=login_checker
+db.password.login=loginPass123!
+
+#Credenciales para el rol de tutor
+db.user.tutor=tutorApp
+db.password.tutor=Tutor123!
+
+#Credenciales para el rol de coordinador
+db.user.coordinador=coordinadorApp
+db.password.coordinador=Coord123!
+
+#Credenciales para el rol de administrador
+db.user.administrador=adminApp
+db.password.administrador=Admin123!
+
+#Credenciales para el rol de supervisor
+db.user.supervisor=supervisorApp
+db.password.supervisor=Supervisor123!
