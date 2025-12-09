@@ -42,9 +42,6 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
     @FXML
     private Label lbBienvenida;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -93,18 +90,17 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
 
     @FXML
     private void clicRegistrarAsistencia(ActionEvent event) {
+        irVista("/gestortutoriasfx/vista/FXMLRegistrarAsistencia.fxml");
     }
 
     @FXML
     private void clicGestionarEvidencia(ActionEvent event) {
+        irVista("/gestortutoriasfx/vista/FXMLListadoEvidencias.fxml");
     }
-
+    
     @FXML
     private void clicLlenarReporte(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicEnviarReporte(ActionEvent event) {
+        irVista("/gestortutoriasfx/vista/FXMLGestionarReporteDeTutoria.fxml");
     }
     
     private void irVista(String ruta) {
@@ -117,7 +113,7 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
             ex.printStackTrace();
             Utilidades.mostrarAlertaSimple("Error de Navegación", 
                     "No se pudo cargar la vista: " + ruta, 
-                    Alert.AlertType.ERROR);
+                    Alert.AlertType.WARNING);
         }
     }
 }

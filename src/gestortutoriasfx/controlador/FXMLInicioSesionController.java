@@ -3,11 +3,13 @@ package gestortutoriasfx.controlador;
 import gestortutoriasfx.dominio.TutorImplementacion;
 import gestortutoriasfx.dominio.UsuarioImplementacion;
 import gestortutoriasfx.interfaz.IPrincipalControlador;
+import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.pojo.Usuario;
 import gestortutoriasfx.utilidad.Utilidades;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -51,7 +53,7 @@ public class FXMLInicioSesionController implements Initializable{
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        ConexionBD.establecerCredenciales("login");
     }    
 
     @FXML
@@ -76,27 +78,50 @@ public class FXMLInicioSesionController implements Initializable{
         return camposValidos;
     }
     
-    private void verificarCredenciales(String usuario, String password){
-        HashMap<String, Object> respuesta = UsuarioImplementacion.obtenerUsuarios(usuario);
-        boolean error = (boolean) respuesta.get("error");
+    private void verificarCredenciales(String noPersonal, String password){
+        HashMap<String, Object> respuestaLogin = UsuarioImplementacion.validarLogin(noPersonal, password);
+        boolean error = (boolean) respuestaLogin.get("error");
         
         if(!error){
-            Usuario usuarioSesion = (Usuario) respuesta.get("usuario");
+            Usuario usuarioSesion = (Usuario) respuestaLogin.get("usuario");
             
-            if(usuarioSesion.getPassword().equals(password)){
-                Sesion.setUsuarioSesion(usuarioSesion);
+            HashMap<String, Object> respuestaRoles = UsuarioImplementacion.obtenerRolesUsuario(usuarioSesion.getIdUsuario());
+            
+            if (!(boolean) respuestaRoles.get("error")) {
+                ArrayList<String> roles = (ArrayList<String>) respuestaRoles.get("roles");
                 
-                if(usuarioSesion.getIdRol() == 3){
-                    cargarDatosTutor(usuarioSesion);
-                }else{
-                    Sesion.setIdTutor(0); 
-                    irPantallaPrincipal(usuarioSesion);
+                if (roles.isEmpty()) {
+                    Utilidades.mostrarAlertaSimple("Acceso Denegado", ""
+                            + "El usuario no tiene roles asignados.", Alert.AlertType.WARNING);
+                } else if (roles.size() == 1) {
+                    ingresarAlSistema(usuarioSesion, roles.get(0));
+                } else {
+                    irPantallaSeleccionRol(usuarioSesion, roles);
                 }
-            }else{
-                Utilidades.mostrarAlertaSimple("Credenciales incorrectas", "Contraseña incorrecta", Alert.AlertType.WARNING);
+            } else {
+                Utilidades.mostrarAlertaSimple("Error", 
+                        respuestaRoles.get("mensaje").toString(), Alert.AlertType.WARNING);
             }
+            
         }else{
-            Utilidades.mostrarAlertaSimple("Error", respuesta.get("mensaje").toString(), Alert.AlertType.WARNING);
+            Utilidades.mostrarAlertaSimple("Error", 
+                    respuestaLogin.get("mensaje").toString(), Alert.AlertType.WARNING);
+        }
+    }
+    
+    public void ingresarAlSistema(Usuario usuario, String rolSeleccionado) {
+        ConexionBD.establecerCredenciales(rolSeleccionado);
+        
+        usuario.setRol(rolSeleccionado);
+        Sesion.setUsuarioSesion(usuario);
+        
+        if ("Tutor".equalsIgnoreCase(rolSeleccionado)) {
+            cargarDatosTutor(usuario);
+        } else if ("Coordinador".equalsIgnoreCase(rolSeleccionado)) {
+            Sesion.setIdTutor(0);
+            irPantallaPrincipal(usuario, rolSeleccionado);
+        } else {
+            irPantallaPrincipal(usuario, rolSeleccionado);
         }
     }
     
@@ -107,7 +132,7 @@ public class FXMLInicioSesionController implements Initializable{
         if (!error) {
             int idTutor = (int) respuesta.get("idTutor");
             Sesion.setIdTutor(idTutor);
-            irPantallaPrincipal(usuario);
+            irPantallaPrincipal(usuario, "Tutor");
         } else {
             Utilidades.mostrarAlertaSimple("Error de Perfil", 
                     "El usuario tiene rol de Tutor pero no está registrado en la tabla de Tutores.", 
@@ -115,22 +140,22 @@ public class FXMLInicioSesionController implements Initializable{
         }
     }
     
-    private String obtenerRutaFXMLPorRol(int idRol){
+    private String obtenerRutaFXMLPorRol(String idRol){
         switch(idRol){
-            case 1:
+            case "Administrador":
                 return "/gestortutoriasfx/vista/FXMLPrincipalAdministrador.fxml";
-            case 2:
+            case "Coordinador":
                 return "/gestortutoriasfx/vista/FXMLPrincipalCoordinador.fxml";
-            case 3:
+            case "Tutor":
                 return "/gestortutoriasfx/vista/FXMLPrincipalTutor.fxml";
             default:
                 return "";
         }
     }
     
-    private void irPantallaPrincipal(Usuario usuario){
+    private void irPantallaPrincipal(Usuario usuario, String rol){
         try {
-            String rutaFXML = obtenerRutaFXMLPorRol(usuario.getIdRol());
+            String rutaFXML = obtenerRutaFXMLPorRol(rol);
             
             if(rutaFXML.isEmpty()){
                 Utilidades.mostrarAlertaSimple("Rol no reconocido", 
@@ -146,11 +171,34 @@ public class FXMLInicioSesionController implements Initializable{
             Scene escena = new Scene(vista);
             Stage escenario = (Stage) tfUsuario.getScene().getWindow();
             escenario.setScene(escena);
-            escenario.setTitle("Principal");
+            escenario.setTitle("Sistema de Gestión de Tutorías - " + rol);
             escenario.show();
             
         } catch(IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void irPantallaSeleccionRol(Usuario usuario, ArrayList<String> roles) {
+        try {
+            FXMLLoader loader = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLSeleccionRol.fxml");
+            Parent root = loader.load();
+            
+            FXMLSeleccionRolController controller = loader.getController();
+            controller.inicializar(usuario, roles, this); 
+            
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Seleccionar Rol");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.initOwner(tfUsuario.getScene().getWindow());
+            stage.show();
+            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Utilidades.mostrarAlertaSimple("Error", 
+                    "No se pudo abrir la ventana de selección de roles.", Alert.AlertType.WARNING);
         }
     }
 }

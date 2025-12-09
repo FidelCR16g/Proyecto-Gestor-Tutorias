@@ -17,16 +17,20 @@ package gestortutoriasfx.modelo.pojo;
 
 public class Tutor {
     private int idTutor;
-    private String noPersonal;
+    private String numPersonal;
     private int idUsuario;
+    
+    private int espaciosTutorados;
+    private String nombreCompleto;
 
     public Tutor() {
     }
-    
-    public Tutor(int idTutor, String noPersonal, int idUsuario) {
+
+    public Tutor(int idTutor, String numPersonal, int idUsuario, int espaciosTutorados) {
         this.idTutor = idTutor;
-        this.noPersonal = noPersonal;
+        this.numPersonal = numPersonal;
         this.idUsuario = idUsuario;
+        this.espaciosTutorados = espaciosTutorados;
     }
 
     public int getIdTutor() {
@@ -37,12 +41,20 @@ public class Tutor {
         this.idTutor = idTutor;
     }
 
-    public String getNoPersonal() {
-        return noPersonal;
+    public String getNumPersonal() {
+        return numPersonal;
     }
 
-    public void setNoPersonal(String noPersonal) {
-        this.noPersonal = noPersonal;
+    public void setNumPersonal(String numPersonal) {
+        this.numPersonal = numPersonal;
+    }
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public int getIdUsuario() {
@@ -51,5 +63,13 @@ public class Tutor {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public int getEspaciosTutorados() {
+        return espaciosTutorados;
+    }
+
+    public void setEspaciosTutorados(int espaciosTutorados) {
+        this.espaciosTutorados = espaciosTutorados;
     }
 }
