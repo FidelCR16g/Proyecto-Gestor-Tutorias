@@ -17,7 +17,7 @@ package gestortutoriasfx.modelo.pojo;
 
 public class FechaTutoria {
     private int idFechaTutoria;
-    private int idPeriodoEscolar;
+    private int idPeriodo;
     private int numSesion;
     private String fechaInicio;
     private String fechaCierre;
@@ -27,7 +27,7 @@ public class FechaTutoria {
 
     public FechaTutoria(int idFechaTutoria, int idPeriodo, int numSesion, String fechaInicio, String fechaCierre) {
         this.idFechaTutoria = idFechaTutoria;
-        this.idPeriodoEscolar = idPeriodo;
+        this.idPeriodo = idPeriodo;
         this.numSesion = numSesion;
         this.fechaInicio = fechaInicio;
         this.fechaCierre = fechaCierre;
@@ -41,12 +41,12 @@ public class FechaTutoria {
         this.idFechaTutoria = idFechaTutoria;
     }
 
-    public int getIdPeriodoEscolar() {
-        return idPeriodoEscolar;
+    public int getIdPeriodo() {
+        return idPeriodo;
     }
 
-    public void setIdPeriodoEscolar(int idPeriodo) {
-        this.idPeriodoEscolar = idPeriodo;
+    public void setIdPeriodo(int idPeriodo) {
+        this.idPeriodo = idPeriodo;
     }
 
     public int getNumSesion() {
@@ -73,7 +73,8 @@ public class FechaTutoria {
         this.fechaCierre = fechaCierre;
     }
     
+    @Override
     public String toString() {
-        return numSesion + ". Sesión (" + fechaInicio + " - " + fechaCierre + ")";
+        return numSesion + ". Sesión (" + fechaInicio + " al " + fechaCierre + ")";
     }
 }

@@ -16,39 +16,39 @@ package gestortutoriasfx.modelo.pojo;
  */
 
 public class PeriodoEscolar {
-    private int idPeriodoEscolar;
-    private String rangoPeriodo;
+    private int idPeriodo;
+    private String nombre;
     private String fechaInicio;
     private String fechaFin;
-    private boolean estado;
-    private String nombrePeriodoEscolar;
+    private String estado;
     
     public PeriodoEscolar(){
     }
 
-    public PeriodoEscolar(int idPeriodoEscolar, String rangoPeriodo, String fechaInicio, String fechaFin, boolean estado, String nombrePeriodoEscolar) {
-        this.idPeriodoEscolar = idPeriodoEscolar;
-        this.rangoPeriodo = rangoPeriodo;
+    public PeriodoEscolar(int idPeriodo, String nombre, String fechaInicio, String fechaFin, String estado) {
+        this.idPeriodo = idPeriodo;
+        this.nombre = nombre;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.estado = estado;
-        this.nombrePeriodoEscolar = nombrePeriodoEscolar;
     }
 
-    public int getIdPeriodoEscolar() {
-        return idPeriodoEscolar;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setIdPeriodoEscolar(int idPeriodoEscolar) {
-        this.idPeriodoEscolar = idPeriodoEscolar;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    
+
+    public int getIdPeriodo() {
+        return idPeriodo;
     }
 
-    public String getRangoPeriodo() {
-        return rangoPeriodo;
-    }
-
-    public void setRangoPeriodo(String rangoPeriodo) {
-        this.rangoPeriodo = rangoPeriodo;
+    public void setIdPeriodo(int idPeriodo) {
+        this.idPeriodo = idPeriodo;
     }
 
     public String getFechaInicio() {
@@ -67,19 +67,11 @@ public class PeriodoEscolar {
         this.fechaFin = fechaFin;
     }
 
-    public boolean isEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public String getNombrePeriodoEscolar() {
-        return nombrePeriodoEscolar;
-    }
-
-    public void setNombrePeriodoEscolar(String nombrePeriodoEscolar) {
-        this.nombrePeriodoEscolar = nombrePeriodoEscolar;
     }
 }

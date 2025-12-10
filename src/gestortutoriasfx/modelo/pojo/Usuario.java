@@ -1,7 +1,5 @@
 package gestortutoriasfx.modelo.pojo;
 
-import java.util.ArrayList;
-
 /**
  * Nombre de la Clase: Usuario
  *
@@ -19,45 +17,32 @@ import java.util.ArrayList;
 
 public class Usuario {
     private int idUsuario;
-    private String noPersonal;
+    private String usuario;
     private String password;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String email;
-    private String rol;
-    
-    private int idRolEspecifico;
+    private int idRol;
     
     public Usuario() {
     }
 
-    public Usuario(int idUsuario, String noPersonal, String password, String nombre, String apellidoPaterno, String apellidoMaterno, String email, String rol, int idRolEspecifico) {
-        this.idUsuario = idUsuario;
-        this.noPersonal = noPersonal;
+    public Usuario(String usuario, String password, String apellidoPaterno, String apellidoMaterno, String email, int idRol) {
+        this.usuario = usuario;
         this.password = password;
-        this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
         this.email = email;
-        this.rol = rol;
-        this.idRolEspecifico = idRolEspecifico;
+        this.idRol = idRol;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getNoPersonal() {
-        return noPersonal;
-    }
-
-    public void setNoPersonal(String noPersonal) {
-        this.noPersonal = noPersonal;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getPassword() {
@@ -66,14 +51,6 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getApellidoPaterno() {
@@ -100,21 +77,27 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getRol() {
-        return rol;
+    public int getIdRol() {
+        return idRol;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setIdRol(int idRol) {
+        this.idRol = idRol;
     }
 
-    public int getIdRolEspecifico() {
-        return idRolEspecifico;
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdRolEspecifico(int idRolEspecifico) {
-        this.idRolEspecifico = idRolEspecifico;
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
-    
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }

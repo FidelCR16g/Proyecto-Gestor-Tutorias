@@ -1,10 +1,14 @@
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
+import gestortutoriasfx.modelo.Sesion;
+import gestortutoriasfx.modelo.dao.EstudianteDAO;
 import gestortutoriasfx.modelo.dao.SesionTutoriaDAO;
+import gestortutoriasfx.modelo.pojo.Estudiante;
 import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,83 +31,60 @@ import java.util.List;
  * sesion de tutoria de la base de datos.
  */
 
-public class SesionTutoriaImplementacion {
-    public static HashMap<String, Object> cargarHorarioGenerado(ArrayList<SesionTutoria> horarios) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-        Connection conexion = ConexionBD.abrirConexionBD();
-        
-        if (conexion != null) {
-            try {
-                conexion.setAutoCommit(false);
-                for (SesionTutoria sesionTutoria : horarios) {
-                    SesionTutoriaDAO.registrarSesion(conexion, sesionTutoria);
-                }
-                conexion.commit();
-                respuesta.put("error", false);
-                respuesta.put("mensaje", "Se registraron " + horarios.size() + " horarios correctamente.");
-                
-            } catch (SQLException ex) {
-                respuesta.put("mensaje", "Error al guardar en BD: " + ex.getMessage());
-                ex.printStackTrace();
-                try { conexion.rollback(); } catch (SQLException e) { e.printStackTrace(); }
-            } finally {
-                try { conexion.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
-                ConexionBD.cerrarConexion(conexion);
-            }
-        } else {
-            respuesta.put("mensaje", "No hay conexión con la base de datos.");
-        }
-        return respuesta;
-    }
-    
-    public static HashMap<String, Object> guardarAsistencias(List<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
+public class SesionTutoriaImplementacion { 
+    public static boolean cargarHorarioGenerado(List<SesionTutoria> horarios) {
+        boolean exito = false;
         Connection conexion = ConexionBD.abrirConexionBD();
         
         if (conexion != null) {
             try {
                 conexion.setAutoCommit(false);
                 
-                for(SesionTutoria sesion : lista){
-                    boolean asistio = sesion.isAsistencia();
-                    SesionTutoriaDAO.actualizarEstadoAsistencia(conexion, sesion.getIdSesion(), asistio);
+                for (SesionTutoria sesion : horarios) {
+                    SesionTutoriaDAO.registrarSesion(conexion, sesion);
                 }
                 
                 conexion.commit();
-                respuesta.put("error", false);
-                respuesta.put("mensaje", "Se ha registrado la asistencia correctamente.");
-                
+                exito = true;
             } catch (SQLException ex) {
-                respuesta.put("mensaje", "Error al guardar en BD: " + ex.getMessage());
                 ex.printStackTrace();
                 try { conexion.rollback(); } catch (SQLException e) { e.printStackTrace(); }
             } finally {
-                try { conexion.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
                 ConexionBD.cerrarConexion(conexion);
             }
-        } else {
-            respuesta.put("mensaje", "No hay conexión con la base de datos.");
         }
-        return respuesta;
+        return exito;
     }
     
-    public static HashMap<String, Object> obtenerEstudiantesDelTutor(int idTutor) {
+     public static HashMap<String, Object> obtenerEstudiantesDelTutor(int idTutor) {
         return EstudianteImplementacion.obtenerTutoradosPorTutor(idTutor);
     }
     
     public static HashMap<String, Object> obtenerFechasPorPeriodo(int idPeriodo) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-        Connection conexion = ConexionBD.abrirConexionBD();
+        Connection conexion = null;
 
         try {
-            ArrayList<FechaTutoria> listaFechas = SesionTutoriaDAO.obtenerFechasPorPeriodo(conexion, idPeriodo);
+            conexion = ConexionBD.abrirConexionBD();
+            ResultSet resultado = SesionTutoriaDAO.obtenerFechasPorPeriodo(conexion, idPeriodo);
+            
+            ArrayList<FechaTutoria> listaFechas = new ArrayList<>();
+            
+            while (resultado.next()) {
+                FechaTutoria fecha = new FechaTutoria();
+                fecha.setIdFechaTutoria(resultado.getInt("idFechaTutoria"));
+                fecha.setIdPeriodo(resultado.getInt("idPeriodo"));
+                fecha.setNumSesion(resultado.getInt("numSesion"));
+                fecha.setFechaInicio(resultado.getString("fechaInicio"));
+                fecha.setFechaCierre(resultado.getString("fechaCierre"));
+                listaFechas.add(fecha);
+            }
+            
             respuesta.put("error", false);
             respuesta.put("fechas", listaFechas);
 
         } catch (SQLException e) {
+            respuesta.put("error", true);
             respuesta.put("mensaje", "Error al cargar las fechas de tutoría: " + e.getMessage());
             e.printStackTrace();
         } finally {
@@ -112,62 +93,28 @@ public class SesionTutoriaImplementacion {
         
         return respuesta;
     }
-    
-    public static HashMap<String, Object> obtenerListaAsistencia(int idTutor, int numSesion) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-        Connection conexion = ConexionBD.abrirConexionBD();
-        
-        try {
-            ArrayList<SesionTutoria> lista = SesionTutoriaDAO.obtenerAlumnosPorSesion(conexion, idTutor, numSesion);
-            
-            respuesta.put("error", false);
-            respuesta.put("lista", lista);
-            
-        } catch (SQLException ex) {
-            respuesta.put("mensaje", ex.getMessage());
-        } finally {
-            ConexionBD.cerrarConexion(conexion);
-        }
-        return respuesta;
-    }
-    
+
     public static HashMap<String, Object> obtenerSesionesOcupadas(int idPeriodo) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         Connection conexion = null;
 
         try {
             conexion = ConexionBD.abrirConexionBD();
-            ArrayList<Integer> sesionesOcupadas = 
-                    SesionTutoriaDAO.obtenerSesionesOcupadas(conexion, gestortutoriasfx.modelo.Sesion.getIdTutor(), idPeriodo);
+            int idTutor = Sesion.getIdTutor();
+            
+            ResultSet resultado = SesionTutoriaDAO.obtenerSesionesOcupadas(conexion, idTutor, idPeriodo);
+            ArrayList<Integer> sesionesOcupadas = new ArrayList<>();
+            
+            while (resultado.next()) {
+                sesionesOcupadas.add(resultado.getInt("numSesion"));
+            }
+            
             respuesta.put("error", false);
             respuesta.put("ocupadas", sesionesOcupadas);
 
         } catch (SQLException e) {
             respuesta.put("error", true);
             respuesta.put("mensaje", "Error al verificar sesiones disponibles: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            ConexionBD.cerrarConexion(conexion);
-        }
-        
-        return respuesta;
-    }
-    
-    public static HashMap<String, Object> obtenerSesionesTutor(int idTutor) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        Connection conexion = null;
-        
-        try {
-            conexion = ConexionBD.abrirConexionBD();
-            ArrayList<SesionTutoria> listaSesiones = SesionTutoriaDAO.obtenerSesionesAgrupadasPorTutor(conexion, idTutor);
-            
-            respuesta.put("error", false);
-            respuesta.put("sesiones", listaSesiones);
-            
-        } catch (SQLException e) {
-            respuesta.put("error", true);
-            respuesta.put("mensaje", "Error al cargar las sesiones: " + e.getMessage());
             e.printStackTrace();
         } finally {
             ConexionBD.cerrarConexion(conexion);
