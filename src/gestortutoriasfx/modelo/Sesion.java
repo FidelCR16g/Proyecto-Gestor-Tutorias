@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gestortutoriasfx.modelo;
 
 import gestortutoriasfx.modelo.pojo.Usuario;
@@ -24,7 +20,12 @@ import gestortutoriasfx.modelo.pojo.Usuario;
 
 public class Sesion {
     private static Usuario usuarioSesion;
-    private static int idTutor;
+    
+    private static int idTutor; 
+    private static int idCoordinador;
+    private static int idSupervisor;
+    
+    private Sesion() {}
 
     public static Usuario getUsuarioSesion() {
         return usuarioSesion;
@@ -40,6 +41,14 @@ public class Sesion {
 
     public static void setIdTutor(int idTutor) {
         Sesion.idTutor = idTutor;
+    }
+    
+    public static int getIdCoordinador() {
+        return idCoordinador;
+    }
+
+    public static void setIdCoordinador(int idCoordinador) {
+        Sesion.idCoordinador = idCoordinador;
     }
     
     public static void cerrarSesion() {

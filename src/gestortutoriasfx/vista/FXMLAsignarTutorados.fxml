@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLAsignarTutoradosController">
+   <children>
+      <VBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="900.0" style="-fx-background-color: #1565c0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Asignación de Tutorados" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </Label>
+            <HBox spacing="10.0">
+               <children>
+                  <Label text="Gestionando carga académica de:" textFill="#e3f2fd">
+                     <font><Font size="14.0" /></font>
+                  </Label>
+                  <Label fx:id="lbNombreTutor" textFill="WHITE">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets left="25.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+
+      <HBox alignment="CENTER" layoutX="25.0" layoutY="100.0" spacing="40.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="100.0">
+         <children>
+            
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Estudiantes Asignados (Clase Actual)" textFill="#2e7d32">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Label>
+                  
+                  <ListView fx:id="lvAsignados" style="-fx-border-color: #2e7d32; -fx-border-width: 2; -fx-background-radius: 5;" VBox.vgrow="ALWAYS" />
+                  
+                  <Label alignment="CENTER_RIGHT" maxWidth="Infinity" text="Arrastre a la derecha para quitar -&gt;" textFill="#ef5350">
+                     <font><Font size="11.0" /></font>
+                  </Label>
+               </children>
+            </VBox>
+
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Estudiantes Sin Tutor (Disponibles)" textFill="#546e7a">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Label>
+                  
+                  <ListView fx:id="lvDisponibles" style="-fx-border-color: #cfd8dc; -fx-border-width: 2; -fx-background-radius: 5;" VBox.vgrow="ALWAYS" />
+                  
+                  <Label text="&lt;- Arrastre a la izquierda para asignar" textFill="#1976d2">
+                     <font><Font name="System Bold" size="11.0" /></font>
+                  </Label>
+               </children>
+            </VBox>
+
+         </children>
+      </HBox>
+
+      <HBox alignment="CENTER_RIGHT" layoutX="25.0" layoutY="530.0" spacing="20.0" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="25.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1); -fx-cursor: hand;" text="Guardar Asignación">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+      <Label fx:id="lbConteo" layoutX="321.0" layoutY="526.0" text="0 / 30 Asignados" textFill="#455a64">
+          <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

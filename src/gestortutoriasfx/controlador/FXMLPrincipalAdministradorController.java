@@ -33,7 +33,7 @@ public class FXMLPrincipalAdministradorController implements Initializable, IPri
 
     @Override
     public void inicializarInformacion(Usuario usuario) {
-        System.out.println("Bienvenido Administrador: " + usuario.getUsuario());
+        System.out.println("Bienvenido Administrador: " + usuario.getNombre());
     }
     
 }

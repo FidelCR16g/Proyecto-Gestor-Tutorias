@@ -33,13 +33,12 @@ El proyecto sigue una arquitectura MVC (Modelo-Vista-Controlador) estricta, comp
 
 👤 Rol: Tutor Académico
 - CU-03 Registrar Horario de Tutoría: Generación automática de bloques de horarios (intervalos de 20 min) con validación de fechas y periodos.
-- CU-04 Registrar Asistencia: (En desarrollo) Listado dinámico para marcar asistencia.
-- CU-06 Gestionar Evidencia: (En desarrollo) Carga de archivos probatorios.
-- CU-08 Enviar Reporte de Tutoría: (En desarrollo).
+- CU-04 Registrar Asistencia: Listado dinámico para marcar asistencia.
+- CU-06 Gestionar Evidencia: Carga de archivos de las evidencias.
+- CU-07 Gestionar Reportes de Tutoría: Gestion de los reportes realizados de las tutorias.
 
 👔 Rol: Coordinador
-- CU-15 Gestionar Planeación: (En desarollo) Configuración de periodos y fechas límite.
-- CU-17 Revisar Reporte de Tutoría: (En desarrollo) Validación de entregas de tutores.
+- CU-14 Asignar Tutorado: Asignacion de tutorados por parte del coordinador hacia tutores disponibles.
 
 ---
 
@@ -58,7 +57,25 @@ El sistema utiliza un archivo de propiedades para la conexión. Asegúrate de co
 `src/gestortutoriasfx/recurso/database.properties`
 
 ```properties
+db.url=jdbc:mysql://localhost:3306/gestion_tutorias?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=America/Mexico_City
 db.driver=com.mysql.cj.jdbc.Driver
-db.url=jdbc:mysql://localhost:3306/gestion_tutorias_final?useSSL=false...
-db.user=root
-db.password=TU_CONTRASEÑA
+
+#Credenciales para el usuario de login
+db.user.login=login_checker
+db.password.login=loginPass123!
+
+#Credenciales para el rol de tutor
+db.user.tutor=tutorApp
+db.password.tutor=Tutor123!
+
+#Credenciales para el rol de coordinador
+db.user.coordinador=coordinadorApp
+db.password.coordinador=Coord123!
+
+#Credenciales para el rol de administrador
+db.user.administrador=adminApp
+db.password.administrador=Admin123!
+
+#Credenciales para el rol de supervisor
+db.user.supervisor=supervisorApp
+db.password.supervisor=Supervisor123!

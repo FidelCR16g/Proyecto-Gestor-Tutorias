@@ -24,22 +24,20 @@ import java.util.Properties;
 
 public class ConexionBD {
     private static final String ARCHIVO_PROPIEDADES = "/gestortutoriasfx/recurso/database.properties";
+    private static String url;
+    private static String driver;
+    private static String usuarioActual;
+    private static String passwordActual;
+    
+    static {
+        establecerCredenciales("login_checker");
+    }
     
     public static Connection abrirConexionBD() {
         Connection conexion = null;
         try{
-            Properties prop = cargarPropiedades();
-            String driver = prop.getProperty("db.driver");
-            String url = prop.getProperty("db.url");
-            String user = prop.getProperty("db.usuario");
-            String password = prop.getProperty("db.password");
-            
             Class.forName(driver);
-            
-            conexion = DriverManager.getConnection(url, user, password);
-        } catch (IOException ex) {
-            System.err.println("Error al cargar propiedades: " + ex.getMessage());
-            ex.printStackTrace();
+            conexion = DriverManager.getConnection(url, usuarioActual, passwordActual);
         } catch (ClassNotFoundException ex){
             System.err.println("Error: No se encontró el Driver de MySQL.");
             ex.printStackTrace();
@@ -48,6 +46,34 @@ public class ConexionBD {
             ex.printStackTrace();
         }
         return conexion;
+    }
+    
+    public static void establecerCredenciales(String rolKey) {
+        try {
+            Properties prop = cargarPropiedades();
+            
+            if (url == null) {
+                driver = prop.getProperty("db.driver");
+                url = prop.getProperty("db.url");
+            }
+            
+            String userKey = "db.user." + rolKey.toLowerCase();
+            String passKey = "db.password." + rolKey.toLowerCase();
+
+            String nuevoUsuario = prop.getProperty(userKey);
+            String nuevoPassword = prop.getProperty(passKey);
+
+            if (nuevoUsuario != null && nuevoPassword != null) {
+                usuarioActual = nuevoUsuario;
+                passwordActual = nuevoPassword;
+            } else {
+                System.err.println("ADVERTENCIA: No se encontraron credenciales para el rol: " + rolKey);
+            }
+
+        } catch (IOException ex) {
+            System.err.println("Error crítico al cargar configuración de seguridad: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
     
     private static Properties cargarPropiedades() throws IOException{
