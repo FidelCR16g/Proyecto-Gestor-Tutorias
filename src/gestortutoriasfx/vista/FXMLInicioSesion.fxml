@@ -21,7 +21,6 @@
             <TextField fx:id="tfUsuario" layoutX="48.0" layoutY="181.0" prefHeight="31.0" prefWidth="228.0" />
             <Label layoutX="48.0" layoutY="160.0" text="Usuario:" />
             <Label layoutX="48.0" layoutY="251.0" text="Contraseña:" />
-            <TextField fx:id="tfPassword" layoutX="48.0" layoutY="273.0" prefHeight="31.0" prefWidth="228.0" />
             <Label fx:id="lbErrorPassword" layoutX="48.0" layoutY="304.0" prefHeight="19.0" prefWidth="144.0" textFill="RED">
                <font>
                   <Font size="13.0" />
@@ -33,6 +32,7 @@
                </font>
             </Label>
             <Button layoutX="121.0" layoutY="375.0" mnemonicParsing="false" onAction="#clicIniciarSesion" style="-fx-background-color: #364396;" text="Iniciar Sesion" textFill="WHITE" />
+            <PasswordField fx:id="pfPassword" layoutX="48.0" layoutY="272.0" prefHeight="31.0" prefWidth="228.0" />
          </children>
       </Pane>
       <Pane layoutX="-9.0" prefHeight="450.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;">

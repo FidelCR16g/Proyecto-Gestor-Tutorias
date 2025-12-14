@@ -41,20 +41,15 @@
             <Label text="Número de Sesión:" GridPane.rowIndex="1">
                <font><Font name="System Bold" size="14.0" /></font>
             </Label>
-            <ComboBox fx:id="cbNumeroSesion" prefHeight="35.0" prefWidth="280.0" promptText="Seleccione la sesión" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cbNumeroSesion" prefHeight="35.0" prefWidth="290.0" promptText="Seleccione la sesión" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             
-            <Label text="Hora de Arranque:" GridPane.rowIndex="2">
+            <Label text="Hora de Inicio:" GridPane.rowIndex="2">
                <font><Font name="System Bold" size="14.0" /></font>
             </Label>
             <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <TextField fx:id="tfHoraInicio" prefHeight="35.0" prefWidth="80.0" promptText="HH:MM">
-                     <font><Font size="14.0" /></font>
-                  </TextField>
-                  <ComboBox fx:id="cbAmPm" prefHeight="35.0" prefWidth="80.0" style="-fx-font-size: 13px;" />
-                  <Label text="(Intervalos de 20 min)" textFill="#78909c" wrapText="true">
-                     <font><Font size="12.0" /></font>
-                  </Label>
+                  <ComboBox fx:id="cbHora" prefHeight="35.0" prefWidth="140.0" promptText="Hora" style="-fx-font-size: 13px;" />
+                  <ComboBox fx:id="cbMinutos" prefHeight="35.0" prefWidth="140.0" promptText="Minutos" style="-fx-font-size: 13px;" />
                </children>
             </HBox>
 
@@ -65,40 +60,49 @@
             <Label text="Modalidad:" GridPane.rowIndex="4">
                <font><Font name="System Bold" size="14.0" /></font>
             </Label>
-            <ComboBox fx:id="cbModalidad" prefHeight="35.0" prefWidth="280.0" promptText="Seleccione una modalidad" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <ComboBox fx:id="cbSalon" prefHeight="31.0" prefWidth="281.0" promptText="Seleccione un salón" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cbModalidad" prefHeight="35.0" prefWidth="290.0" promptText="Seleccione una modalidad" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="cbSalon" prefHeight="31.0" prefWidth="290.0" promptText="Seleccione un salón" style="-fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
 
-      <Separator layoutX="50.0" layoutY="400.0" prefWidth="200.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
+      <Separator layoutX="50.0" layoutY="372.0" prefHeight="21.0" prefWidth="550.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
 
-      <VBox layoutX="50.0" layoutY="420.0" spacing="5.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+      <VBox layoutX="50.0" layoutY="393.0" spacing="5.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
          <children>
             <Label text="Criterios de Asignación:" textFill="#0277bd">
                <font><Font name="System Bold" size="13.0" /></font>
             </Label>
-            <Label text="1. La fecha se asignará automáticamente según la planeación oficial." textFill="#455a64">
+            <Label text="• 1. La fecha se asignará automáticamente según la planeación oficial." textFill="#455a64">
                <font><Font size="13.0" /></font>
-               <graphic><Label text="•" textFill="#0277bd" /></graphic>
             </Label>
-            <Label text="2. Ordenado por Semestre (Ascendente) → Apellido Paterno." textFill="#455a64">
+            <Label text="• 2. Ordenado por Semestre (Ascendente) → Apellido Paterno." textFill="#455a64">
                <font><Font size="13.0" /></font>
-               <graphic><Label text="•" textFill="#0277bd" /></graphic>
+            </Label>
+            <Label text="• 3. Intervalos de 20 minutos por sesion" textFill="#455a64">
+               <font>
+                  <Font size="13.0" />
+               </font>
             </Label>
          </children>
       </VBox>
 
-      <Label fx:id="lbError" layoutX="50.0" layoutY="500.0" textFill="#d32f2f" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
-         <font><Font name="System Bold" size="12.0" /></font>
+            <Label fx:id="lbError" layoutX="50.0" layoutY="484.0" textFill="#d32f2f" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
       </Label>
 
-      <HBox alignment="CENTER" layoutX="0.0" layoutY="530.0" spacing="30.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <HBox alignment="CENTER" layoutX="0.0" layoutY="530.0" spacing="30.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Button fx:id="btnGenerar" mnemonicParsing="false" onAction="#clicGenerarHorarios" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1);" text="Generar Horarios">
-               <font><Font name="System Bold" size="14.0" /></font>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
             </Button>
             <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #cfd8dc; -fx-cursor: hand;" text="Cancelar">
-               <font><Font size="14.0" /></font>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Button>
          </children>
       </HBox>

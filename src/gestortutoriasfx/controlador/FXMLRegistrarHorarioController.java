@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +28,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 /**
  * Nombre de la Clase: FXMLRegistrarHorarioController
@@ -52,15 +50,15 @@ public class FXMLRegistrarHorarioController implements Initializable {
     @FXML
     private Label lbPeriodoActual;
     @FXML
-    private TextField tfHoraInicio;
-    @FXML
     private Button btnGenerar;
     @FXML
     private Button btnCancelar;
     @FXML
     private ComboBox cbNumeroSesion;
     @FXML
-    private ComboBox<String> cbAmPm;
+    private ComboBox<String> cbHora;
+    @FXML
+    private ComboBox<String> cbMinutos;
     @FXML
     private ComboBox cbSalon;
     @FXML
@@ -68,14 +66,15 @@ public class FXMLRegistrarHorarioController implements Initializable {
     
     private PeriodoEscolar periodoActual;
     private ArrayList<FechaTutoria> rangosFechas;
+    private static final DateTimeFormatter FORMATO_HORA_BD = DateTimeFormatter.ofPattern("H:mm");
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cargarPeriodo();
         if (periodoActual != null) {
             cargarCatalogos();
-            cargarSesionesDisponibles(); 
-            configurarFormularioBase();
+            cargarSesionesDisponibles();
+            configurarComboBoxesTiempo();
         }
     }
     
@@ -96,16 +95,63 @@ public class FXMLRegistrarHorarioController implements Initializable {
         }
     }
     
+    private void actualizarComboSesiones(ObservableList<FechaTutoria> opciones) {
+        cbNumeroSesion.setItems(opciones);
+        
+        if (opciones.isEmpty()) {
+            bloquearFormulario("Ya has agendado todas las sesiones disponibles o vigentes para este periodo.");
+        }
+    }
+    
     private void bloquearFormulario(String mensaje) {
         lbError.setText(mensaje);
         lbError.setStyle("-fx-text-fill: orange;");
         btnGenerar.setDisable(true);
         btnCancelar.setDisable(true);
         cbNumeroSesion.setDisable(true);
-        tfHoraInicio.setDisable(true);
-        cbAmPm.setDisable(true);
+        cbHora.setDisable(true);
+        cbMinutos.setDisable(true);
         cbSalon.setDisable(true);
         cbModalidad.setDisable(true);
+    }
+    
+    private void configurarComboBoxesTiempo() {
+        ObservableList<String> horas = FXCollections.observableArrayList();
+        ObservableList<String> minutos = FXCollections.observableArrayList();
+        
+        for (int i = 7; i <= 18; i++) { 
+            horas.add(String.format("%02d", i));
+        }
+        
+        for (int i = 0; i < 60; i += 20) {
+            minutos.add(String.format("%02d", i));
+        }
+        
+        cbHora.setItems(horas);
+        cbMinutos.setItems(minutos);
+        
+        cbHora.setValue("07");
+        cbMinutos.setValue("00");
+    }
+    
+    private ArrayList<SesionTutoria> calcularSecuenciaDeHorarios(
+            ArrayList<Estudiante> estudiantes,
+            FechaTutoria fechaConfig,
+            Salon salon,
+            String modalidad,
+            LocalTime horaActual) {
+        ArrayList<SesionTutoria> listaSesiones = new ArrayList<>();
+        int duracionSesionMinutos = 20;
+        for (Estudiante estudiante : estudiantes) {
+            LocalTime horaFin = horaActual.plusMinutes(duracionSesionMinutos);
+
+            SesionTutoria sesion = crearSesionIndividual(
+                estudiante, fechaConfig, salon, modalidad, horaActual, horaFin
+            );
+            listaSesiones.add(sesion);
+            horaActual = horaFin; 
+        }
+        return listaSesiones;
     }
     
     private void cargarCatalogos() {
@@ -118,6 +164,18 @@ public class FXMLRegistrarHorarioController implements Initializable {
             cbSalon.setItems(FXCollections.observableArrayList(lista));
         } else {
             Utilidades.mostrarAlertaSimple("Error", "No se pudieron cargar los salones.", Alert.AlertType.ERROR);
+        }
+    }
+    
+    private void cargarHorario(List<SesionTutoria> lista) {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.cargarHorarioGenerado((ArrayList<SesionTutoria>) lista);        
+        if (!(boolean) respuesta.get("error")) {
+            Utilidades.mostrarAlertaSimple("Éxito", "Se genero la asignacion de horarios correctamente.", 
+                    Alert.AlertType.INFORMATION);
+            limpiarPanelCentral();
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", "No se pudieron guardar los horarios en la BD.", 
+                    Alert.AlertType.WARNING);
         }
     }
     
@@ -136,84 +194,86 @@ public class FXMLRegistrarHorarioController implements Initializable {
         HashMap<String, Object> respFechas = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(periodoActual.getIdPeriodoEscolar());
         HashMap<String, Object> respOcupadas = SesionTutoriaImplementacion.obtenerSesionesOcupadas(periodoActual.getIdPeriodoEscolar());
 
-        if (!(boolean) respFechas.get("error") && !(boolean) respOcupadas.get("error")) {
-            rangosFechas = (ArrayList<FechaTutoria>) respFechas.get("fechas");
-            ArrayList<Integer> sesionesHechas = (ArrayList<Integer>) respOcupadas.get("ocupadas");
-            ObservableList<FechaTutoria> opcionesCombo = FXCollections.observableArrayList();
-            
-            for (FechaTutoria fechaTutoria : rangosFechas) {
-                LocalDate cierre = LocalDate.parse(fechaTutoria.getFechaCierre());
-                if (!sesionesHechas.contains(fechaTutoria.getNumSesion()) && !cierre.isBefore(LocalDate.now())) {
-                    opcionesCombo.add(fechaTutoria);
-                }
-            }
-
-            cbNumeroSesion.setItems(opcionesCombo);
-
-            if (opcionesCombo.isEmpty()) {
-                bloquearFormulario("Ya has agendado todas las sesiones disponibles para este periodo.");
-            }
-        } else {
+        if ((boolean) respFechas.get("error") || (boolean) respOcupadas.get("error")) {
             Utilidades.mostrarAlertaSimple("Error de Conexión", 
                     "No se pudieron cargar las sesiones disponibles.", Alert.AlertType.ERROR);
+            return;
         }
+
+        ArrayList<FechaTutoria> todasLasFechas = (ArrayList<FechaTutoria>) respFechas.get("fechas");
+        ArrayList<Integer> sesionesOcupadas = (ArrayList<Integer>) respOcupadas.get("ocupadas");
+        
+        this.rangosFechas = todasLasFechas; 
+
+        ObservableList<FechaTutoria> sesionesValidas = filtrarSesionesValidas(todasLasFechas, sesionesOcupadas);
+        actualizarComboSesiones(sesionesValidas);
     }
     
-    private void configurarFormularioBase() {
-        ObservableList<String> amPmList = FXCollections.observableArrayList("AM", "PM");
-        cbAmPm.setItems(amPmList);
-        cbAmPm.getSelectionModel().selectFirst();
-        lbError.setText("");
+    private SesionTutoria crearSesionIndividual(
+            Estudiante estudiante,
+            FechaTutoria fechaConfig,
+            Salon salon,
+            String modalidad,
+            LocalTime inicio,
+            LocalTime fin) {
+
+        SesionTutoria sesion = new SesionTutoria();
+        sesion.setIdPeriodoEscolar(periodoActual.getIdPeriodoEscolar());
+        sesion.setIdTutor(Sesion.getIdTutor());
+        sesion.setNumSesion(fechaConfig.getNumSesion());
+        sesion.setFecha(fechaConfig.getFechaInicio());
+        sesion.setIdSalon(salon.getIdSalon());
+        sesion.setModalidad(modalidad);
+        sesion.setEstado("Programada");
+        sesion.setMatriculaEstudiante(estudiante.getMatricula());
+        sesion.setHoraInicio(inicio.format(FORMATO_HORA_BD));
+        sesion.setHoraFin(fin.format(FORMATO_HORA_BD));
+        return sesion;
+    }
+    
+    private boolean esFechaDisponible(FechaTutoria fecha, ArrayList<Integer> ocupadas, LocalDate hoy) {
+        boolean yaFueAgendada = ocupadas.contains(fecha.getNumSesion());
+        if (yaFueAgendada) return false;
+        
+        LocalDate fechaCierre = LocalDate.parse(fecha.getFechaCierre());
+        boolean estaVencida = fechaCierre.isBefore(hoy);
+        
+        return !estaVencida;
     }
     
     private void generarHorario() {
-        FechaTutoria fechaSeleccionada = (FechaTutoria) cbNumeroSesion.getValue();
-        Salon salonSeleccionado = (Salon) cbSalon.getValue();
-        String modalidadSeleccionada = (String) cbModalidad.getValue();
-        int numSesion = fechaSeleccionada.getNumSesion();
-        String fechaBaseBD = fechaSeleccionada.getFechaInicio();
-        
         ArrayList<Estudiante> listaEstudiantes = obtenerEstudiantes();
-        
-        if (listaEstudiantes == null) return;
+        if (listaEstudiantes == null || listaEstudiantes.isEmpty()) return;
 
-        ArrayList<SesionTutoria> horariosParaGuardar = new ArrayList<>();
-        
-        String horaString = tfHoraInicio.getText() + " " + cbAmPm.getValue();
-        DateTimeFormatter formatoEntrada = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
-        DateTimeFormatter formatoSalida = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalTime horaActual = LocalTime.parse(horaString, formatoEntrada);
-        
-        for (Estudiante estudiante : listaEstudiantes) {
-            SesionTutoria sesion = new SesionTutoria();
-            sesion.setIdPeriodoEscolar(periodoActual.getIdPeriodoEscolar());
-            sesion.setIdTutor(Sesion.getIdTutor());
-            sesion.setMatriculaEstudiante(estudiante.getMatricula());
-            sesion.setNumSesion(numSesion);
-            sesion.setFecha(fechaBaseBD);
-            sesion.setHoraInicio(horaActual.format(formatoSalida));
-            LocalTime horaFin = horaActual.plusMinutes(20);
-            sesion.setHoraFin(horaFin.format(formatoSalida));
-            sesion.setEstado("Programada");
-            sesion.setIdSalon(salonSeleccionado.getIdSalon());
-            sesion.setModalidad(modalidadSeleccionada);
-            horariosParaGuardar.add(sesion);
-            horaActual = horaFin;
-        }
-        
-        cargarHorario(horariosParaGuardar);
+        FechaTutoria fechaConfig = (FechaTutoria) cbNumeroSesion.getValue();
+        Salon salonSeleccionado = (Salon) cbSalon.getValue();
+        String modalidad = (String) cbModalidad.getValue();
+        LocalTime horaInicio = obtenerHoraInicioSeleccionada();
+
+        ArrayList<SesionTutoria> horariosGenerados = calcularSecuenciaDeHorarios(
+            listaEstudiantes, 
+            fechaConfig, 
+            salonSeleccionado, 
+            modalidad, 
+            horaInicio
+        );
+
+        cargarHorario(horariosGenerados);
     }
+    
+    private ObservableList<FechaTutoria> filtrarSesionesValidas(
+            ArrayList<FechaTutoria> fechas, 
+            ArrayList<Integer> ocupadas) {
+        
+        ObservableList<FechaTutoria> listaFiltrada = FXCollections.observableArrayList();
+        LocalDate fechaHoy = LocalDate.now();
 
-    private void cargarHorario(List<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.cargarHorarioGenerado((ArrayList<SesionTutoria>) lista);        
-        if (!(boolean) respuesta.get("error")) {
-            Utilidades.mostrarAlertaSimple("Éxito", "Se genero la asignacion de horarios correctamente.", 
-                    Alert.AlertType.INFORMATION);
-            limpiarPanelCentral();
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron guardar los horarios en la BD.", 
-                    Alert.AlertType.WARNING);
+        for (FechaTutoria fecha : fechas) {
+            if (esFechaDisponible(fecha, ocupadas, fechaHoy)) {
+                listaFiltrada.add(fecha);
+            }
         }
+        return listaFiltrada;
     }
     
     private void limpiarPanelCentral() {
@@ -246,6 +306,12 @@ public class FXMLRegistrarHorarioController implements Initializable {
         }
     }
     
+    private LocalTime obtenerHoraInicioSeleccionada() {
+        String horaString = cbHora.getValue() + ":" + cbMinutos.getValue(); 
+        DateTimeFormatter formatoEntrada = DateTimeFormatter.ofPattern("H:mm");
+        return LocalTime.parse(horaString, formatoEntrada);
+    }
+    
     private boolean validarCampos() {
         boolean valido = true;
         StringBuilder msj = new StringBuilder();
@@ -254,12 +320,11 @@ public class FXMLRegistrarHorarioController implements Initializable {
             valido = false; msj.append("• Seleccione una sesión.\n");
         }
         
-        if (tfHoraInicio.getText().isEmpty()) {
+        if (cbHora.getValue() == null) {
             valido = false; msj.append("• Ingrese hora de inicio.\n");
-        } else {
-            if (!tfHoraInicio.getText().matches("^(0?[1-9]|1[0-2]):[0-5][0-9]$")) {
-                valido = false; msj.append("• Formato de hora inválido (HH:MM).\n");
-            }
+        }
+        if (cbMinutos.getValue() == null) {
+            valido = false; msj.append("• Ingrese minutos de inicio.\n");
         }
         if (cbSalon.getValue() == null) {
             valido = false; msj.append("• Seleccione un salón.\n");

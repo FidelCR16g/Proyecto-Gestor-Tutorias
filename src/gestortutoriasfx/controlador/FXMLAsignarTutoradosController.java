@@ -26,7 +26,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 
-
 /**
  * Nombre de la Clase: FXMLAsignarTutoradosController
  *
@@ -43,7 +42,6 @@ import javafx.scene.layout.Pane;
  */
 
 public class FXMLAsignarTutoradosController implements Initializable {
-
     @FXML 
     private Label lbNombreTutor;
     @FXML 
@@ -69,35 +67,68 @@ public class FXMLAsignarTutoradosController implements Initializable {
         desasignados = new ArrayList<>();
     }
     
-    public void inicializarTutor(Tutor tutor) {
-        this.tutorActual = tutor;
-        lbNombreTutor.setText(tutor.getNombreCompleto());
-        cargarEstudiantes();
+    @FXML
+    private void clicGuardar(ActionEvent event) {
+        if (listaAsignados.size() > tutorActual.getEspaciosTutorados()) {
+            Utilidades.mostrarAlertaSimple("Cupo Excedido", 
+                    "El tutor no puede tener más alumnos de los permitidos.", Alert.AlertType.WARNING);
+            return;
+        }
+        if (nuevosAsignados.isEmpty() && desasignados.isEmpty()) {
+            Utilidades.mostrarAlertaSimple("Sin Cambios", 
+                    "No ha realizado ninguna modificación.", Alert.AlertType.INFORMATION);
+            return;
+        }
+        boolean exito = EstudianteImplementacion.actualizarAsignaciones(
+                nuevosAsignados, 
+                desasignados, 
+                tutorActual.getIdTutor()
+        );
+        if (exito) {
+            Utilidades.mostrarAlertaSimple("Éxito", 
+                    "Asignaciones actualizadas correctamente.", Alert.AlertType.INFORMATION);
+            regresarAlListado();
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", 
+                    "No se pudieron guardar los cambios en la BD.", Alert.AlertType.ERROR);
+        }
     }
 
-    private void configurarListas() {
-        listaDisponibles = FXCollections.observableArrayList();
-        listaAsignados = FXCollections.observableArrayList();
-        
-        lvDisponibles.setItems(listaDisponibles);
-        lvAsignados.setItems(listaAsignados);
-        
-        lvDisponibles.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        lvAsignados.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
-        configurarArrastre(lvDisponibles, lvAsignados, true);
-        
-        configurarArrastre(lvAsignados, lvDisponibles, false);
+    @FXML
+    private void clicCancelar(ActionEvent event) {
+        if (!nuevosAsignados.isEmpty() || !desasignados.isEmpty()) {
+            if (!Utilidades.mostrarAlertaVerificacion("Salir", 
+                    "¿Desea salir sin guardar?", "Se perderán los movimientos.")) {
+                return;
+            }
+        }
+        regresarAlListado();
     }
-
+    
+    private void actualizarConteo() {
+        int total = listaAsignados.size();
+        int max = tutorActual.getEspaciosTutorados();
+        lbConteo.setText(total + " / " + max + " Asignados");
+        if (total > max) {
+            lbConteo.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        } else {
+            lbConteo.setStyle("-fx-text-fill: #78909c;");
+        }
+    }
+    
+    private Estudiante buscarEnLista(List<Estudiante> lista, String matricula) {
+        for (Estudiante estudiante : lista) {
+            if (estudiante.getMatricula().equals(matricula)) return estudiante;
+        }
+        return null;
+    }
+    
     private void cargarEstudiantes() {
-        HashMap<String, Object> respAsignados = EstudianteImplementacion.obtenerTutoradosPorTutor(tutorActual.getIdTutor());
-        
-        HashMap<String, Object> respDisponibles = EstudianteImplementacion.obtenerEstudiantesSinTutor();
-
-        if (!(boolean) respAsignados.get("error") && !(boolean) respDisponibles.get("error")) {
-            ArrayList<Estudiante> asignadosBD = (ArrayList<Estudiante>) respAsignados.get("estudiantes");
-            ArrayList<Estudiante> disponiblesBD = (ArrayList<Estudiante>) respDisponibles.get("estudiantes");
+        HashMap<String, Object> respuestaAsignados = EstudianteImplementacion.obtenerTutoradosPorTutor(tutorActual.getIdTutor());
+        HashMap<String, Object> respuestaDisponibles = EstudianteImplementacion.obtenerEstudiantesSinTutor();
+        if (!(boolean) respuestaAsignados.get("error") && !(boolean) respuestaDisponibles.get("error")) {
+            ArrayList<Estudiante> asignadosBD = (ArrayList<Estudiante>) respuestaAsignados.get("estudiantes");
+            ArrayList<Estudiante> disponiblesBD = (ArrayList<Estudiante>) respuestaDisponibles.get("estudiantes");
             
             listaAsignados.setAll(asignadosBD);
             listaDisponibles.setAll(disponiblesBD);
@@ -109,8 +140,14 @@ public class FXMLAsignarTutoradosController implements Initializable {
     }
     
     private void configurarArrastre(ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
+        configurarInicioArrastre(origen);
+        configurarRecepcionArrastre(origen, destino, esAsignacion);
+    }
+    
+    private void configurarInicioArrastre(ListView<Estudiante> origen) {
         origen.setOnDragDetected(event -> {
             Estudiante item = origen.getSelectionModel().getSelectedItem();
+            
             if (item != null) {
                 Dragboard db = origen.startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
@@ -119,35 +156,38 @@ public class FXMLAsignarTutoradosController implements Initializable {
                 event.consume();
             }
         });
+    }
 
+    private void configurarListas() {
+        listaDisponibles = FXCollections.observableArrayList();
+        listaAsignados = FXCollections.observableArrayList();
+        lvDisponibles.setItems(listaDisponibles);
+        lvAsignados.setItems(listaAsignados);
+        lvDisponibles.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        lvAsignados.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        configurarArrastre(lvDisponibles, lvAsignados, true);
+        configurarArrastre(lvAsignados, lvDisponibles, false);
+    }
+    
+    private void configurarRecepcionArrastre(ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
         destino.setOnDragOver(event -> {
             if (event.getGestureSource() != destino && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-
+        
         destino.setOnDragDropped(event -> {
-            boolean success = false;
-            Dragboard db = event.getDragboard();
-            
-            if (db.hasString()) {
-                String matricula = db.getString();
-                Estudiante estudianteMover = buscarEnLista(origen.getItems(), matricula);
-                
-                if (estudianteMover != null) {
-                    origen.getItems().remove(estudianteMover);
-                    destino.getItems().add(estudianteMover);
-
-                    registrarCambio(estudianteMover, esAsignacion);
-                    
-                    actualizarConteo();
-                    success = true;
-                }
-            }
-            event.setDropCompleted(success);
+            boolean exito = procesarSoltado(event.getDragboard(), origen, destino, esAsignacion);
+            event.setDropCompleted(exito);
             event.consume();
         });
+    }
+    
+    public void inicializarTutor(Tutor tutor) {
+        this.tutorActual = tutor;
+        lbNombreTutor.setText(tutor.getNombreCompleto());
+        cargarEstudiantes();
     }
 
     private void registrarCambio(Estudiante estudiante, boolean asignadoAhora) {
@@ -165,66 +205,29 @@ public class FXMLAsignarTutoradosController implements Initializable {
             }
         }
     }
-
-    private Estudiante buscarEnLista(List<Estudiante> lista, String matricula) {
-        for (Estudiante e : lista) {
-            if (e.getMatricula().equals(matricula)) return e;
-        }
-        return null;
-    }
     
-    private void actualizarConteo() {
-        int total = listaAsignados.size();
-        int max = tutorActual.getEspaciosTutorados();
-        lbConteo.setText(total + " / " + max + " Asignados");
-        
-        if (total > max) {
-            lbConteo.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
-        } else {
-            lbConteo.setStyle("-fx-text-fill: #78909c;");
-        }
-    }
+    private boolean procesarSoltado(Dragboard db, ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
+        if (!db.hasString()) return false;
 
-    @FXML
-    private void clicGuardar(ActionEvent event) {
-        if (listaAsignados.size() > tutorActual.getEspaciosTutorados()) {
-            Utilidades.mostrarAlertaSimple("Cupo Excedido", "El tutor no puede tener más alumnos de los permitidos.", Alert.AlertType.WARNING);
-            return;
-        }
+        String matricula = db.getString();
+        Estudiante estudianteMover = buscarEnLista(origen.getItems(), matricula);
 
-        if (nuevosAsignados.isEmpty() && desasignados.isEmpty()) {
-            Utilidades.mostrarAlertaSimple("Sin Cambios", "No ha realizado ninguna modificación.", Alert.AlertType.INFORMATION);
-            return;
+        if (estudianteMover != null) {
+            origen.getItems().remove(estudianteMover);
+            destino.getItems().add(estudianteMover);
+            registrarCambio(estudianteMover, esAsignacion);
+            actualizarConteo();
+            
+            return true;
         }
         
-        boolean exito = EstudianteImplementacion.actualizarAsignaciones(
-                nuevosAsignados, 
-                desasignados, 
-                tutorActual.getIdTutor()
-        );
-        
-        if (exito) {
-            Utilidades.mostrarAlertaSimple("Éxito", "Asignaciones actualizadas correctamente.", Alert.AlertType.INFORMATION);
-            regresarAlListado();
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron guardar los cambios en la BD.", Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void clicCancelar(ActionEvent event) {
-        if (!nuevosAsignados.isEmpty() || !desasignados.isEmpty()) {
-            if (!Utilidades.mostrarAlertaVerificacion("Salir", "¿Desea salir sin guardar?", "Se perderán los movimientos.")) {
-                return;
-            }
-        }
-        regresarAlListado();
+        return false;
     }
     
     private void regresarAlListado() {
         try {
-            FXMLLoader loader = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLListadoTutoresDisponibles.fxml");
-            Parent root = loader.load();
+            FXMLLoader cargador = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLSeleccionTutor.fxml");
+            Parent root = cargador.load();
             Pane panel = (Pane) btnGuardar.getScene().lookup("#panelContenido");
             if (panel != null) {
                 panel.getChildren().clear();

@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -44,7 +45,6 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
     }    
 
     @Override
@@ -56,31 +56,15 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
-        boolean cerrar = Utilidades.mostrarAlertaVerificacion("Cerrar Sesión", 
+        boolean deseaSalir = Utilidades.mostrarAlertaVerificacion("Cerrar Sesión", 
                 "¿Está seguro de que desea salir?", 
                 "Se regresará a la pantalla de inicio de sesión.");
         
-        if(cerrar){
-            try {
-                Stage escenarioActual = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-                
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gestortutoriasfx/vista/FXMLInicioSesion.fxml"));
-                Parent root = loader.load();
-                
-                Scene escena = new Scene(root);
-                Stage escenarioLogin = new Stage();
-                escenarioLogin.setScene(escena);
-                escenarioLogin.setTitle("Inicio de Sesión");
-                escenarioLogin.show();
-                
-                escenarioActual.close();
-                
-                gestortutoriasfx.modelo.Sesion.cerrarSesion();
-                
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        if (!deseaSalir) return;
+        gestortutoriasfx.modelo.Sesion.cerrarSesion();
+
+        cerrarVentanaActual(event);
+        abrirVentanaLogin();
     }
 
     @FXML
@@ -95,12 +79,35 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
 
     @FXML
     private void clicGestionarEvidencia(ActionEvent event) {
-        irVista("/gestortutoriasfx/vista/FXMLListadoEvidencias.fxml");
+        irVista("/gestortutoriasfx/vista/FXMLGestionarEvidencias.fxml");
     }
     
     @FXML
     private void clicLlenarReporte(ActionEvent event) {
         irVista("/gestortutoriasfx/vista/FXMLGestionarReporteDeTutoria.fxml");
+    }
+    
+    private void abrirVentanaLogin() {
+        try {
+            FXMLLoader cargador = new FXMLLoader(getClass().getResource("/gestortutoriasfx/vista/FXMLInicioSesion.fxml"));
+            Parent root = cargador.load();
+            
+            Scene escena = new Scene(root);
+            Stage escenarioLogin = new Stage();
+            escenarioLogin.setScene(escena);
+            escenarioLogin.setTitle("Inicio de Sesión");
+            escenarioLogin.show();
+            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Utilidades.mostrarAlertaSimple("Error", "No se pudo cargar la ventana de inicio de sesión.", Alert.AlertType.ERROR);
+        }
+    }
+    
+    private void cerrarVentanaActual(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stageActual = (Stage) source.getScene().getWindow();
+        stageActual.close();
     }
     
     private void irVista(String ruta) {

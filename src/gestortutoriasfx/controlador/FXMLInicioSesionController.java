@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -42,11 +43,11 @@ public class FXMLInicioSesionController implements Initializable{
     @FXML
     private TextField tfUsuario;
     @FXML
-    private TextField tfPassword;
-    @FXML
     private Label lbErrorPassword;
     @FXML
     private Label lbErrorUsuario;
+    @FXML
+    private PasswordField pfPassword;
 
     /**
      * Initializes the controller class.
@@ -58,54 +59,38 @@ public class FXMLInicioSesionController implements Initializable{
 
     @FXML
     private void clicIniciarSesion(ActionEvent event) {
-        if(validarCampos(tfUsuario.getText(), tfPassword.getText())){
-            verificarCredenciales(tfUsuario.getText(), tfPassword.getText());
+        if(validarCampos(tfUsuario.getText(), pfPassword.getText())){
+            verificarCredenciales(tfUsuario.getText(), pfPassword.getText());
         }
     }
     
-    private boolean validarCampos(String usuario, String password) {
-        lbErrorUsuario.setText("");
-        lbErrorPassword.setText("");
-        boolean camposValidos = true;
-        if (usuario.isEmpty()) {
-            lbErrorUsuario.setText("Usuario obligatorio.");
-            camposValidos = false;
+    private void cargarDatosTutor(Usuario usuario) {
+        HashMap<String, Object> respuesta = TutorImplementacion.obtenerIdTutor(usuario.getIdUsuario());
+        boolean error = (boolean) respuesta.get("error");
+
+        if (!error) {
+            int idTutor = (int) respuesta.get("idTutor");
+            Sesion.setIdTutor(idTutor);
+            irPantallaPrincipal(usuario, "Tutor");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error de Perfil", 
+                    "El usuario tiene rol de Tutor pero no está registrado en la tabla de Tutores.", 
+                    Alert.AlertType.ERROR);
         }
-        if (password.isEmpty()) {
-            lbErrorPassword.setText("Contraseña obligatoria.");
-            camposValidos = false;
-        }
-        return camposValidos;
     }
     
-    private void verificarCredenciales(String noPersonal, String password){
-        HashMap<String, Object> respuestaLogin = UsuarioImplementacion.validarLogin(noPersonal, password);
-        boolean error = (boolean) respuestaLogin.get("error");
-        
-        if(!error){
-            Usuario usuarioSesion = (Usuario) respuestaLogin.get("usuario");
-            
-            HashMap<String, Object> respuestaRoles = UsuarioImplementacion.obtenerRolesUsuario(usuarioSesion.getIdUsuario());
-            
-            if (!(boolean) respuestaRoles.get("error")) {
-                ArrayList<String> roles = (ArrayList<String>) respuestaRoles.get("roles");
-                
-                if (roles.isEmpty()) {
-                    Utilidades.mostrarAlertaSimple("Acceso Denegado", ""
-                            + "El usuario no tiene roles asignados.", Alert.AlertType.WARNING);
-                } else if (roles.size() == 1) {
-                    ingresarAlSistema(usuarioSesion, roles.get(0));
-                } else {
-                    irPantallaSeleccionRol(usuarioSesion, roles);
-                }
-            } else {
-                Utilidades.mostrarAlertaSimple("Error", 
-                        respuestaRoles.get("mensaje").toString(), Alert.AlertType.WARNING);
-            }
-            
-        }else{
-            Utilidades.mostrarAlertaSimple("Error", 
-                    respuestaLogin.get("mensaje").toString(), Alert.AlertType.WARNING);
+    private void gestionarRedireccionPorRol(Usuario usuario, ArrayList<String> roles) {
+        if (roles.isEmpty()) {
+            Utilidades.mostrarAlertaSimple("Acceso Denegado", 
+                    "El usuario no tiene roles asignados para ingresar al sistema.", 
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (roles.size() == 1) {
+            ingresarAlSistema(usuario, roles.get(0));
+        } else {
+            irPantallaSeleccionRol(usuario, roles);
         }
     }
     
@@ -125,32 +110,16 @@ public class FXMLInicioSesionController implements Initializable{
         }
     }
     
-    private void cargarDatosTutor(Usuario usuario) {
-        HashMap<String, Object> respuesta = TutorImplementacion.obtenerIdTutor(usuario.getIdUsuario());
-        boolean error = (boolean) respuesta.get("error");
-
-        if (!error) {
-            int idTutor = (int) respuesta.get("idTutor");
-            Sesion.setIdTutor(idTutor);
-            irPantallaPrincipal(usuario, "Tutor");
-        } else {
-            Utilidades.mostrarAlertaSimple("Error de Perfil", 
-                    "El usuario tiene rol de Tutor pero no está registrado en la tabla de Tutores.", 
-                    Alert.AlertType.ERROR);
+    private Usuario intentarLogin(String noPersonal, String password) {
+        HashMap<String, Object> respuesta = UsuarioImplementacion.validarLogin(noPersonal, password);
+        
+        if ((boolean) respuesta.get("error")) {
+            Utilidades.mostrarAlertaSimple("Credenciales Incorrectas", 
+                    respuesta.get("mensaje").toString(), Alert.AlertType.WARNING);
+            return null;
         }
-    }
-    
-    private String obtenerRutaFXMLPorRol(String idRol){
-        switch(idRol){
-            case "Administrador":
-                return "/gestortutoriasfx/vista/FXMLPrincipalAdministrador.fxml";
-            case "Coordinador":
-                return "/gestortutoriasfx/vista/FXMLPrincipalCoordinador.fxml";
-            case "Tutor":
-                return "/gestortutoriasfx/vista/FXMLPrincipalTutor.fxml";
-            default:
-                return "";
-        }
+        
+        return (Usuario) respuesta.get("usuario");
     }
     
     private void irPantallaPrincipal(Usuario usuario, String rol){
@@ -200,5 +169,55 @@ public class FXMLInicioSesionController implements Initializable{
             Utilidades.mostrarAlertaSimple("Error", 
                     "No se pudo abrir la ventana de selección de roles.", Alert.AlertType.WARNING);
         }
+    }
+    
+    private String obtenerRutaFXMLPorRol(String idRol){
+        switch(idRol){
+            case "Administrador":
+                return "/gestortutoriasfx/vista/FXMLPrincipalAdministrador.fxml";
+            case "Coordinador":
+                return "/gestortutoriasfx/vista/FXMLPrincipalCoordinador.fxml";
+            case "Tutor":
+                return "/gestortutoriasfx/vista/FXMLPrincipalTutor.fxml";
+            default:
+                return "";
+        }
+    }
+    
+    private ArrayList<String> recuperarRoles(Usuario usuario) {
+        HashMap<String, Object> respuesta = UsuarioImplementacion.obtenerRolesUsuario(usuario.getIdUsuario());
+        
+        if ((boolean) respuesta.get("error")) {
+            Utilidades.mostrarAlertaSimple("Error de Sistema", 
+                    respuesta.get("mensaje").toString(), Alert.AlertType.ERROR);
+            return null;
+        }
+        
+        return (ArrayList<String>) respuesta.get("roles");
+    }
+    
+    private boolean validarCampos(String usuario, String password) {
+        lbErrorUsuario.setText("");
+        lbErrorPassword.setText("");
+        boolean camposValidos = true;
+        if (usuario.isEmpty()) {
+            lbErrorUsuario.setText("Usuario obligatorio.");
+            camposValidos = false;
+        }
+        if (password.isEmpty()) {
+            lbErrorPassword.setText("Contraseña obligatoria.");
+            camposValidos = false;
+        }
+        return camposValidos;
+    }
+    
+    private void verificarCredenciales(String noPersonal, String password) {
+        Usuario usuario = intentarLogin(noPersonal, password);
+        if (usuario == null) return;
+
+        ArrayList<String> roles = recuperarRoles(usuario);
+        if (roles == null) return;
+
+        gestionarRedireccionPorRol(usuario, roles);
     }
 }

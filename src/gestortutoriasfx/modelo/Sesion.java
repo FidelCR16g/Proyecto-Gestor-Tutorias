@@ -50,9 +50,19 @@ public class Sesion {
     public static void setIdCoordinador(int idCoordinador) {
         Sesion.idCoordinador = idCoordinador;
     }
-    
+
+    public static int getIdSupervisor() {
+        return idSupervisor;
+    }
+
+    public static void setIdSupervisor(int idSupervisor) {
+        Sesion.idSupervisor = idSupervisor;
+    }
+   
     public static void cerrarSesion() {
         usuarioSesion = null;
         idTutor = 0;
+        idCoordinador = 0;
+        idSupervisor = 0;
     }
 }
