@@ -362,7 +362,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         }
         
         if (!valido) Utilidades.mostrarAlertaSimple("Datos Inválidos", 
-                mensajeError.toString(), Alert.AlertType.WARNING);
+                mensajeError, Alert.AlertType.WARNING);
         return valido;
     }
 }

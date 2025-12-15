@@ -64,6 +64,7 @@ public class FXMLAsignarTutoradosController implements Initializable {
         inicializarListasVisuales();
         nuevosAsignados = new ArrayList<>();
         desasignados = new ArrayList<>();
+        configurarArrastreBidireccional();
     }
     
     @FXML
