@@ -3,7 +3,10 @@ package gestortutoriasfx.utilidades;
 import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.scene.Node;
+import javafx.scene.control.ListView;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
@@ -57,5 +60,59 @@ public class ArrastrarSoltarUtilidad {
                 }
             });
         }
+    }
+    
+    public static <T> void configurarIntercambioListas(
+            ListView<T> origen, 
+            ListView<T> destino, 
+            Function<T, String> extractorId, 
+            Consumer<T> accionPostMovimiento) {
+
+        origen.setOnDragDetected(event -> {
+            T item = origen.getSelectionModel().getSelectedItem();
+            if (item != null) {
+                Dragboard db = origen.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(extractorId.apply(item)); 
+                db.setContent(content);
+                event.consume();
+            }
+        });
+
+        destino.setOnDragOver(event -> {
+            if (event.getGestureSource() != destino && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        destino.setOnDragDropped(event -> {
+            boolean success = false;
+            Dragboard db = event.getDragboard();
+
+            if (db.hasString()) {
+                String idRecibido = db.getString();
+                
+                T itemMover = null;
+                for (T item : origen.getItems()) {
+                    if (extractorId.apply(item).equals(idRecibido)) {
+                        itemMover = item;
+                        break;
+                    }
+                }
+
+                if (itemMover != null) {
+                    origen.getItems().remove(itemMover);
+                    destino.getItems().add(itemMover);
+                    
+                    if (accionPostMovimiento != null) {
+                        accionPostMovimiento.accept(itemMover);
+                    }
+                    success = true;
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
     }
 }
