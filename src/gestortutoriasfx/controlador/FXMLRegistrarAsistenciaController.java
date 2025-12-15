@@ -7,13 +7,11 @@ import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import gestortutoriasfx.utilidad.Utilidades;
+import gestortutoriasfx.utilidades.ArrastrarSoltarUtilidad;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,9 +21,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 
 /**
@@ -45,7 +40,7 @@ import javafx.scene.layout.Pane;
 
 public class FXMLRegistrarAsistenciaController implements Initializable {
     @FXML 
-    private ComboBox<String> cbSesion;
+    private ComboBox<FechaTutoria> cbSesion;
     @FXML 
     private ListView<SesionTutoria> lvFaltas;
     @FXML 
@@ -57,11 +52,12 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
 
     private ObservableList<SesionTutoria> listaFaltas;
     private ObservableList<SesionTutoria> listaAsistencias;
-    private ObservableList<String> sesionesDisponibles;
+    private ObservableList<FechaTutoria> sesionesDisponibles;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        configurarListas();
+        inicializarListasVisuales();
+        configurarArrastreBidireccional();
         configurarListenerSesion();
         cargarSesionesDisponibles();
     }
@@ -87,71 +83,70 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
         }
     }
     
-    private SesionTutoria buscarEnLista(List<SesionTutoria> lista, int id) {
-        for (SesionTutoria sesionTutoria : lista) {
-            if (sesionTutoria.getIdSesion() == id) return sesionTutoria;
+    private void actualizarComboSesiones() {
+        if (sesionesDisponibles.isEmpty()) {
+            Utilidades.mostrarAlertaSimple("Sin Agenda", "No tienes sesiones agendadas.", Alert.AlertType.WARNING);
         }
-        return null;
+        cbSesion.setItems(sesionesDisponibles);
+    }
+    
+    private boolean clasificarAlumnosEnListas(ArrayList<SesionTutoria> listaBD) {
+        listaFaltas.clear();
+        listaAsistencias.clear();
+        boolean registroPrevio = false;
+
+        for (SesionTutoria sesion : listaBD) {
+            if ("Asistio".equalsIgnoreCase(sesion.getEstado())) {
+                listaAsistencias.add(sesion);
+                registroPrevio = true;
+            } else if ("No Asistio".equalsIgnoreCase(sesion.getEstado())) {
+                listaFaltas.add(sesion);
+                registroPrevio = true;
+            } else {
+                listaFaltas.add(sesion);
+            }
+        }
+        return registroPrevio;
     }
     
     private void cargarAlumnos(int numSesion) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerListaAsistencia(Sesion.getIdTutor(), numSesion);
+        ArrayList<SesionTutoria> listaBD = obtenerListaAsistenciaDeBD(numSesion);
         
-        if (!(boolean) respuesta.get("error")) {
-            ArrayList<SesionTutoria> listaBD = (ArrayList<SesionTutoria>) respuesta.get("lista");
-            boolean yaFueRegistrada = false;
-            
-            listaFaltas.clear();
-            listaAsistencias.clear();
-            
-            for (SesionTutoria sesion : listaBD) {
-                if ("Asistio".equalsIgnoreCase(sesion.getEstado())) {
-                    listaAsistencias.add(sesion);
-                    yaFueRegistrada = true;
-                } else if ("No Asistio".equalsIgnoreCase(sesion.getEstado())) {
-                    listaFaltas.add(sesion);
-                    yaFueRegistrada = true;
-                }else {
-                    listaFaltas.add(sesion);
-                }
-            }
-            
+        if (listaBD != null) {
+            boolean yaFueRegistrada = clasificarAlumnosEnListas(listaBD);
             configurarModoEdicion(yaFueRegistrada);
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", respuesta.get("mensaje").toString(), 
-                    Alert.AlertType.WARNING);
         }
     }
     
     private void cargarSesionesDisponibles() {
-        HashMap<String, Object> respuestaPeriodo = PeriodoEscolarImplementacion.obtenerPeriodoActual();
-        
-        if (!(boolean) respuestaPeriodo.get("error")) {
-            PeriodoEscolar periodo = (PeriodoEscolar) respuestaPeriodo.get("periodo");
-            HashMap<String, Object> respuestaFechas = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(periodo.getIdPeriodoEscolar());
-            HashMap<String, Object> respuestaOcupadas = SesionTutoriaImplementacion.obtenerSesionesOcupadas(periodo.getIdPeriodoEscolar());
-            
-            if (!(boolean) respuestaFechas.get("error") && !(boolean) respuestaOcupadas.get("error")) {
-                ArrayList<FechaTutoria> todasLasFechas = (ArrayList<FechaTutoria>) respuestaFechas.get("fechas");
-                ArrayList<Integer> sesionesAgendadas = (ArrayList<Integer>) respuestaOcupadas.get("ocupadas");
-                ObservableList itemsCombo = FXCollections.observableArrayList();
-                
-                if (sesionesAgendadas.isEmpty()) {
-                    Utilidades.mostrarAlertaSimple("Sin Agenda", "No tienes sesiones agendadas.", Alert.AlertType.WARNING);
-                } else {
-                    for (FechaTutoria ft : todasLasFechas) {
-                        if (sesionesAgendadas.contains(ft.getNumSesion())) {
-                            itemsCombo.add(ft);
-                        }
-                    }
-                }
-                cbSesion.setItems(itemsCombo);
-            } else {
-                Utilidades.mostrarAlertaSimple("Error", "No se pudieron cargar las sesiones.", Alert.AlertType.ERROR);
-            }
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudo recuperar el periodo actual.", Alert.AlertType.ERROR);
+        PeriodoEscolar periodo = obtenerPeriodoActual();
+        if (periodo == null) return;
+
+        ArrayList<FechaTutoria> todasLasFechas = obtenerTodasLasFechas(periodo.getIdPeriodoEscolar());
+        ArrayList<Integer> ocupadas = obtenerSesionesOcupadas(periodo.getIdPeriodoEscolar());
+
+        if (todasLasFechas != null && ocupadas != null) {
+            obtenerSesionesUsuario(todasLasFechas, ocupadas);
+            actualizarComboSesiones();
         }
+    }
+    
+    private void configurarArrastreBidireccional() {
+        // De Faltas a Asistencias
+        ArrastrarSoltarUtilidad.configurarIntercambioListas(
+            lvFaltas, 
+            lvAsistencias, 
+            sesion -> String.valueOf(sesion.getIdSesion()),
+            null
+        );
+
+        // De Asistencias a Faltas
+        ArrastrarSoltarUtilidad.configurarIntercambioListas(
+            lvAsistencias, 
+            lvFaltas, 
+            sesion -> String.valueOf(sesion.getIdSesion()), 
+            null
+        );
     }
     
     private void configurarModoEdicion(boolean yaFueRegistrada) {
@@ -170,70 +165,31 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
             btnGuardar.setText("Guardar Cambios");
         }
     }
-
-    private void configurarListas() {
+    
+    private void configurarListenerSesion() {
+        cbSesion.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                try {
+                    FechaTutoria fechaSeleccionada = (FechaTutoria) newValue;
+                    cargarAlumnos(fechaSeleccionada.getNumSesion());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    private boolean guardarListaAsistencia(ArrayList<SesionTutoria> lista) {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.guardarAsistencias(lista);
+        return !(boolean) respuesta.get("error");
+    }
+    
+    private void inicializarListasVisuales() {
         listaFaltas = FXCollections.observableArrayList();
         listaAsistencias = FXCollections.observableArrayList();
         
         lvFaltas.setItems(listaFaltas);
         lvAsistencias.setItems(listaAsistencias);
-        
-        configurarArrastre(lvFaltas, lvAsistencias);
-        configurarArrastre(lvAsistencias, lvFaltas);
-    }
-    
-    private void configurarListenerSesion() {
-        cbSesion.valueProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (newValue != null) {
-                    try {
-                        FechaTutoria fechaSeleccionada = (FechaTutoria) newValue;
-                        int numSesion = fechaSeleccionada.getNumSesion();
-                        
-                        cargarAlumnos(numSesion);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-    
-    private void configurarArrastre(ListView<SesionTutoria> origen, ListView<SesionTutoria> destino) {
-        origen.setOnDragDetected(event -> {
-            SesionTutoria item = origen.getSelectionModel().getSelectedItem();
-            if (item != null) {
-                Dragboard db = origen.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.putString(String.valueOf(item.getIdSesion())); 
-                db.setContent(content);
-                event.consume();
-            }
-        });
-        destino.setOnDragOver(event -> {
-            if (event.getGestureSource() != destino && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-        destino.setOnDragDropped(event -> {
-            boolean success = false;
-            Dragboard db = event.getDragboard();
-            
-            if (db.hasString()) {
-                int idSesionMover = Integer.parseInt(db.getString());
-                SesionTutoria itemMover = buscarEnLista(origen.getItems(), idSesionMover);
-                
-                if (itemMover != null) {
-                    origen.getItems().remove(itemMover);
-                    destino.getItems().add(itemMover);
-                    success = true;
-                }
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
     }
     
     private void limpiarPanelCentral() {
@@ -243,16 +199,62 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
         } catch (Exception e) {}
     }
     
-    private void registrarAsistencia(ArrayList<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.guardarAsistencias(lista);
+    private ArrayList<SesionTutoria> obtenerListaAsistenciaDeBD(int numSesion) {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerListaAsistencia(Sesion.getIdTutor(), numSesion);
         
         if (!(boolean) respuesta.get("error")) {
-            Utilidades.mostrarAlertaSimple("Éxito", "Listas de asistencia guardadas correctamente.",
-                    Alert.AlertType.INFORMATION);
+            return (ArrayList<SesionTutoria>) respuesta.get("lista");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", respuesta.get("mensaje").toString(), Alert.AlertType.WARNING);
+            return null;
+        }
+    }
+    
+    private PeriodoEscolar obtenerPeriodoActual() {
+        HashMap<String, Object> respuesta = PeriodoEscolarImplementacion.obtenerPeriodoActual();
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (PeriodoEscolar) respuesta.get("periodo");
+        }
+        Utilidades.mostrarAlertaSimple("Error", 
+                "No se pudo recuperar el periodo actual.", Alert.AlertType.ERROR);
+        return null;
+    }
+
+    private ArrayList<Integer> obtenerSesionesOcupadas(int idPeriodo) {
+        HashMap<String, Object> resp = SesionTutoriaImplementacion.obtenerSesionesOcupadas(idPeriodo);
+        
+        return (boolean) resp.get("error") ? null : (ArrayList<Integer>) resp.get("ocupadas");
+    }
+    
+    private void obtenerSesionesUsuario(ArrayList<FechaTutoria> fechas, ArrayList<Integer> ocupadas) {
+        sesionesDisponibles = FXCollections.observableArrayList();
+        for (FechaTutoria fechaTutoria : fechas) {
+            if (ocupadas.contains(fechaTutoria.getNumSesion())) {
+                sesionesDisponibles.add(fechaTutoria);
+            }
+        }
+    }
+    
+    private ArrayList<FechaTutoria> obtenerTodasLasFechas(int idPeriodo) {
+        HashMap<String, Object> resp = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(idPeriodo);
+        
+        return (boolean) resp.get("error") ? null : (ArrayList<FechaTutoria>) resp.get("fechas");
+    }
+    
+    private void procesarResultadoGuardado(boolean exito) {
+        if (exito) {
+            Utilidades.mostrarAlertaSimple("Éxito", 
+                "Listas de asistencia guardadas correctamente.", Alert.AlertType.INFORMATION);
             limpiarPanelCentral();
         } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron guardar los cambios en la BD.", 
-                    Alert.AlertType.WARNING);
+            Utilidades.mostrarAlertaSimple("Error", 
+                "No se pudieron guardar los cambios en la BD.", Alert.AlertType.WARNING);
         }
+    }
+    
+    private void registrarAsistencia(ArrayList<SesionTutoria> lista) {
+        boolean exito = guardarListaAsistencia(lista);
+        procesarResultadoGuardado(exito);
     }
 }
