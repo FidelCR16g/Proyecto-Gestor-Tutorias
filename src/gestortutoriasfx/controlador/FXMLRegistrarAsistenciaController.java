@@ -110,7 +110,7 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
     }
     
     private void cargarAlumnos(int numSesion) {
-        ArrayList<SesionTutoria> listaBD = obtenerListaAsistenciaDeBD(numSesion);
+        ArrayList<SesionTutoria> listaBD = obtenerListaAsistencia(numSesion);
         
         if (listaBD != null) {
             boolean yaFueRegistrada = clasificarAlumnosEnListas(listaBD);
@@ -199,7 +199,7 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
         } catch (Exception e) {}
     }
     
-    private ArrayList<SesionTutoria> obtenerListaAsistenciaDeBD(int numSesion) {
+    private ArrayList<SesionTutoria> obtenerListaAsistencia(int numSesion) {
         HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerListaAsistencia(Sesion.getIdTutor(), numSesion);
         
         if (!(boolean) respuesta.get("error")) {
