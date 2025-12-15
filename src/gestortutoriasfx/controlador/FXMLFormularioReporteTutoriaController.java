@@ -13,7 +13,6 @@ import gestortutoriasfx.utilidad.Utilidades;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -102,7 +101,7 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
     
     @FXML
     private void clicAgregarProblematica(ActionEvent event) {
-        if (!sonCamposProblematicaValidos()) return;
+        if (!validarCampos()) return;
         
         try {
             int cantidad = Integer.parseInt(tfNumAlumnos.getText());
@@ -427,25 +426,30 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
         }
     }
     
-    private boolean sonCamposProblematicaValidos() {
+    private boolean validarCampos() {
         boolean valido = true;
-        StringBuilder msj = new StringBuilder();
+        String mensajeError = "Se encontraron los siguientes errores: \n";
         
         if (tfEE.getText().isEmpty()) {
-            valido = false; msj.append("• Ingrese una Experiencia Educativa.\n");
+            valido = false; 
+            mensajeError += ("Ingrese una Experiencia Educativa.\n");
         }
         
         if (tfProfesor.getText().isEmpty()) {
-            valido = false; msj.append("• Ingrese un Profesor.\n");
+            valido = false;
+            mensajeError += ("Ingrese un Profesor.\n");
         }
         if (tfProblematica.getText().isEmpty()) {
-            valido = false; msj.append("• Ingrese la descripcion de la Problematica.\n");
+            valido = false;
+            mensajeError += ("Ingrese la descripcion de la Problematica.\n");
         }
         if (tfNumAlumnos.getText().isEmpty()) {
-            valido = false; msj.append("• Ingrese el numero de alumnos.\n");
+            valido = false;
+            mensajeError += ("Ingrese el numero de alumnos.\n");
         }
         
-        if (!valido) Utilidades.mostrarAlertaSimple("Datos Inválidos", msj.toString(), Alert.AlertType.WARNING);
+        if (!valido) Utilidades.mostrarAlertaSimple("Datos Inválidos", 
+                mensajeError, Alert.AlertType.WARNING);
         return valido;
     }
     
