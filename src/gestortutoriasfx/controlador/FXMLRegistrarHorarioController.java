@@ -219,11 +219,6 @@ public class FXMLRegistrarHorarioController implements Initializable {
         return sesion;
     }
     
-    private boolean enviarHorariosABD(List<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.registrarSesion((ArrayList<SesionTutoria>) lista);        
-        return !(boolean) respuesta.get("error");
-    }
-    
     private boolean esFechaDisponible(FechaTutoria fecha, ArrayList<Integer> ocupadas, LocalDate hoy) {
         boolean yaFueAgendada = ocupadas.contains(fecha.getNumSesion());
         if (yaFueAgendada) return false;
@@ -252,6 +247,11 @@ public class FXMLRegistrarHorarioController implements Initializable {
         );
 
         registrarHorario(horariosGenerados);
+    }
+    
+    private boolean guardarHorarios(List<SesionTutoria> lista) {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.registrarSesion((ArrayList<SesionTutoria>) lista);        
+        return !(boolean) respuesta.get("error");
     }
     
     private ObservableList<FechaTutoria> filtrarSesionesValidas(
@@ -331,7 +331,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
     }
     
     private void registrarHorario(List<SesionTutoria> lista) {
-        boolean exito = enviarHorariosABD(lista);
+        boolean exito = guardarHorarios(lista);
         procesarResultadoRegistro(exito);
     }
     
