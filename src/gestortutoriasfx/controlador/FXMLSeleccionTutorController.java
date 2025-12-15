@@ -78,13 +78,10 @@ public class FXMLSeleccionTutorController implements Initializable {
     }
     
     private void cargarTutores() {
-        HashMap<String, Object> respuesta = TutorImplementacion.obtenerListaTutores();
+        ArrayList<Tutor> listaTutores = obtenerTutoresDisponibles();
         
-        if (!(boolean) respuesta.get("error")) {
-            ArrayList<Tutor> lista = (ArrayList<Tutor>) respuesta.get("tutores");
-            renderizarTarjetas(lista);
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", respuesta.get("mensaje").toString(), Alert.AlertType.ERROR);
+        if (listaTutores != null) {
+            renderizarTarjetas(listaTutores);
         }
     }
 
@@ -116,13 +113,25 @@ public class FXMLSeleccionTutorController implements Initializable {
         actualizarSeleccionVisual();
     }
     
+    private ArrayList<Tutor> obtenerTutoresDisponibles() {
+        HashMap<String, Object> respuesta = TutorImplementacion.obtenerListaTutores();
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Tutor>) respuesta.get("tutores");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error de Conexión", 
+                respuesta.get("mensaje").toString(), Alert.AlertType.ERROR);
+            return null;
+        }
+    }
+    
     private void renderizarTarjetas(ArrayList<Tutor> listaTutores) {
         gpListaTutores.getChildren().clear();
         int columna = 0;
         int fila = 0;
 
-        for (Tutor t : listaTutores) {
-            TarjetaTutor tarjeta = new TarjetaTutor(t, this::manejarSeleccionTutor);
+        for (Tutor tutor : listaTutores) {
+            TarjetaTutor tarjeta = new TarjetaTutor(tutor, this::manejarSeleccionTutor);
             
             gpListaTutores.add(tarjeta, columna, fila);
             

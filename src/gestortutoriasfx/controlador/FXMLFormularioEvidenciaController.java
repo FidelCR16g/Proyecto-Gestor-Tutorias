@@ -163,7 +163,7 @@ public class FXMLFormularioEvidenciaController implements Initializable {
             return false;
         }
 
-        long limiteBytes = 5 * 1024 * 1024;
+        long limiteBytes = ((long) 5 * 1024 * 1024);
         
         if (archivo.length() > limiteBytes) {
             Utilidades.mostrarAlertaSimple("Archivo pesado", 

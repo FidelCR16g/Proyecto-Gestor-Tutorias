@@ -69,29 +69,11 @@ public class FXMLAsignarTutoradosController implements Initializable {
     
     @FXML
     private void clicGuardar(ActionEvent event) {
-        if (listaAsignados.size() > tutorActual.getEspaciosTutorados()) {
-            Utilidades.mostrarAlertaSimple("Cupo Excedido", 
-                    "El tutor no puede tener más alumnos de los permitidos.", Alert.AlertType.WARNING);
-            return;
-        }
-        if (nuevosAsignados.isEmpty() && desasignados.isEmpty()) {
-            Utilidades.mostrarAlertaSimple("Sin Cambios", 
-                    "No ha realizado ninguna modificación.", Alert.AlertType.INFORMATION);
-            return;
-        }
-        boolean exito = EstudianteImplementacion.actualizarAsignaciones(
-                nuevosAsignados, 
-                desasignados, 
-                tutorActual.getIdTutor()
-        );
-        if (exito) {
-            Utilidades.mostrarAlertaSimple("Éxito", 
-                    "Asignaciones actualizadas correctamente.", Alert.AlertType.INFORMATION);
-            regresarAlListado();
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", 
-                    "No se pudieron guardar los cambios en la BD.", Alert.AlertType.ERROR);
-        }
+        if (!validarReglasDeNegocio()) return;
+        
+        boolean exito = guardarCambiosEnBD();
+
+        procesarResultadoGuardado(exito);
     }
 
     @FXML
@@ -107,13 +89,19 @@ public class FXMLAsignarTutoradosController implements Initializable {
     
     private void actualizarConteo() {
         int total = listaAsignados.size();
-        int max = tutorActual.getEspaciosTutorados();
-        lbConteo.setText(total + " / " + max + " Asignados");
-        if (total > max) {
+        int maximo = tutorActual.getEspaciosTutorados();
+        lbConteo.setText(total + " / " + maximo + " Asignados");
+        if (total > maximo) {
             lbConteo.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
         } else {
             lbConteo.setStyle("-fx-text-fill: #78909c;");
         }
+    }
+    
+    private void actualizarListasVisuales(ArrayList<Estudiante> asignados, ArrayList<Estudiante> disponibles) {
+        listaAsignados.setAll(asignados);
+        listaDisponibles.setAll(disponibles);
+        actualizarConteo();
     }
     
     private Estudiante buscarEnLista(List<Estudiante> lista, String matricula) {
@@ -124,19 +112,15 @@ public class FXMLAsignarTutoradosController implements Initializable {
     }
     
     private void cargarEstudiantes() {
-        HashMap<String, Object> respuestaAsignados = EstudianteImplementacion.obtenerTutoradosPorTutor(tutorActual.getIdTutor());
-        HashMap<String, Object> respuestaDisponibles = EstudianteImplementacion.obtenerEstudiantesSinTutor();
-        if (!(boolean) respuestaAsignados.get("error") && !(boolean) respuestaDisponibles.get("error")) {
-            ArrayList<Estudiante> asignadosBD = (ArrayList<Estudiante>) respuestaAsignados.get("estudiantes");
-            ArrayList<Estudiante> disponiblesBD = (ArrayList<Estudiante>) respuestaDisponibles.get("estudiantes");
-            
-            listaAsignados.setAll(asignadosBD);
-            listaDisponibles.setAll(disponiblesBD);
-            
-            actualizarConteo();
-        } else {
+        ArrayList<Estudiante> asignados = obtenerTutoradosActuales();
+        ArrayList<Estudiante> disponibles = obtenerAlumnosSinTutor();
+
+        if (asignados == null || disponibles == null) {
             Utilidades.mostrarAlertaSimple("Error", "No se pudieron cargar las listas.", Alert.AlertType.ERROR);
+            return;
         }
+
+        actualizarListasVisuales(asignados, disponibles);
     }
     
     private void configurarArrastre(ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
@@ -184,25 +168,44 @@ public class FXMLAsignarTutoradosController implements Initializable {
         });
     }
     
+    private boolean guardarCambiosEnBD() {
+        return EstudianteImplementacion.actualizarAsignaciones(
+            nuevosAsignados, 
+            desasignados, 
+            tutorActual.getIdTutor()
+        );
+    }
+    
     public void inicializarTutor(Tutor tutor) {
         this.tutorActual = tutor;
         lbNombreTutor.setText(tutor.getNombreCompleto());
         cargarEstudiantes();
     }
-
-    private void registrarCambio(Estudiante estudiante, boolean asignadoAhora) {
-        if (asignadoAhora) {
-            if (desasignados.contains(estudiante)) {
-                desasignados.remove(estudiante); 
-            } else {
-                nuevosAsignados.add(estudiante); 
-            }
+    
+    private ArrayList<Estudiante> obtenerAlumnosSinTutor() {
+        HashMap<String, Object> respuesta = EstudianteImplementacion.obtenerEstudiantesSinTutor();
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Estudiante>) respuesta.get("estudiantes");
+        }
+        return null;
+    }
+    
+    private ArrayList<Estudiante> obtenerTutoradosActuales() {
+        HashMap<String, Object> respuesta = EstudianteImplementacion.obtenerTutoradosPorTutor(tutorActual.getIdTutor());
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Estudiante>) respuesta.get("estudiantes");
+        }
+        return null;
+    }
+    
+    private void procesarResultadoGuardado(boolean exito) {
+        if (exito) {
+            Utilidades.mostrarAlertaSimple("Éxito", 
+                "Asignaciones actualizadas correctamente.", Alert.AlertType.INFORMATION);
+            regresarAlListado();
         } else {
-            if (nuevosAsignados.contains(estudiante)) {
-                nuevosAsignados.remove(estudiante); 
-            } else {
-                desasignados.add(estudiante); 
-            }
+            Utilidades.mostrarAlertaSimple("Error", 
+                "No se pudieron guardar los cambios en la BD.", Alert.AlertType.ERROR);
         }
     }
     
@@ -236,5 +239,36 @@ public class FXMLAsignarTutoradosController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void registrarCambio(Estudiante estudiante, boolean asignadoAhora) {
+        if (asignadoAhora) {
+            if (desasignados.contains(estudiante)) {
+                desasignados.remove(estudiante); 
+            } else {
+                nuevosAsignados.add(estudiante); 
+            }
+        } else {
+            if (nuevosAsignados.contains(estudiante)) {
+                nuevosAsignados.remove(estudiante); 
+            } else {
+                desasignados.add(estudiante); 
+            }
+        }
+    }
+    
+    private boolean validarReglasDeNegocio() {
+        if (listaAsignados.size() > tutorActual.getEspaciosTutorados()) {
+            Utilidades.mostrarAlertaSimple("Cupo Excedido", 
+                "El tutor no puede tener más alumnos de los permitidos.", Alert.AlertType.WARNING);
+            return false;
+        }
+        
+        if (nuevosAsignados.isEmpty() && desasignados.isEmpty()) {
+            Utilidades.mostrarAlertaSimple("Sin Cambios", 
+                "No ha realizado ninguna modificación.", Alert.AlertType.INFORMATION);
+            return false;
+        }
+        return true;
     }
 }
