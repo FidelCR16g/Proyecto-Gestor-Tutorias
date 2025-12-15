@@ -28,7 +28,7 @@ import java.util.List;
  */
 
 public class SesionTutoriaImplementacion {
-    public static HashMap<String, Object> cargarHorarioGenerado(ArrayList<SesionTutoria> horarios) {
+    public static HashMap<String, Object> registrarSesion(ArrayList<SesionTutoria> horarios) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
         Connection conexion = ConexionBD.abrirConexionBD();
