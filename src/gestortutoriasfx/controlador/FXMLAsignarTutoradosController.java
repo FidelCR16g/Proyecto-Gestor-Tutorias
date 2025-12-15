@@ -4,6 +4,7 @@ import gestortutoriasfx.dominio.EstudianteImplementacion;
 import gestortutoriasfx.modelo.pojo.Estudiante;
 import gestortutoriasfx.modelo.pojo.Tutor;
 import gestortutoriasfx.utilidad.Utilidades;
+import gestortutoriasfx.utilidades.ArrastrarSoltarUtilidad;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class FXMLAsignarTutoradosController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        configurarListas();
+        inicializarListasVisuales();
         nuevosAsignados = new ArrayList<>();
         desasignados = new ArrayList<>();
     }
@@ -123,49 +124,37 @@ public class FXMLAsignarTutoradosController implements Initializable {
         actualizarListasVisuales(asignados, disponibles);
     }
     
-    private void configurarArrastre(ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
-        configurarInicioArrastre(origen);
-        configurarRecepcionArrastre(origen, destino, esAsignacion);
-    }
-    
-    private void configurarInicioArrastre(ListView<Estudiante> origen) {
-        origen.setOnDragDetected(event -> {
-            Estudiante item = origen.getSelectionModel().getSelectedItem();
-            
-            if (item != null) {
-                Dragboard db = origen.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.putString(item.getMatricula());
-                db.setContent(content);
-                event.consume();
+    private void configurarArrastreBidireccional(){
+        //De disponibles a asignados
+        ArrastrarSoltarUtilidad.configurarIntercambioListas(
+            lvDisponibles, 
+            lvAsignados, 
+            Estudiante::getMatricula,
+            estudiante -> {
+                registrarCambio(estudiante, true); 
+                actualizarConteo(); 
             }
-        });
+        );
+
+        //De asignados a disponibles
+        ArrastrarSoltarUtilidad.configurarIntercambioListas(
+            lvAsignados, 
+            lvDisponibles, 
+            Estudiante::getMatricula, 
+            estudiante -> {
+                registrarCambio(estudiante, false); 
+                actualizarConteo(); 
+            }
+        );
     }
 
-    private void configurarListas() {
+    private void inicializarListasVisuales() {
         listaDisponibles = FXCollections.observableArrayList();
         listaAsignados = FXCollections.observableArrayList();
         lvDisponibles.setItems(listaDisponibles);
         lvAsignados.setItems(listaAsignados);
         lvDisponibles.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         lvAsignados.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        configurarArrastre(lvDisponibles, lvAsignados, true);
-        configurarArrastre(lvAsignados, lvDisponibles, false);
-    }
-    
-    private void configurarRecepcionArrastre(ListView<Estudiante> origen, ListView<Estudiante> destino, boolean esAsignacion) {
-        destino.setOnDragOver(event -> {
-            if (event.getGestureSource() != destino && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-        
-        destino.setOnDragDropped(event -> {
-            boolean exito = procesarSoltado(event.getDragboard(), origen, destino, esAsignacion);
-            event.setDropCompleted(exito);
-            event.consume();
-        });
     }
     
     private boolean guardarCambiosEnBD() {
