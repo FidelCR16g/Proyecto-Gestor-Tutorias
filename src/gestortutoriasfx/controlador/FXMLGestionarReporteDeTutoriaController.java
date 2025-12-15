@@ -1,13 +1,16 @@
 package gestortutoriasfx.controlador;
 
 import gestortutoriasfx.dominio.PeriodoEscolarImplementacion;
+import gestortutoriasfx.dominio.ProblematicaAcademicaImplementacion;
 import gestortutoriasfx.dominio.ReporteTutoriaImplementacion;
 import gestortutoriasfx.dominio.SesionTutoriaImplementacion;
 import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
+import gestortutoriasfx.modelo.pojo.ProblematicaAcademica;
 import gestortutoriasfx.modelo.pojo.ReporteTutoria;
 import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import gestortutoriasfx.utilidad.Utilidades;
+import gestortutoriasfx.utilidades.ReporteTutoriaPDF;
 import gestortutoriasfx.utilidades.TarjetaReporte;
 import gestortutoriasfx.utilidades.TarjetaSesion;
 import java.io.File;
@@ -16,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -92,37 +96,19 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
     @FXML
     private void clicExportarReporte(ActionEvent event) {
         if (reporteSeleccionado == null) {
-            Utilidades.mostrarAlertaSimple("Atención", 
-                    "Selecciona un reporte de la lista.", Alert.AlertType.WARNING);
+            Utilidades.mostrarAlertaSimple("Atención", "Selecciona un reporte.", Alert.AlertType.WARNING);
             return;
         }
-
-        if (periodoActual == null) {
-            Utilidades.mostrarAlertaSimple("Error", 
-                    "No se ha cargado el Periodo Escolar correctamente.", Alert.AlertType.WARNING);
-            return;
-        }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar Reporte de Texto");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo de Texto (*.txt)", "*.txt"));
-        fileChooser.setInitialFileName("Reporte_Sesion_" + reporteSeleccionado.getNumSesion() + ".txt");
+    
+        File archivoDestino = solicitarUbicacionArchivo();
+    
+        if (archivoDestino != null) {
+            boolean exito = ejecutarExportacion(archivoDestino);
         
-        File archivo = fileChooser.showSaveDialog(btnExportar.getScene().getWindow());
-
-        if (archivo != null) {
-            boolean exito = ReporteTutoriaImplementacion.exportarReporteTextoPlano(
-                this.reporteSeleccionado, 
-                this.periodoActual,
-                archivo
-            );
-
             if (exito) {
-                Utilidades.mostrarAlertaSimple("Éxito", 
-                        "El archivo se generó correctamente.", Alert.AlertType.INFORMATION);
+                Utilidades.mostrarAlertaSimple("Éxito", "PDF generado correctamente.", Alert.AlertType.INFORMATION);
             } else {
-                Utilidades.mostrarAlertaSimple("Error", 
-                        "No se pudo escribir el archivo.", Alert.AlertType.WARNING);
+                Utilidades.mostrarAlertaSimple("Error", "No se pudo generar el PDF.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -162,7 +148,8 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
         if (!(boolean) respuestaPeriodo.get("error")) {
             this.periodoActual = (PeriodoEscolar) respuestaPeriodo.get("periodo");
         } else {
-            Utilidades.mostrarAlertaSimple("Error", "No hay periodo activo.", Alert.AlertType.WARNING);
+            Utilidades.mostrarAlertaSimple("Error", 
+                    "No hay periodo activo.", Alert.AlertType.WARNING);
             return;
         }
     }
@@ -174,6 +161,8 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
             this.listaReportesHechos = (ArrayList<ReporteTutoria>) respuestaReportes.get("reportes");
         } else {
             this.listaReportesHechos = new ArrayList<>();
+            Utilidades.mostrarAlertaSimple("Error", 
+                    "No se pudieron cargar los reportes.", Alert.AlertType.WARNING);
         }
     }
     
@@ -183,7 +172,8 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
             this.listaSesionesRealizadas = (ArrayList<SesionTutoria>) respuestaSesiones.get("sesiones");
         } else {
             this.listaSesionesRealizadas = new ArrayList<>();
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron cargar las sesiones.", Alert.AlertType.ERROR);
+            Utilidades.mostrarAlertaSimple("Error", 
+                    "No se pudieron cargar las sesiones.", Alert.AlertType.WARNING);
         }
     }
     
@@ -221,6 +211,23 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
         }
     }
     
+    private boolean ejecutarExportacion(File archivo) {
+        HashMap<String, Object> respuestaBD = ProblematicaAcademicaImplementacion.obtenerProblematicasPorReporte(reporteSeleccionado.getIdReporteTutoria());
+
+        List<ProblematicaAcademica> listaProblemasAcademicos = new ArrayList<>();
+        if (!(boolean) respuestaBD.get("error")) {
+            listaProblemasAcademicos = (List<ProblematicaAcademica>) respuestaBD.get("problematicas");
+        }
+        
+        return ReporteTutoriaPDF.generarReporte(
+            this.reporteSeleccionado, 
+            this.periodoActual, 
+            listaProblemasAcademicos, 
+            sesionSeleccionada.getNombreTutor(),
+            archivo
+        );
+    }
+    
     private void irPantallaFormulario(ReporteTutoria reporteAEnviar, boolean esSoloLectura){
         try {
             FXMLLoader cargador = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLFormularioReporteTutoria.fxml");
@@ -247,5 +254,14 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
         this.sesionSeleccionada = tarjetaClick.getSesion();
         this.reporteSeleccionado = reporteAsociado;
         configurarBotonesAccion(reporteAsociado);
+    }
+    
+    private File solicitarUbicacionArchivo() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte de Tutoría");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo PDF (*.pdf)", "*.pdf"));
+        fileChooser.setInitialFileName("Reporte_Sesion_" + reporteSeleccionado.getNumSesion() + ".pdf");
+        
+        return fileChooser.showSaveDialog(btnExportar.getScene().getWindow());
     }
 }
