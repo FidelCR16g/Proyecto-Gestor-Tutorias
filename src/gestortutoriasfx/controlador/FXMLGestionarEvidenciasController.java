@@ -85,16 +85,10 @@ public class FXMLGestionarEvidenciasController implements Initializable {
     }
 
     private void cargarSesiones() {
-        HashMap<String, Object> respuestaSesionTutoria = 
-                SesionTutoriaImplementacion.obtenerSesionesTutor(Sesion.getIdTutor());
+        ArrayList<SesionTutoria> listaSesiones = obtenerListaSesionesDelTutor();
         
-        if (!(boolean) respuestaSesionTutoria.get("error")) {
-            ArrayList<SesionTutoria> listaSesiones = (ArrayList<SesionTutoria>) respuestaSesionTutoria.get("sesiones");
+        if (listaSesiones != null) {
             mostrarSesionesEnInterfaz(listaSesiones);
-            
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", respuestaSesionTutoria.get("mensaje").toString(), 
-                    Alert.AlertType.WARNING);
         }
     }
     
@@ -161,16 +155,33 @@ public class FXMLGestionarEvidenciasController implements Initializable {
         }
     }
     
-    private boolean tieneEvidencias(int numSesion) {
-        HashMap<String, Object> respuestaEvidencia = EvidenciaImplementacion.obtenerEvidenciasPorSesion(
-            Sesion.getIdTutor(), 
-            numSesion
+    private ArrayList<Evidencia> obtenerEvidencias(int numSesion) {
+        HashMap<String, Object> respuesta = EvidenciaImplementacion.obtenerEvidenciasPorSesion(
+            Sesion.getIdTutor(), numSesion
         );
-
-        if (!(boolean) respuestaEvidencia.get("error")) {
-            ArrayList<Evidencia> lista = (ArrayList<Evidencia>) respuestaEvidencia.get("evidencias");
-            return !lista.isEmpty();
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Evidencia>) respuesta.get("evidencias");
+        } else {
+            System.err.println("Error al obtener evidencias: " + respuesta.get("mensaje"));
+            return null; 
         }
-        return false;
+    }
+    
+    private ArrayList<SesionTutoria> obtenerListaSesionesDelTutor() {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerSesionesTutor(Sesion.getIdTutor());
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<SesionTutoria>) respuesta.get("sesiones");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error de Carga", 
+                respuesta.get("mensaje").toString(), Alert.AlertType.WARNING);
+            return null;
+        }
+    }
+    
+    private boolean tieneEvidencias(int numSesion) {
+        ArrayList<Evidencia> lista = obtenerEvidencias(numSesion);
+        return lista != null && !lista.isEmpty();
     }
 }
