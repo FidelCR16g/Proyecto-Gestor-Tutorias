@@ -212,17 +212,24 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
     }
     
     private boolean ejecutarExportacion(File archivo) {
-        HashMap<String, Object> respuestaBD = ProblematicaAcademicaImplementacion.obtenerProblematicasPorReporte(reporteSeleccionado.getIdReporteTutoria());
-
-        List<ProblematicaAcademica> listaProblemasAcademicos = new ArrayList<>();
-        if (!(boolean) respuestaBD.get("error")) {
-            listaProblemasAcademicos = (List<ProblematicaAcademica>) respuestaBD.get("problematicas");
-        }
+        ReporteTutoria reporteFresco = obtenerReporteActualizado();
         
+        if (reporteFresco == null) {
+            reporteFresco = this.reporteSeleccionado;
+        }
+        HashMap<String, Object> respuestaBD = ProblematicaAcademicaImplementacion.obtenerProblematicasPorReporte(
+            reporteFresco.getIdReporteTutoria()
+        );
+        
+        List<ProblematicaAcademica> listaProblemas = new ArrayList<>();
+        if (!(boolean) respuestaBD.get("error")) {
+            listaProblemas = (List<ProblematicaAcademica>) respuestaBD.get("problematicas");
+        }
+
         return ReporteTutoriaPDF.generarReporte(
-            this.reporteSeleccionado, 
+            reporteFresco,
             this.periodoActual, 
-            listaProblemasAcademicos, 
+            listaProblemas, 
             sesionSeleccionada.getNombreTutor(),
             archivo
         );
@@ -254,6 +261,18 @@ public class FXMLGestionarReporteDeTutoriaController implements Initializable {
         this.sesionSeleccionada = tarjetaClick.getSesion();
         this.reporteSeleccionado = reporteAsociado;
         configurarBotonesAccion(reporteAsociado);
+    }
+    
+    private ReporteTutoria obtenerReporteActualizado() {
+        HashMap<String, Object> respuesta = ReporteTutoriaImplementacion.obtenerReporteActual(
+                Sesion.getIdTutor(), 
+                periodoActual.getIdPeriodoEscolar(), 
+                reporteSeleccionado.getNumSesion());
+
+        if (!(boolean) respuesta.get("error")) {
+             return (ReporteTutoria) respuesta.get("reporte");
+        }
+        return null;
     }
     
     private File solicitarUbicacionArchivo() {

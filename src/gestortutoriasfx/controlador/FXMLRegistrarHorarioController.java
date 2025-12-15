@@ -66,7 +66,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
     
     private PeriodoEscolar periodoActual;
     private ArrayList<FechaTutoria> rangosFechas;
-    private static final DateTimeFormatter FORMATO_HORA_BD = DateTimeFormatter.ofPattern("H:mm");
+    private static final DateTimeFormatter FORMATO_HORA_BD = DateTimeFormatter.ofPattern("HH:mm");
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -191,7 +191,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         ArrayList<FechaTutoria> todasLasFechas = (ArrayList<FechaTutoria>) respFechas.get("fechas");
         ArrayList<Integer> sesionesOcupadas = (ArrayList<Integer>) respOcupadas.get("ocupadas");
         
-        this.rangosFechas = todasLasFechas; 
+        rangosFechas = todasLasFechas; 
 
         ObservableList<FechaTutoria> sesionesValidas = filtrarSesionesValidas(todasLasFechas, sesionesOcupadas);
         actualizarComboSesiones(sesionesValidas);

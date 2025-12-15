@@ -118,10 +118,13 @@ public class ReporteTutoriaPDF {
     private static void agregarComentarios(Document doc, ReporteTutoria reporte) throws DocumentException {
         Paragraph tituloComentarios = new Paragraph("Comentarios Generales:", FUENTE_NEGRITA);
         doc.add(tituloComentarios);
+        String texto;
         
-        String texto = (reporte.getComentarios() == null || reporte.getComentarios().isEmpty()) 
-                ? "Sin comentarios adicionales." 
-                : reporte.getComentarios();
+        if(reporte.getComentarios() == null || reporte.getComentarios().isEmpty()){
+            texto = "Sin comentarios adicionales.";
+        }else{
+            texto = reporte.getComentarios();
+        }
         
         Paragraph contenido = new Paragraph(texto, FUENTE_NORMAL);
         contenido.setSpacingBefore(5);
