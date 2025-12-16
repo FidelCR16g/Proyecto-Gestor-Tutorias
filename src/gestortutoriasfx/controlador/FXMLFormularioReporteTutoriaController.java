@@ -453,6 +453,21 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
         return valido;
     }
     
+    private static boolean validarCamposLogica(String ee, String profesor, String problematica, String numAlumnos) {
+        if (ee == null || ee.trim().isEmpty()) return false;
+        if (profesor == null || profesor.trim().isEmpty()) return false;
+        if (problematica == null || problematica.trim().isEmpty()) return false;
+        if (numAlumnos == null || numAlumnos.trim().isEmpty()) return false;
+        
+        try {
+            int cantidad = Integer.parseInt(numAlumnos);
+            if (cantidad < 1) return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    
     private void validarDatosRequeridos() {
         if (periodoActual == null || sesionSeleccionada == null) {
             Utilidades.mostrarAlertaSimple("Error", 
