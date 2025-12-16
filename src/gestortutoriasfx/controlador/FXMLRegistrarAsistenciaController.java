@@ -11,6 +11,7 @@ import gestortutoriasfx.utilidades.ArrastrarSoltarUtilidad;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,12 +65,7 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
     
     @FXML
     private void clicGuardar(ActionEvent event) {
-        for(SesionTutoria sesionTutoria : listaAsistencias) sesionTutoria.setEstado("Asistio");
-        for(SesionTutoria sesionTutoria : listaFaltas) sesionTutoria.setEstado("No Asistio");
-        
-        ArrayList<SesionTutoria> listaFinal = new ArrayList<>();
-        listaFinal.addAll(listaAsistencias);
-        listaFinal.addAll(listaFaltas);
+        ArrayList<SesionTutoria> listaFinal = prepararListaParaGuardar(listaAsistencias, listaFaltas);
         
         if (!listaFinal.isEmpty()) {
             registrarAsistencia(listaFinal);
@@ -240,6 +236,19 @@ public class FXMLRegistrarAsistenciaController implements Initializable {
         HashMap<String, Object> resp = SesionTutoriaImplementacion.obtenerFechasPorPeriodo(idPeriodo);
         
         return (boolean) resp.get("error") ? null : (ArrayList<FechaTutoria>) resp.get("fechas");
+    }
+    
+    private ArrayList<SesionTutoria> prepararListaParaGuardar
+        (List<SesionTutoria> listaAsistencias, List<SesionTutoria> listaFaltas){
+            
+        for(SesionTutoria sesionTutoria : listaAsistencias) sesionTutoria.setEstado("Asistio");
+        for(SesionTutoria sesionTutoria : listaFaltas) sesionTutoria.setEstado("No Asistio");
+            
+        java.util.ArrayList<SesionTutoria> listaFinal = new java.util.ArrayList<>();
+        listaFinal.addAll(listaAsistencias);
+        listaFinal.addAll(listaFaltas);
+        
+        return listaFinal;
     }
     
     private void procesarResultadoGuardado(boolean exito) {
