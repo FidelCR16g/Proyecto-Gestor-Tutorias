@@ -7,6 +7,7 @@ import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import gestortutoriasfx.utilidad.Utilidades;
 import gestortutoriasfx.utilidades.ArrastrarSoltarUtilidad;
 import gestortutoriasfx.utilidades.TarjetaArchivo;
+import gestortutoriasfx.utilidades.ValidadorEvidencia;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -136,26 +137,19 @@ public class FXMLFormularioEvidenciaController implements Initializable {
     }
     
     private boolean esArchivoValido(File archivo) {
-        String nombre = archivo.getName().toLowerCase();
-        
-        boolean extensionCorrecta = nombre.endsWith(".pdf") || nombre.endsWith(".jpg") || 
-                                nombre.endsWith(".jpeg") || nombre.endsWith(".png");
-        
-        if (!extensionCorrecta) {
-            Utilidades.mostrarAlertaSimple("Formato no válido", 
-                    "Archivo: " + nombre + "\nSolo PDF, JPG y PNG.", Alert.AlertType.WARNING);
-            return false;
-        }
+        String resultado = ValidadorEvidencia.validarArchivo(archivo);
 
-        long limiteBytes = ((long) 25 * 1024 * 1024);
-        
-        if (archivo.length() > limiteBytes) {
-            Utilidades.mostrarAlertaSimple("Archivo pesado", 
-                "El archivo " + nombre + " excede 25MB.", Alert.AlertType.WARNING);
+        if (!resultado.equals("OK")) {
+            Utilidades.mostrarAlertaSimple("Archivo no válido", 
+                "El archivo " + archivo.getName() + " tiene errores:\n" + resultado, 
+                Alert.AlertType.WARNING);
             return false;
         }
-        
         return true;
+    }
+    
+    private static boolean esCapacidadValida(int archivosActuales, int cantidadNuevos) {
+        return (archivosActuales + cantidadNuevos) <= 5;
     }
     
     private void guardarCambios() {
@@ -286,8 +280,9 @@ public class FXMLFormularioEvidenciaController implements Initializable {
     }
     
     private boolean validarCapacidadDisponible(int cantidadNuevos) {
-        int totalVisual = vbListaArchivos.getChildren().size() + cantidadNuevos;
-        if (totalVisual > 5) {
+        int archivosActuales = vbListaArchivos.getChildren().size();
+
+        if (!esCapacidadValida(archivosActuales, cantidadNuevos)) {
             Utilidades.mostrarAlertaSimple("Límite excedido", 
                 "Solo puede tener máximo 5 archivos por sesión.", 
                 Alert.AlertType.WARNING);
