@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gestortutoriasfx.controlador.FXMLRegistrarFechaTutoriaController">
+
+    <VBox prefHeight="60.0" prefWidth="900.0"
+          AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          style="-fx-background-color: #0267A2;">
+        <Label text="Registrar Fecha de Tutoría" textFill="WHITE"
+               style="-fx-font-size: 20px; -fx-font-weight: bold;">
+            <VBox.margin>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </VBox.margin>
+        </Label>
+    </VBox>
+
+    <ScrollPane fitToWidth="true"
+                AnchorPane.topAnchor="60.0" AnchorPane.bottomAnchor="60.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <content>
+            <VBox spacing="12" style="-fx-background-color: #F5F7FA;">
+                <padding>
+                    <Insets top="16" right="16" bottom="16" left="16"/>
+                </padding>
+
+                <Label fx:id="lbContexto" text="Tutoría: (pendiente) | Periodo: (pendiente)"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+                <Label text="Calendario (estructura base). Aquí después se pintan días válidos/no válidos/ocupados."
+                       style="-fx-text-fill: #455A64;"/>
+
+                <VBox fx:id="vbMeses" spacing="14">
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                    <fx:include source="FXMLMesCalendario.fxml"/>
+                </VBox>
+
+                <Label fx:id="lbMensaje" text=""
+                       style="-fx-text-fill: #C62828; -fx-font-size: 12px;"/>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <HBox spacing="10" prefHeight="60.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          style="-fx-background-color: #FFFFFF; -fx-alignment: CENTER_RIGHT;">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+
+        <Button text="Cancelar" onAction="#clicCancelar"
+                style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <Button text="Guardar" onAction="#clicGuardar"
+                style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+    </HBox>
+
+</AnchorPane>

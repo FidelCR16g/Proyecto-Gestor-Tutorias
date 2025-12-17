@@ -77,4 +77,28 @@ public class TutorImplementacion {
         }
         return respuesta;
     }
+    
+    public static HashMap<String, Object> obtenerTutoresPorProgramaEducativo(int idProgramaEducativo) {
+        HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
+
+        Connection conexion = ConexionBD.abrirConexionBD();
+        if (conexion != null) {
+            try {
+                ArrayList<Tutor> lista = TutorDAO.obtenerTutoresPorProgramaEducativo(conexion, idProgramaEducativo);
+                respuesta.put("error", false);
+                respuesta.put("tutores", lista);
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error BD: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
+            }
+        } else {
+            respuesta.put("mensaje", "Sin conexión.");
+        }
+
+        return respuesta;
+    }
+
 }

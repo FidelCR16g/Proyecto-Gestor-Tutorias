@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="520.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLPlaneacionSesionTutoriaController">
+
+    <VBox prefHeight="60.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Planeación de la sesión" textFill="WHITE">
+            <VBox.margin>
+                <Insets bottom="2" left="10" right="10" top="10" />
+            </VBox.margin>
+        </Label>
+        <Label fx:id="lbContexto" style="-fx-font-size: 13px;" text="Periodo: (pendiente)" textFill="WHITE">
+            <VBox.margin>
+                <Insets bottom="10" left="10" right="10" top="0" />
+            </VBox.margin>
+        </Label>
+    </VBox>
+
+    <VBox spacing="12" style="-fx-background-color: #F5F7FA;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+        <padding>
+            <Insets bottom="16" left="16" right="16" top="16" />
+        </padding>
+
+        <Label fx:id="lbSesion" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Tutoría X" />
+
+        <VBox spacing="10" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #E0E0E0;">
+            <padding>
+                <Insets bottom="12" left="12" right="12" top="12" />
+            </padding>
+
+            <HBox spacing="10" style="-fx-alignment: CENTER_LEFT;">
+                <Label style="-fx-font-weight: bold;" text="Fecha:" />
+                <Label fx:id="lbFecha" style="-fx-font-weight: bold;" text="(sin selección)" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button onAction="#clicSeleccionarFecha" prefHeight="26.0" prefWidth="171.0" style="-fx-background-color: #1565C0; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Registrar fecha..." />
+            </HBox>
+
+            <Label style="-fx-font-weight: bold;" text="Descripción / Actividad:" />
+            <TextArea fx:id="taDescripcion" prefRowCount="4" promptText="Ej: Primera sesión de tutoría grupal..." wrapText="true" />
+        </VBox>
+
+        <Label fx:id="lbMensaje" style="-fx-text-fill: #C62828; -fx-font-size: 12px;" text="" />
+    </VBox>
+
+    <HBox prefHeight="60.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-alignment: CENTER_RIGHT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <padding>
+            <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+
+        <Button onAction="#clicCancelar" style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Cancelar" />
+        <Button onAction="#clicGuardar" style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Guardar" />
+    </HBox>
+
+</AnchorPane>

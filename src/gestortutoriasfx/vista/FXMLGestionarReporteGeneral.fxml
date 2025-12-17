@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gestortutoriasfx.controlador.FXMLGestionarReporteGeneralController"
+            style="-fx-background-color: white;">
+
+    <children>
+
+        <!-- ENCABEZADO -->
+        <VBox prefHeight="60.0"
+              style="-fx-background-color: #0267A2; -fx-border-width: 0 0 1 0;"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets left="25.0"/>
+            </padding>
+
+            <children>
+                <Label text="Gestionar Reportes Generales" textFill="WHITE"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold;">
+                    <VBox.margin>
+                        <Insets top="10" bottom="2"/>
+                    </VBox.margin>
+                </Label>
+
+                <Label fx:id="lbContexto" textFill="WHITE" style="-fx-font-size: 12px;">
+                    <VBox.margin>
+                        <Insets bottom="10"/>
+                    </VBox.margin>
+                </Label>
+            </children>
+        </VBox>
+
+        <!-- CONTENIDO -->
+        <VBox spacing="12"
+              AnchorPane.topAnchor="70.0"
+              AnchorPane.leftAnchor="25.0"
+              AnchorPane.rightAnchor="25.0"
+              AnchorPane.bottomAnchor="20.0">
+
+            <!-- BUSQUEDA GLOBAL -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="tfBusqueda"
+                           promptText="Buscar por programa, periodo, sesión, fecha o estatus…"
+                           HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="btnBuscar" text="Buscar" onAction="#clicBuscar"
+                        style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+
+                <Button fx:id="btnLimpiar" text="Limpiar" onAction="#clicLimpiar"
+                        style="-fx-background-color: white; -fx-text-fill: #0267A2; -fx-font-weight: bold; -fx-border-color: #0267A2; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- TABLA -->
+            <Label text="Reportes generales del coordinador:"
+                   style="-fx-font-weight: bold;"/>
+
+            <TableView fx:id="tvReportesGenerales" prefHeight="420.0" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colPrograma" prefWidth="240" text="Programa"/>
+                    <TableColumn fx:id="colPeriodo" prefWidth="160" text="Periodo"/>
+                    <TableColumn fx:id="colSesion" prefWidth="80" text="Sesión"/>
+                    <TableColumn fx:id="colFecha" prefWidth="140" text="Fecha"/>
+                    <TableColumn fx:id="colEstatus" prefWidth="120" text="Estatus"/>
+                </columns>
+            </TableView>
+
+            <!-- ACCIONES -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+
+                <Button fx:id="btnCrear" text="Crear" onAction="#clicCrear"
+                        style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+
+                <Button fx:id="btnEditar" text="Editar" onAction="#clicEditar"
+                        style="-fx-background-color: white; -fx-text-fill: #0267A2; -fx-font-weight: bold; -fx-border-color: #0267A2; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+
+                <Button fx:id="btnVer" text="Ver" onAction="#clicVer"
+                        style="-fx-background-color: white; -fx-text-fill: #0267A2; -fx-font-weight: bold; -fx-border-color: #0267A2; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+
+                <Button fx:id="btnExportar" text="Exportar" onAction="#clicExportar"
+                        style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;"/>
+
+            </HBox>
+
+        </VBox>
+
+    </children>
+</AnchorPane>

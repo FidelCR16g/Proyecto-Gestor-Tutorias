@@ -189,4 +189,78 @@ public class ReporteTutoriaImplementacion {
         if (texto.length() <= largoMax) return texto;
         return texto.substring(0, largoMax - 3) + "...";
     }
+    
+    
+    public static HashMap<String, Object> buscarReportesParaRevision(String busqueda) {
+        HashMap<String, Object> resp = new LinkedHashMap<>();
+        resp.put("error", true);
+
+        Connection c = ConexionBD.abrirConexionBD();
+        if (c != null) {
+            try {
+                ArrayList<ReporteTutoria> lista = ReporteTutoriaDAO.obtenerReportesParaRevision(c, busqueda);
+                resp.put("error", false);
+                resp.put("reportes", lista);
+            } catch (SQLException e) {
+                resp.put("mensaje", "Error BD al buscar reportes: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(c);
+            }
+        } else {
+            resp.put("mensaje", "Sin conexión con la base de datos.");
+        }
+        return resp;
+    }
+
+    public static HashMap<String, Object> marcarReporteComoRevisado(int idReporteTutoria) {
+        HashMap<String, Object> resp = new LinkedHashMap<>();
+        resp.put("error", true);
+
+        Connection c = ConexionBD.abrirConexionBD();
+        if (c != null) {
+            try {
+                int filas = ReporteTutoriaDAO.actualizarEstatus(c, idReporteTutoria, "Revisado");
+                if (filas > 0) {
+                    resp.put("error", false);
+                    resp.put("mensaje", "Reporte marcado como Revisado.");
+                } else {
+                    resp.put("error", true);
+                    resp.put("mensaje", "No se pudo marcar como Revisado (posiblemente ya estaba Revisado o no estaba Enviado).");
+                }
+            } catch (SQLException e) {
+                resp.put("mensaje", "Error BD al actualizar estatus: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(c);
+            }
+        } else {
+            resp.put("mensaje", "Sin conexión con la base de datos.");
+        }
+        return resp;
+    }
+    
+    public static HashMap<String, Object> obtenerReportePorId(int idReporteTutoria) {
+        HashMap<String, Object> resp = new LinkedHashMap<>();
+        resp.put("error", true);
+
+        Connection c = ConexionBD.abrirConexionBD();
+        if (c != null) {
+            try {
+                ReporteTutoria r = ReporteTutoriaDAO.obtenerReportePorId(c, idReporteTutoria);
+                resp.put("error", false);
+                resp.put("reporte", r);
+            } catch (SQLException e) {
+                resp.put("mensaje", "Error BD al cargar reporte: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(c);
+            }
+        } else {
+            resp.put("mensaje", "Sin conexión con la base de datos.");
+        }
+        return resp;
+    }
+
+
 }

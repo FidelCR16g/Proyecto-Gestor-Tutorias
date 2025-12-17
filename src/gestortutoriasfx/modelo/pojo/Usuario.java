@@ -19,102 +19,62 @@ import java.util.ArrayList;
 
 public class Usuario {
     private int idUsuario;
-    private String noPersonal;
+    private String numPersonal;
     private String password;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String email;
-    private String rol;
-    
-    private int idRolEspecifico;
-    
-    public Usuario() {
-    }
+    private String rol; 
 
-    public Usuario(int idUsuario, String noPersonal, String password, String nombre, String apellidoPaterno, String apellidoMaterno, String email, String rol, int idRolEspecifico) {
+    public Usuario() {}
+
+    public Usuario(int idUsuario, String numPersonal, String password, String nombre,
+                   String apellidoPaterno, String apellidoMaterno, String email, String rol) {
         this.idUsuario = idUsuario;
-        this.noPersonal = noPersonal;
+        this.numPersonal = numPersonal;
         this.password = password;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
         this.email = email;
         this.rol = rol;
-        this.idRolEspecifico = idRolEspecifico;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
-    }
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public String getNumPersonal() { return numPersonal; }
+    public void setNumPersonal(String numPersonal) { this.numPersonal = numPersonal; }
 
-    public String getNoPersonal() {
-        return noPersonal;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setNoPersonal(String noPersonal) {
-        this.noPersonal = noPersonal;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getApellidoPaterno() { return apellidoPaterno; }
+    public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getApellidoMaterno() { return apellidoMaterno; }
+    public void setApellidoMaterno(String apellidoMaterno) { this.apellidoMaterno = apellidoMaterno; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "idUsuario=" + idUsuario +
+                ", numPersonal='" + numPersonal + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellidoPaterno='" + apellidoPaterno + '\'' +
+                ", apellidoMaterno='" + apellidoMaterno + '\'' +
+                ", email='" + email + '\'' +
+                ", rol='" + rol + '\'' +
+                '}';
     }
-
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
-
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRol() {
-        return rol;
-    }
-
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
-
-    public int getIdRolEspecifico() {
-        return idRolEspecifico;
-    }
-
-    public void setIdRolEspecifico(int idRolEspecifico) {
-        this.idRolEspecifico = idRolEspecifico;
-    }
-
-    
 }

@@ -16,5 +16,38 @@ package gestortutoriasfx.modelo.pojo;
  */
 
 public class Administrador {
-    
+    private int idRolAdministrador;
+    private int idUsuario;
+
+    public Administrador() {
+    }
+
+    public Administrador(int idRolAdministrador, int idUsuario) {
+        this.idRolAdministrador = idRolAdministrador;
+        this.idUsuario = idUsuario;
+    }
+
+    public int getIdRolAdministrador() {
+        return idRolAdministrador;
+    }
+
+    public void setIdRolAdministrador(int idRolAdministrador) {
+        this.idRolAdministrador = idRolAdministrador;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    @Override
+    public String toString() {
+        return "Administrador{" +
+                "idRolAdministrador=" + idRolAdministrador +
+                ", idUsuario=" + idUsuario +
+                '}';
+    }
 }

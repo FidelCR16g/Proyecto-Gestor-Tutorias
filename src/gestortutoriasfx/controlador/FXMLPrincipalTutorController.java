@@ -1,10 +1,15 @@
 package gestortutoriasfx.controlador;
 
+import gestortutoriasfx.dominio.UsuarioImplementacion;
 import gestortutoriasfx.interfaz.IPrincipalControlador;
+import gestortutoriasfx.modelo.ConexionBD;
+import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.pojo.Usuario;
 import gestortutoriasfx.utilidad.Utilidades;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
 
 /**
  * Nombre de la Clase: FXMLPrincipalTutorController
@@ -34,7 +40,7 @@ import javafx.stage.Stage;
  * Se encarga de controlar los distintos elementos de la pantalla principal del tutor
  */
 
-public class FXMLPrincipalTutorController implements Initializable, IPrincipalControlador{
+public class FXMLPrincipalTutorController implements Initializable, IPrincipalControlador {
 
     @FXML
     private BorderPane borderPanePrincipal;
@@ -44,27 +50,25 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
     private Label lbBienvenida;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    }    
+    public void initialize(URL url, ResourceBundle rb) { }
 
     @Override
     public void inicializarInformacion(Usuario usuario) {
-        if(usuario != null){
+        if (usuario != null) {
             lbBienvenida.setText("Bienvenido(a) " + usuario.getNombre());
         }
     }
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
-        boolean deseaSalir = Utilidades.mostrarAlertaVerificacion("Cerrar Sesión", 
-                "¿Está seguro de que desea salir?", 
-                "Se regresará a la pantalla de inicio de sesión.");
-        
+        boolean deseaSalir = Utilidades.mostrarAlertaVerificacion(
+                "Cerrar Sesión",
+                "¿Está seguro de que desea salir?",
+                "Se regresará a la pantalla de selección de rol."
+        );
         if (!deseaSalir) return;
-        gestortutoriasfx.modelo.Sesion.cerrarSesion();
 
-        cerrarVentanaActual(event);
-        abrirVentanaLogin();
+        regresarASeleccionRol(event);
     }
 
     @FXML
@@ -81,35 +85,81 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
     private void clicGestionarEvidencia(ActionEvent event) {
         irVista("/gestortutoriasfx/vista/FXMLGestionarEvidencias.fxml");
     }
-    
+
     @FXML
     private void clicLlenarReporte(ActionEvent event) {
         irVista("/gestortutoriasfx/vista/FXMLGestionarReporteDeTutoria.fxml");
     }
-    
-    private void abrirVentanaLogin() {
+
+    private void regresarASeleccionRol(ActionEvent event) {
         try {
-            FXMLLoader cargador = new FXMLLoader(getClass().getResource("/gestortutoriasfx/vista/FXMLInicioSesion.fxml"));
-            Parent root = cargador.load();
-            
-            Scene escena = new Scene(root);
-            Stage escenarioLogin = new Stage();
-            escenarioLogin.setScene(escena);
-            escenarioLogin.setTitle("Inicio de Sesión");
-            escenarioLogin.show();
-            
+            Usuario usuario = Sesion.getUsuarioSesion();
+            if (usuario == null) {
+                irALogin(event);
+                return;
+            }
+
+            ConexionBD.establecerCredenciales("login");
+
+            HashMap<String, Object> respuesta = UsuarioImplementacion.obtenerRolesUsuario(usuario.getIdUsuario());
+            if ((boolean) respuesta.get("error")) {
+                Sesion.cerrarSesion();
+                irALogin(event);
+                return;
+            }
+
+            ArrayList<String> roles = (ArrayList<String>) respuesta.get("roles");
+            if (roles == null || roles.isEmpty()) {
+                Sesion.cerrarSesion();
+                irALogin(event);
+                return;
+            }
+
+            FXMLLoader loader = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLSeleccionRol.fxml");
+            Parent root = loader.load();
+
+            FXMLSeleccionRolController controller = loader.getController();
+            controller.inicializar(usuario, roles);
+
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.setScene(new Scene(root));
+            stageActual.setTitle("Seleccionar Perfil");
+            stageActual.show();
+
+            Sesion.setIdTutor(0);
+            usuario.setRol(null);
+
         } catch (IOException ex) {
             ex.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error", "No se pudo cargar la ventana de inicio de sesión.", Alert.AlertType.ERROR);
+            Utilidades.mostrarAlertaSimple(
+                    "Error",
+                    "No se pudo cargar la pantalla de selección de rol.",
+                    Alert.AlertType.ERROR
+            );
         }
     }
-    
-    private void cerrarVentanaActual(ActionEvent event) {
-        Node source = (Node) event.getSource();
-        Stage stageActual = (Stage) source.getScene().getWindow();
-        stageActual.close();
+
+    private void irALogin(ActionEvent event) {
+        try {
+            ConexionBD.establecerCredenciales("login");
+            FXMLLoader loader = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLInicioSesion.fxml");
+            Parent root = loader.load();
+
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.setScene(new Scene(root));
+            stageActual.setTitle("Inicio de Sesión");
+            stageActual.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Utilidades.mostrarAlertaSimple(
+                    "Error",
+                    "No se pudo cargar la pantalla de inicio de sesión.",
+                    Alert.AlertType.ERROR
+            );
+        }
     }
-    
+
     private void irVista(String ruta) {
         try {
             FXMLLoader cargador = Utilidades.obtenerVista(ruta);
@@ -118,9 +168,11 @@ public class FXMLPrincipalTutorController implements Initializable, IPrincipalCo
             panelContenido.getChildren().add(vista);
         } catch (IOException ex) {
             ex.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error de Navegación", 
-                    "No se pudo cargar la vista: " + ruta, 
-                    Alert.AlertType.WARNING);
+            Utilidades.mostrarAlertaSimple(
+                    "Error de Navegación",
+                    "No se pudo cargar la vista: " + ruta,
+                    Alert.AlertType.WARNING
+            );
         }
     }
 }

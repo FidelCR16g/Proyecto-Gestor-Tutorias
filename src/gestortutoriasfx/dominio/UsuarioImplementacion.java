@@ -27,35 +27,35 @@ import java.util.LinkedHashMap;
 
 public class UsuarioImplementacion {
     public static HashMap<String, Object> validarLogin(String noPersonal, String password) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-        Connection conexion = ConexionBD.abrirConexionBD(); 
-        
-        if (conexion != null) {
-            try {
-                Usuario usuario = UsuarioDAO.iniciarSesion(conexion, noPersonal, password);
-                
-                if (usuario != null) {
-                    respuesta.put("error", false);
-                    respuesta.put("usuario", usuario);
-                    ConexionBD.establecerCredenciales(usuario.getRol());
-                    
-                } else {
-                    respuesta.put("mensaje", "Credenciales incorrectas.");
-                }
-                
-            } catch (SQLException ex) {
-                respuesta.put("mensaje", "Error BD: " + ex.getMessage());
-                ex.printStackTrace();
-            } finally {
-                ConexionBD.cerrarConexion(conexion);
+    HashMap<String, Object> respuesta = new LinkedHashMap<>();
+    respuesta.put("error", true);
+
+    Connection conexion = ConexionBD.abrirConexionBD();
+
+    if (conexion != null) {
+        try {
+            Usuario usuario = UsuarioDAO.iniciarSesion(conexion, noPersonal, password);
+
+            if (usuario != null) {
+                respuesta.put("error", false);
+                respuesta.put("usuario", usuario);
+            } else {
+                respuesta.put("mensaje", "Credenciales incorrectas.");
             }
-        } else {
-            respuesta.put("mensaje", "No hay conexión con la base de datos.");
+
+        } catch (SQLException ex) {
+            respuesta.put("mensaje", "Error BD: " + ex.getMessage());
+            ex.printStackTrace();
+        } finally {
+            ConexionBD.cerrarConexion(conexion);
         }
-        
-        return respuesta;
+    } else {
+        respuesta.put("mensaje", "No hay conexión con la base de datos.");
     }
+
+    return respuesta;
+}
+
     
     public static HashMap<String, Object> obtenerRolesUsuario(int idUsuario) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();

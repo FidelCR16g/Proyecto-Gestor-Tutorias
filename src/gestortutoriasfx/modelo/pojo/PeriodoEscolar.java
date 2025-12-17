@@ -22,8 +22,8 @@ public class PeriodoEscolar {
     private String fechaFin;
     private boolean estado;
     private String nombrePeriodoEscolar;
-    
-    public PeriodoEscolar(){
+
+    public PeriodoEscolar() {
     }
 
     public PeriodoEscolar(int idPeriodoEscolar, String rangoPeriodo, String fechaInicio, String fechaFin, boolean estado, String nombrePeriodoEscolar) {
@@ -81,5 +81,10 @@ public class PeriodoEscolar {
 
     public void setNombrePeriodoEscolar(String nombrePeriodoEscolar) {
         this.nombrePeriodoEscolar = nombrePeriodoEscolar;
+    }
+
+    @Override
+    public String toString() {
+        return nombrePeriodoEscolar != null ? nombrePeriodoEscolar : (rangoPeriodo + " (" + fechaInicio + " - " + fechaFin + ")");
     }
 }

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLPlaneacionTutoriaController">
+
+    <!-- Header -->
+    <VBox prefHeight="70.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Planeación de tutoría" textFill="WHITE">
+            <VBox.margin>
+                <Insets bottom="2" left="12" right="12" top="12" />
+            </VBox.margin>
+        </Label>
+
+        <Label fx:id="lbContexto" style="-fx-font-size: 13px;" text="Periodo: ---- | Coordinador: ----" textFill="WHITE">
+            <VBox.margin>
+                <Insets bottom="10" left="12" />
+            </VBox.margin>
+        </Label>
+    </VBox>
+
+    <!-- Contenido -->
+    <VBox spacing="14.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
+
+        <Label style="-fx-font-size: 13px;" text="Selecciona una sesión para planear o editar. Las sesiones pendientes aparecen como 'Sin planear'." />
+
+        <!-- Grid 2x2 -->
+        <GridPane fx:id="gridSesiones" hgap="18" vgap="18">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50" />
+                <ColumnConstraints percentWidth="50" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="50" />
+                <RowConstraints percentHeight="50" />
+            </rowConstraints>
+
+            <!-- SESIÓN 1 -->
+            <VBox fx:id="cardSesion1" spacing="8" style="-fx-border-color: #DADADA; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <padding><Insets bottom="14" left="14" right="14" top="14" /></padding>
+
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sesión 1" />
+                <Label fx:id="lbFecha1" style="-fx-font-size: 13px;" text="Fecha: --/--/----" />
+                <Label fx:id="lbActividad1" style="-fx-font-size: 13px;" text="Actividad: (sin planear)" wrapText="true" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label fx:id="lbEstado1" style="-fx-font-size: 12px; -fx-padding: 4 8 4 8; -fx-background-radius: 12; -fx-background-color: #F2F2F2;" text="Sin planear" />
+
+                    <Button fx:id="btnAccion1" onAction="#clicAccionSesion1" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Planear" />
+
+                    <Button fx:id="btnVer1" disable="true" onAction="#clicConsultarSesion1" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Consultar" />
+                </HBox>
+            </VBox>
+
+            <!-- SESIÓN 2 -->
+            <VBox fx:id="cardSesion2" spacing="8" style="-fx-border-color: #DADADA; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <padding><Insets bottom="14" left="14" right="14" top="14" /></padding>
+
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sesión 2" />
+                <Label fx:id="lbFecha2" style="-fx-font-size: 13px;" text="Fecha: --/--/----" />
+                <Label fx:id="lbActividad2" style="-fx-font-size: 13px;" text="Actividad: (sin planear)" wrapText="true" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label fx:id="lbEstado2" style="-fx-font-size: 12px; -fx-padding: 4 8 4 8; -fx-background-radius: 12; -fx-background-color: #F2F2F2;" text="Sin planear" />
+
+                    <Button fx:id="btnAccion2" onAction="#clicAccionSesion2" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Planear" />
+
+                    <Button fx:id="btnVer2" disable="true" onAction="#clicConsultarSesion2" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Consultar" />
+                </HBox>
+            </VBox>
+
+            <!-- SESIÓN 3 -->
+            <VBox fx:id="cardSesion3" spacing="8" style="-fx-border-color: #DADADA; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <padding><Insets bottom="14" left="14" right="14" top="14" /></padding>
+
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sesión 3" />
+                <Label fx:id="lbFecha3" style="-fx-font-size: 13px;" text="Fecha: --/--/----" />
+                <Label fx:id="lbActividad3" style="-fx-font-size: 13px;" text="Actividad: (sin planear)" wrapText="true" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label fx:id="lbEstado3" style="-fx-font-size: 12px; -fx-padding: 4 8 4 8; -fx-background-radius: 12; -fx-background-color: #F2F2F2;" text="Sin planear" />
+
+                    <Button fx:id="btnAccion3" onAction="#clicAccionSesion3" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Planear" />
+
+                    <Button fx:id="btnVer3" disable="true" onAction="#clicConsultarSesion3" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Consultar" />
+                </HBox>
+            </VBox>
+
+            <!-- SESIÓN 4 -->
+            <VBox fx:id="cardSesion4" spacing="8" style="-fx-border-color: #DADADA; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <padding><Insets bottom="14" left="14" right="14" top="14" /></padding>
+
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sesión 4 (Adicional)" />
+                <Label fx:id="lbFecha4" style="-fx-font-size: 13px;" text="Fecha: --/--/----" />
+                <Label fx:id="lbActividad4" style="-fx-font-size: 13px;" text="Actividad: (sin planear)" wrapText="true" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label fx:id="lbEstado4" style="-fx-font-size: 12px; -fx-padding: 4 8 4 8; -fx-background-radius: 12; -fx-background-color: #F2F2F2;" text="Sin planear" />
+
+                    <Button fx:id="btnAccion4" onAction="#clicAccionSesion4" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Planear" />
+
+                    <Button fx:id="btnVer4" disable="true" onAction="#clicConsultarSesion4" style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold;                                    -fx-background-radius: 8; -fx-padding: 8 14; -fx-cursor: hand;" text="Consultar" />
+                </HBox>
+            </VBox>
+
+        </GridPane>
+    </VBox>
+
+</AnchorPane>

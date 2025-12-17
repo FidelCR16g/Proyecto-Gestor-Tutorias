@@ -30,7 +30,7 @@ public class ConexionBD {
     private static String passwordActual;
     
     static {
-        establecerCredenciales("login_checker");
+        establecerCredenciales("login");
     }
     
     public static Connection abrirConexionBD() {

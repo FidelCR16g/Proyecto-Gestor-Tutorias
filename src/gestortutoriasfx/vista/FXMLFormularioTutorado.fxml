@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLFormularioTutoradoController">
+
+    <!-- Header -->
+    <VBox prefHeight="60.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label fx:id="lbTitulo" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Registrar Tutorado" textFill="WHITE">
+            <VBox.margin>
+                <Insets left="18" top="14" />
+            </VBox.margin>
+        </Label>
+    </VBox>
+
+    <!-- Body -->
+    <ScrollPane fitToWidth="true" prefHeight="561.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+        <content>
+            <VBox prefHeight="501.0" prefWidth="881.0" spacing="14" style="-fx-background-color: #F4F6F8;">
+                <padding>
+                    <Insets bottom="18" left="18" right="18" top="18" />
+                </padding>
+
+                <!-- Card -->
+                <VBox prefWidth="849.0" spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;">
+                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Datos del tutorado" />
+
+                    <HBox spacing="18">
+
+                        <!-- Left: Form -->
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+
+                            <!-- Sección Académica -->
+                            <TitledPane expanded="true" text="Datos académicos">
+                                <content>
+                                    <GridPane hgap="12" prefHeight="156.0" prefWidth="557.0" vgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints prefWidth="160" />
+                                            <ColumnConstraints hgrow="ALWAYS" />
+                                        </columnConstraints>
+
+                                        <Label text="Matrícula:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                        <TextField fx:id="tfMatricula" promptText="Ej: zS25XXXXXX" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                        <Label text="Programa educativo:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                        <ComboBox fx:id="cbPrograma" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Tutor:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                        <ComboBox fx:id="cbTutor" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Año de ingreso:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                        <DatePicker fx:id="dpIngreso" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                        <Label text="Semestre:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                        <ComboBox fx:id="cbSemestre" prefWidth="140" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <rowConstraints>
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                              </rowConstraints>
+                                    </GridPane>
+                                </content>
+                            </TitledPane>
+
+                            <!-- Sección Personal -->
+                            <TitledPane expanded="true" text="Datos personales">
+                                <content>
+                                    <GridPane hgap="12" vgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints prefWidth="160" />
+                                            <ColumnConstraints hgrow="ALWAYS" />
+                                        </columnConstraints>
+
+                                        <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                        <TextField fx:id="tfNombre" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                        <Label text="Apellido paterno:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                        <TextField fx:id="tfApellidoPaterno" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Apellido materno:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                        <TextField fx:id="tfApellidoMaterno" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                        <TextField fx:id="tfTelefono" promptText="Ej: 2280000000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                        <Label text="Correo institucional:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                        <TextField fx:id="tfCorreo" promptText="Ej: zs########@estudiantes.uv.mx" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <rowConstraints>
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                                 <RowConstraints />
+                              </rowConstraints>
+                                    </GridPane>
+                                </content>
+                            </TitledPane>
+
+                            <!-- Solo edición -->
+                            <TitledPane fx:id="tpSoloEdicion" expanded="true" managed="false" text="Información del sistema (solo lectura)" visible="false">
+                                <content>
+                                    <GridPane hgap="12" vgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints prefWidth="160" />
+                                            <ColumnConstraints hgrow="ALWAYS" />
+                                        </columnConstraints>
+
+                                        <Label text="Créditos obtenidos:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                        <TextField fx:id="tfCreditos" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                        <Label text="Cambios de tutor:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                        <TextField fx:id="tfCambioTutor" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <rowConstraints>
+                                 <RowConstraints />
+                                 <RowConstraints />
+                              </rowConstraints>
+                                    </GridPane>
+                                </content>
+                            </TitledPane>
+
+                        </VBox>
+
+                        <!-- Right: Foto + Estado -->
+                        <VBox prefWidth="240" spacing="10" style="-fx-border-color: #E6E9EE; -fx-border-radius: 10; -fx-padding: 12;">
+                            <Label style="-fx-font-weight: bold;" text="Foto" />
+                            <ImageView fx:id="ivFoto" fitHeight="163.0" fitWidth="200" preserveRatio="true" style="-fx-border-color: #D9DDE3; -fx-border-radius: 8; -fx-background-radius: 8;" />
+
+                            <Button fx:id="btnCargarFoto" maxWidth="Infinity" onAction="#clicCargarFoto" text="Cargar foto" />
+
+                            <Separator />
+
+                            <CheckBox fx:id="cbPerfilActivo" selected="true" text="Perfil activo" />
+
+                            <Label fx:id="lbInfo" style="-fx-text-fill: #6B7280;" text="Tip: La matrícula y el año de ingreso deben coincidir." wrapText="true" />
+                           <Button onAction="#clicCancelar" text="Cancelar" />
+                           <Button fx:id="btnGuardar" onAction="#clicGuardar" style="-fx-background-color: #0267A2; -fx-text-fill: white;" text="Guardar" />
+                        </VBox>
+
+                    </HBox>
+
+                    <!-- Buttons -->
+                    <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="817.0" spacing="10" />
+
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+</AnchorPane>

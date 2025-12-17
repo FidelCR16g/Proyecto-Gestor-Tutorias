@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gestortutoriasfx.controlador.FXMLMesCalendarioController"
+      fx:id="rootMes"
+      spacing="8"
+      style="-fx-background-color: white;
+             -fx-background-radius: 10;
+             -fx-border-radius: 10;
+             -fx-border-color: #E0E0E0;">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Nombre del mes -->
+    <Label fx:id="lbNombreMes"
+           text="MES 2025"
+           style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+    <!-- Calendario del mes -->
+    <GridPane fx:id="gpMes" hgap="6" vgap="6">
+
+        <!-- 7 columnas (L a D) -->
+        <columnConstraints>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+            <ColumnConstraints percentWidth="14.285"/>
+        </columnConstraints>
+
+        <!-- 1 fila encabezado + 6 semanas -->
+        <rowConstraints>
+            <RowConstraints minHeight="22"/>
+            <RowConstraints minHeight="36"/>
+            <RowConstraints minHeight="36"/>
+            <RowConstraints minHeight="36"/>
+            <RowConstraints minHeight="36"/>
+            <RowConstraints minHeight="36"/>
+            <RowConstraints minHeight="36"/>
+        </rowConstraints>
+
+    </GridPane>
+</VBox>

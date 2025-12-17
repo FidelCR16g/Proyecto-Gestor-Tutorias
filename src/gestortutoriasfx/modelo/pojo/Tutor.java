@@ -17,19 +17,19 @@ package gestortutoriasfx.modelo.pojo;
 
 public class Tutor {
     private int idTutor;
-    private String numPersonal;
-    private int idUsuario;
-    
+    private int idProfesor;           
     private int espaciosTutorados;
+
+    private String numPersonal;
     private String nombreCompleto;
+    private String email;
 
     public Tutor() {
     }
 
-    public Tutor(int idTutor, String numPersonal, int idUsuario, int espaciosTutorados) {
+    public Tutor(int idTutor, int idProfesor, int espaciosTutorados) {
         this.idTutor = idTutor;
-        this.numPersonal = numPersonal;
-        this.idUsuario = idUsuario;
+        this.idProfesor = idProfesor;
         this.espaciosTutorados = espaciosTutorados;
     }
 
@@ -39,6 +39,22 @@ public class Tutor {
 
     public void setIdTutor(int idTutor) {
         this.idTutor = idTutor;
+    }
+
+    public int getIdProfesor() {
+        return idProfesor;
+    }
+
+    public void setIdProfesor(int idProfesor) {
+        this.idProfesor = idProfesor;
+    }
+
+    public int getEspaciosTutorados() {
+        return espaciosTutorados;
+    }
+
+    public void setEspaciosTutorados(int espaciosTutorados) {
+        this.espaciosTutorados = espaciosTutorados;
     }
 
     public String getNumPersonal() {
@@ -57,19 +73,17 @@ public class Tutor {
         this.nombreCompleto = nombreCompleto;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getEmail() {
+        return email;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getEspaciosTutorados() {
-        return espaciosTutorados;
-    }
-
-    public void setEspaciosTutorados(int espaciosTutorados) {
-        this.espaciosTutorados = espaciosTutorados;
+    @Override
+    public String toString() {
+        return (nombreCompleto != null ? nombreCompleto : "Tutor") +
+                " | Cupo: " + espaciosTutorados;
     }
 }

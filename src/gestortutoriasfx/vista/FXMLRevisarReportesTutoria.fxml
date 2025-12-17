@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: white;"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gestortutoriasfx.controlador.FXMLRevisarReportesTutoriaController">
+
+    <children>
+
+        <!-- ENCABEZADO -->
+        <VBox alignment="CENTER_LEFT" prefHeight="60.0"
+              style="-fx-background-color: #0267A2; -fx-border-width: 0 0 1 0;"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets left="25.0"/>
+            </padding>
+
+            <children>
+                <Label text="Revisar Reportes de Tutoría" textFill="WHITE">
+                    <font><Font name="System Bold" size="20.0"/></font>
+                </Label>
+                <Label text="Busque por matrícula, profesor o sesión (ej: zS23000001, 'Pérez', '1')." textFill="WHITE">
+                    <font><Font size="12.0"/></font>
+                </Label>
+            </children>
+        </VBox>
+
+        <!-- CONTENIDO -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    layoutY="60.0" style="-fx-background-color: transparent;"
+                    AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+
+            <content>
+                <VBox spacing="18.0">
+                    <padding>
+                        <Insets top="20.0" right="25.0" bottom="20.0" left="25.0"/>
+                    </padding>
+
+                    <children>
+
+                        <!-- === 1. BUSCADOR ÚNICO === -->
+                        <Label text="1. Búsqueda" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <children>
+                                <TextField fx:id="tfBusqueda"
+                                           promptText="Matrícula (zS...), profesor (apellido/nombre) o sesión (1-4)"
+                                           HBox.hgrow="ALWAYS"/>
+
+                                <Button text="Buscar" onAction="#clicBuscar"
+                                        style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                                        prefWidth="120"/>
+                            </children>
+                        </HBox>
+
+                        <!-- === 2. RESULTADOS === -->
+                        <Label text="2. Reportes encontrados" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <TableView fx:id="tvReportes" prefHeight="420.0">
+                            <columns>
+                                <TableColumn fx:id="tcNombreTutor" text="Tutor" prefWidth="250.0"/>
+                                <TableColumn fx:id="tcPrograma" text="Programa" prefWidth="220.0"/>
+                                <TableColumn fx:id="tcSesion" text="Sesión" prefWidth="90.0"/>
+                                <TableColumn fx:id="tcFecha" text="Fecha" prefWidth="120.0"/>
+                                <TableColumn fx:id="tcEstado" text="Estado" prefWidth="160.0"/>
+                            </columns>
+                        </TableView>
+
+                        <Label fx:id="lbMensaje" text=""
+                               style="-fx-text-fill: #C62828; -fx-font-size: 12px;"/>
+
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- BOTONERA -->
+        <HBox alignment="CENTER_RIGHT" prefHeight="60.0" spacing="15.0"
+              style="-fx-border-color: #cccccc; -fx-border-width: 1 0 0 0;"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <padding>
+                <Insets right="25.0"/>
+            </padding>
+
+            <children>
+                <Button text="Ver reporte" onAction="#clicVerReporte"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                        prefWidth="130"/>
+            </children>
+        </HBox>
+
+    </children>
+</AnchorPane>

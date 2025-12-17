@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: white;"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gestortutoriasfx.controlador.FXMLMostrarReporteTutoriaController">
+
+    <children>
+
+        <!-- ENCABEZADO -->
+        <VBox alignment="CENTER_LEFT" prefHeight="60.0"
+              style="-fx-background-color: #0267A2; -fx-border-width: 0 0 1 0;"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <padding>
+                <Insets left="25.0"/>
+            </padding>
+
+            <children>
+                <Label text="Reporte de Tutoría Académica" textFill="WHITE">
+                    <font><Font name="System Bold" size="20.0"/></font>
+                </Label>
+
+                <Label text="Vista de consulta. Puede marcar el reporte como revisado." textFill="WHITE">
+                    <font><Font size="12.0"/></font>
+                </Label>
+            </children>
+        </VBox>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutY="60.0"
+                    style="-fx-background-color: transparent;"
+                    AnchorPane.bottomAnchor="60.0"
+                    AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="60.0">
+
+            <content>
+                <VBox spacing="20.0">
+                    <padding>
+                        <Insets bottom="20.0" left="25.0" right="25.0" top="20.0"/>
+                    </padding>
+
+                    <children>
+
+                        <!-- === 1. DATOS GENERALES === -->
+                        <Label text="1. Datos Generales" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <GridPane hgap="15.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES"/>
+                            </columnConstraints>
+
+                            <rowConstraints>
+                                <RowConstraints minHeight="30.0"/>
+                                <RowConstraints minHeight="30.0"/>
+                            </rowConstraints>
+
+                            <children>
+                                <Label style="-fx-font-weight: bold;" text="Periodo Escolar:"/>
+                                <Label fx:id="lbPeriodo" GridPane.columnIndex="1"/>
+
+                                <Label style="-fx-font-weight: bold;" text="Programa Educativo:" GridPane.columnIndex="2"/>
+                                <Label fx:id="lbProgramaEducativo" GridPane.columnIndex="3"/>
+
+                                <Label style="-fx-font-weight: bold;" text="Sesión:" GridPane.rowIndex="1"/>
+                                <Label fx:id="lbSesion" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label style="-fx-font-weight: bold;" text="Fecha de la Sesión:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                <Label fx:id="lbFechaTutoria" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                            </children>
+                        </GridPane>
+
+                        <!-- === 2. RESUMEN ESTADÍSTICO === -->
+                        <Label text="2. Resumen Estadístico" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <HBox alignment="CENTER_LEFT" spacing="40.0">
+                            <children>
+                                <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Asistencia Total:"/>
+                                <Label fx:id="lbTotalAsistencias" text="0" textFill="#2e7d32">
+                                    <font><Font name="System Bold" size="18.0"/></font>
+                                </Label>
+
+                                <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Alumnos en Riesgo:"/>
+                                <Label fx:id="lbTotalRiesgo" text="0" textFill="#d32f2f">
+                                    <font><Font name="System Bold" size="18.0"/></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- === 3. PROBLEMÁTICAS ACADÉMICAS === -->
+                        <Label text="3. Problemáticas Académicas" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <TableView fx:id="tvProblematicas" prefHeight="220.0">
+                            <columns>
+                                <TableColumn fx:id="tcEE" prefWidth="200.0" text="Experiencia Educativa"/>
+                                <TableColumn fx:id="tcProfesor" prefWidth="200.0" text="Profesor"/>
+                                <TableColumn fx:id="tcProblematica" prefWidth="300.0" text="Descripción"/>
+                                <TableColumn fx:id="tcNumAlumnos" prefWidth="80.0" style="-fx-alignment: CENTER;" text="Cant."/>
+                            </columns>
+                        </TableView>
+
+                        <!-- === 4. COMENTARIOS === -->
+                        <Label text="4. Comentarios Generales" textFill="#0267a2">
+                            <font><Font name="System Bold" size="14.0"/></font>
+                        </Label>
+                        <Separator/>
+
+                        <TextArea fx:id="taComentarios"
+                                  prefHeight="90.0"
+                                  editable="false"
+                                  wrapText="true"
+                                  promptText="(Sin comentarios)"/>
+
+                        <Label fx:id="lbMensaje" text=""
+                               style="-fx-text-fill: #C62828; -fx-font-size: 12px;"/>
+
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- BOTONERA: solo checkbox + regresar -->
+        <HBox alignment="CENTER_RIGHT" prefHeight="60.0" spacing="15.0"
+              style="-fx-border-color: #cccccc; -fx-border-width: 1 0 0 0;"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+            <padding>
+                <Insets left="25.0" right="25.0"/>
+            </padding>
+
+            <children>
+
+                <!-- Izquierda: Check revisado -->
+                <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                    <children>
+                        <CheckBox fx:id="chRevisado" text="Marcar como revisado" onAction="#clicMarcarRevisado"
+                                  style="-fx-font-weight: bold;"/>
+                        <Label fx:id="lbEstatus" text="" style="-fx-text-fill: #555555;"/>
+                    </children>
+                </HBox>
+
+                <!-- Derecha: Regresar -->
+                <Button text="Regresar" onAction="#clicRegresar"
+                        prefWidth="110.0"
+                        style="-fx-background-color: #e0e0e0; -fx-font-weight: bold; -fx-cursor: hand;"/>
+
+            </children>
+        </HBox>
+
+    </children>
+</AnchorPane>
