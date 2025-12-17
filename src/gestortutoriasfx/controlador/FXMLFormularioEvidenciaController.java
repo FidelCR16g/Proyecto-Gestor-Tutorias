@@ -7,6 +7,7 @@ import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import gestortutoriasfx.utilidad.Utilidades;
 import gestortutoriasfx.utilidades.ArrastrarSoltarUtilidad;
 import gestortutoriasfx.utilidades.TarjetaArchivo;
+import gestortutoriasfx.utilidades.ValidadorEvidencia;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -22,8 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -105,22 +104,16 @@ public class FXMLFormularioEvidenciaController implements Initializable {
         validarBotonGuardar();
     }
     
+    private double calcularTamanoKB(long bytes) {
+        double kb = bytes / 1024.0;
+        return Math.round(kb * 100.0) / 100.0;
+    }
+    
     private void cargarEvidenciasExistentes() {
-        HashMap<String, Object> respuesta = EvidenciaImplementacion.obtenerEvidenciasPorSesion(
-            Sesion.getIdTutor(), sesionActual.getNumSesion());
-
-        if (!(boolean) respuesta.get("error")) {
-            ArrayList<Evidencia> existentes = (ArrayList<Evidencia>) respuesta.get("evidencias");
-            
-            vbListaArchivos.getChildren().clear();
-            
-            for (Evidencia ev : existentes) {
-                TarjetaArchivo tarjeta = new TarjetaArchivo(ev, this::procesarEliminacion);
-                vbListaArchivos.getChildren().add(tarjeta);
-            }
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", (String) respuesta.get("mensaje"), 
-                    Alert.AlertType.WARNING);
+        ArrayList<Evidencia> lista = obtenerEvidenciasDeBD();
+        
+        if (lista != null) {
+            renderizarListaEvidencias(lista);
         }
     }
     
@@ -131,68 +124,37 @@ public class FXMLFormularioEvidenciaController implements Initializable {
     }
     
     private Evidencia crearEvidenciaDesdeArchivo(File archivo) {
-        try {
-            byte[] bytes = Files.readAllBytes(archivo.toPath());
+        byte[] contenido = leerBytesDelArchivo(archivo);
+        if (contenido == null) return null;
+
+        Evidencia evidencia = new Evidencia();
+        evidencia.setNombreArchivo(archivo.getName());
+        evidencia.setArchivo(contenido);
+        evidencia.setEsNuevo(true);
+        evidencia.setTamanoKB(calcularTamanoKB(archivo.length()));
         
-            Evidencia evidencia = new Evidencia();
-            evidencia.setNombreArchivo(archivo.getName());
-            evidencia.setArchivo(bytes);
-            evidencia.setEsNuevo(true);
-        
-            double kb = archivo.length() / 1024.0;
-            evidencia.setTamanoKB(Math.round(kb * 100.0) / 100.0);
-        
-            return evidencia;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error de Lectura", 
-                    "No se pudo procesar el archivo: " + archivo.getName(), Alert.AlertType.ERROR);
-            return null;
-        }
+        return evidencia;
     }
     
     private boolean esArchivoValido(File archivo) {
-        String nombre = archivo.getName().toLowerCase();
-        
-        boolean extensionCorrecta = nombre.endsWith(".pdf") || nombre.endsWith(".jpg") || 
-                                nombre.endsWith(".jpeg") || nombre.endsWith(".png");
-        
-        if (!extensionCorrecta) {
-            Utilidades.mostrarAlertaSimple("Formato no válido", 
-                    "Archivo: " + nombre + "\nSolo PDF, JPG y PNG.", Alert.AlertType.WARNING);
-            return false;
-        }
+        String resultado = ValidadorEvidencia.validarArchivo(archivo);
 
-        long limiteBytes = 5 * 1024 * 1024;
-        
-        if (archivo.length() > limiteBytes) {
-            Utilidades.mostrarAlertaSimple("Archivo pesado", 
-                "El archivo " + nombre + " excede 5MB.", Alert.AlertType.WARNING);
+        if (!resultado.equals("OK")) {
+            Utilidades.mostrarAlertaSimple("Archivo no válido", 
+                "El archivo " + archivo.getName() + " tiene errores:\n" + resultado, 
+                Alert.AlertType.WARNING);
             return false;
         }
-        
         return true;
     }
     
+    private static boolean esCapacidadValida(int archivosActuales, int cantidadNuevos) {
+        return (archivosActuales + cantidadNuevos) <= 5;
+    }
+    
     private void guardarCambios() {
-        HashMap<String, Object> respuesta = EvidenciaImplementacion.guardarCambiosEvidencias(
-            evidenciasPorGuardar, 
-            evidenciasPorEliminar,
-            Sesion.getIdTutor(),
-            sesionActual.getNumSesion()
-        );
-        
-        if (!(boolean) respuesta.get("error")) {
-            Utilidades.mostrarAlertaSimple("Éxito", respuesta.get("mensaje").toString(), 
-                    Alert.AlertType.INFORMATION);
-            evidenciasPorGuardar.clear();
-            evidenciasPorEliminar.clear();
-            btnGuardar.setDisable(true);
-            regresarAListado();
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron aplicar los cambios.", 
-                    Alert.AlertType.WARNING);
-        }
+        boolean exito = persistirCambiosEnBD();
+        procesarResultadoGuardado(exito);
     }
     
     public void inicializarSesion(SesionTutoria sesion) {
@@ -203,6 +165,45 @@ public class FXMLFormularioEvidenciaController implements Initializable {
         cbSesion.setDisable(true);
         
         cargarEvidenciasExistentes();
+    }
+    
+    private byte[] leerBytesDelArchivo(File archivo) {
+        try {
+            return Files.readAllBytes(archivo.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Utilidades.mostrarAlertaSimple("Error de Lectura", 
+                "No se pudo procesar el archivo: " + archivo.getName(), Alert.AlertType.ERROR);
+            return null;
+        }
+    }
+    
+    private void limpiarEstadoLocal() {
+        evidenciasPorGuardar.clear();
+        evidenciasPorEliminar.clear();
+        btnGuardar.setDisable(true);
+    }
+    
+    private ArrayList<Evidencia> obtenerEvidenciasDeBD() {
+        HashMap<String, Object> respuesta = EvidenciaImplementacion.obtenerEvidenciasPorSesion(
+            Sesion.getIdTutor(), sesionActual.getNumSesion());
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Evidencia>) respuesta.get("evidencias");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", respuesta.get("mensaje").toString(), Alert.AlertType.WARNING);
+            return null;
+        }
+    }
+    
+    private boolean persistirCambiosEnBD() {
+        HashMap<String, Object> respuesta = EvidenciaImplementacion.guardarCambiosEvidencias(
+            evidenciasPorGuardar, 
+            evidenciasPorEliminar,
+            Sesion.getIdTutor(),
+            sesionActual.getNumSesion()
+        );
+        return !(boolean) respuesta.get("error");
     }
     
     private void procesarArchivos(List<File> archivos) {
@@ -222,6 +223,16 @@ public class FXMLFormularioEvidenciaController implements Initializable {
         }
         
     }
+    
+    private void procesarResultadoGuardado(boolean exito) {
+        if (exito) {
+            Utilidades.mostrarAlertaSimple("Éxito", "Cambios guardados correctamente.", Alert.AlertType.INFORMATION);
+            limpiarEstadoLocal();
+            regresarAListado();
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", "No se pudieron aplicar los cambios.", Alert.AlertType.WARNING);
+        }
+    }
 
     private void procesarEliminacion(Evidencia evidencia) {
         vbListaArchivos.getChildren().removeIf(nodo -> 
@@ -235,6 +246,14 @@ public class FXMLFormularioEvidenciaController implements Initializable {
         }
 
         validarBotonGuardar();
+    }
+    
+    private void renderizarListaEvidencias(ArrayList<Evidencia> evidencias) {
+        vbListaArchivos.getChildren().clear();
+        for (Evidencia ev : evidencias) {
+            TarjetaArchivo tarjeta = new TarjetaArchivo(ev, this::procesarEliminacion);
+            vbListaArchivos.getChildren().add(tarjeta);
+        }
     }
     
     private void regresarAListado() {
@@ -261,8 +280,9 @@ public class FXMLFormularioEvidenciaController implements Initializable {
     }
     
     private boolean validarCapacidadDisponible(int cantidadNuevos) {
-        int totalVisual = vbListaArchivos.getChildren().size() + cantidadNuevos;
-        if (totalVisual > 5) {
+        int archivosActuales = vbListaArchivos.getChildren().size();
+
+        if (!esCapacidadValida(archivosActuales, cantidadNuevos)) {
             Utilidades.mostrarAlertaSimple("Límite excedido", 
                 "Solo puede tener máximo 5 archivos por sesión.", 
                 Alert.AlertType.WARNING);

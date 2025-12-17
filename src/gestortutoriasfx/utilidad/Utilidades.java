@@ -22,7 +22,6 @@ import javafx.scene.control.ButtonType;
  */
 
 public class Utilidades {
-    //Alertas que solo muestran algo
     public static void mostrarAlertaSimple(String titulo, String contenido, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
         alerta.setTitle(titulo);
@@ -54,7 +53,6 @@ public class Utilidades {
         return resultado.isPresent() && resultado.get() == botonAceptar;
     }
     
-    //Metodo para colocar la url de los FXML de manera mas sencilla
     public static FXMLLoader obtenerVista(String url){
         return new FXMLLoader(GestorTutoriasFX.class.getResource(url));
     }

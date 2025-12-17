@@ -1,19 +1,35 @@
-package gestortutoriasfx.utilidades;
+package gestortutoriasfx.utilidades; // Asegúrate que el paquete sea el correcto
 
 import gestortutoriasfx.modelo.pojo.Tutor;
-import gestortutoriasfx.utilidad.TarjetaBase;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.util.function.Consumer;
 
-public class TarjetaTutor extends TarjetaBase {
+public class TarjetaTutor extends VBox { 
 
     private final Tutor tutor;
+    
+    private final String ESTILO_NORMAL = "-fx-background-color: #ffffff; "
+                + "-fx-border-color: #bdbdbd; "
+                + "-fx-border-width: 1; "
+                + "-fx-background-radius: 5; "
+                + "-fx-border-radius: 5; "
+                + "-fx-cursor: hand; "
+                + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);";
+    
+    private final String ESTILO_SELECCIONADO = "-fx-background-color: #e3f2fd; "
+                + "-fx-border-color: #1565c0; "
+                + "-fx-border-width: 2; "
+                + "-fx-background-radius: 5; "
+                + "-fx-border-radius: 5; "
+                + "-fx-cursor: hand;";
 
     public TarjetaTutor(Tutor tutor, Consumer<Tutor> accionAlSeleccionar) {
         super();
@@ -24,8 +40,13 @@ public class TarjetaTutor extends TarjetaBase {
     private void inicializarContenido(Consumer<Tutor> accionClick) {
         this.setAlignment(Pos.CENTER);
         this.setSpacing(10);
-        this.setPrefHeight(100);
+        this.setPadding(new Insets(15));
         this.setPrefWidth(280);
+        
+        this.setMinHeight(80); 
+        this.setPrefHeight(USE_COMPUTED_SIZE);
+
+        this.setStyle(ESTILO_NORMAL);
 
         Label lbNombre = new Label(tutor.getNombreCompleto());
         lbNombre.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -33,6 +54,7 @@ public class TarjetaTutor extends TarjetaBase {
         lbNombre.setWrapText(true);
         lbNombre.setAlignment(Pos.CENTER);
         lbNombre.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        lbNombre.setMaxWidth(Double.MAX_VALUE); 
 
         HBox infoInferior = new HBox();
         infoInferior.setAlignment(Pos.CENTER);
@@ -54,11 +76,18 @@ public class TarjetaTutor extends TarjetaBase {
             if (accionClick != null) {
                 accionClick.accept(tutor);
             }
-            this.seleccionar();
         });
     }
 
     public Tutor getTutor() {
         return tutor;
+    }
+
+    public void seleccionar() {
+        this.setStyle(ESTILO_SELECCIONADO);
+    }
+
+    public void deseleccionar() {
+        this.setStyle(ESTILO_NORMAL);
     }
 }

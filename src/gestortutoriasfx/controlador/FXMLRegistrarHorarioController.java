@@ -66,7 +66,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
     
     private PeriodoEscolar periodoActual;
     private ArrayList<FechaTutoria> rangosFechas;
-    private static final DateTimeFormatter FORMATO_HORA_BD = DateTimeFormatter.ofPattern("H:mm");
+    private static final DateTimeFormatter FORMATO_HORA_BD = DateTimeFormatter.ofPattern("HH:mm");
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -167,18 +167,6 @@ public class FXMLRegistrarHorarioController implements Initializable {
         }
     }
     
-    private void cargarHorario(List<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.cargarHorarioGenerado((ArrayList<SesionTutoria>) lista);        
-        if (!(boolean) respuesta.get("error")) {
-            Utilidades.mostrarAlertaSimple("Éxito", "Se genero la asignacion de horarios correctamente.", 
-                    Alert.AlertType.INFORMATION);
-            limpiarPanelCentral();
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", "No se pudieron guardar los horarios en la BD.", 
-                    Alert.AlertType.WARNING);
-        }
-    }
-    
     private void cargarPeriodo() {
         HashMap<String, Object> respuesta = PeriodoEscolarImplementacion.obtenerPeriodoActual();
         if (!(boolean) respuesta.get("error")) {
@@ -203,7 +191,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         ArrayList<FechaTutoria> todasLasFechas = (ArrayList<FechaTutoria>) respFechas.get("fechas");
         ArrayList<Integer> sesionesOcupadas = (ArrayList<Integer>) respOcupadas.get("ocupadas");
         
-        this.rangosFechas = todasLasFechas; 
+        rangosFechas = todasLasFechas; 
 
         ObservableList<FechaTutoria> sesionesValidas = filtrarSesionesValidas(todasLasFechas, sesionesOcupadas);
         actualizarComboSesiones(sesionesValidas);
@@ -258,7 +246,12 @@ public class FXMLRegistrarHorarioController implements Initializable {
             horaInicio
         );
 
-        cargarHorario(horariosGenerados);
+        registrarHorario(horariosGenerados);
+    }
+    
+    private boolean guardarHorarios(List<SesionTutoria> lista) {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.registrarSesion((ArrayList<SesionTutoria>) lista);        
+        return !(boolean) respuesta.get("error");
     }
     
     private ObservableList<FechaTutoria> filtrarSesionesValidas(
@@ -288,22 +281,19 @@ public class FXMLRegistrarHorarioController implements Initializable {
     }
     
     private ArrayList<Estudiante> obtenerEstudiantes(){
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerEstudiantesDelTutor(Sesion.getIdTutor());
+        ArrayList<Estudiante> estudiantes = recuperarEstudiantes();
         
-        if (!(boolean) respuesta.get("error")) {
-            ArrayList<Estudiante> lista = (ArrayList<Estudiante>) respuesta.get("estudiantes");
-            if(lista.isEmpty()) {
-                Utilidades.mostrarAlertaSimple("Sin Alumnos", 
-                        "No tiene estudiantes asignados.", Alert.AlertType.WARNING);
-                return null;
-            }
-            lista.sort(Comparator.comparingInt(Estudiante::getSemestre).thenComparing(Estudiante::getApellidoPaterno));
-            return lista;
-        } else {
-            Utilidades.mostrarAlertaSimple("Error", 
-                    respuesta.get("mensaje").toString(), Alert.AlertType.ERROR);
-            return null;
+        if (estudiantes != null && !estudiantes.isEmpty()) {
+            ordenarEstudiantes(estudiantes);
+            return estudiantes;
         }
+        
+        if (estudiantes != null && estudiantes.isEmpty()) {
+             Utilidades.mostrarAlertaSimple("Sin Alumnos", 
+                "No tiene estudiantes asignados para generar horarios.", Alert.AlertType.WARNING);
+        }
+        
+        return null;
     }
     
     private LocalTime obtenerHoraInicioSeleccionada() {
@@ -312,28 +302,67 @@ public class FXMLRegistrarHorarioController implements Initializable {
         return LocalTime.parse(horaString, formatoEntrada);
     }
     
+    private void ordenarEstudiantes(ArrayList<Estudiante> lista) {
+        lista.sort(Comparator.comparingInt(Estudiante::getSemestre)
+             .thenComparing(Estudiante::getApellidoPaterno));
+    }
+    
+    private void procesarResultadoRegistro(boolean exito) {
+        if (exito) {
+            Utilidades.mostrarAlertaSimple("Éxito", 
+                "Se generó la asignación de horarios correctamente.", Alert.AlertType.INFORMATION);
+            limpiarPanelCentral();
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", 
+                "No se pudieron guardar los horarios en la BD.", Alert.AlertType.WARNING);
+        }
+    }
+    
+    private ArrayList<Estudiante> recuperarEstudiantes() {
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.obtenerEstudiantesDelTutor(Sesion.getIdTutor());
+        
+        if (!(boolean) respuesta.get("error")) {
+            return (ArrayList<Estudiante>) respuesta.get("estudiantes");
+        } else {
+            Utilidades.mostrarAlertaSimple("Error", 
+                respuesta.get("mensaje").toString(), Alert.AlertType.ERROR);
+            return null;
+        }
+    }
+    
+    private void registrarHorario(List<SesionTutoria> lista) {
+        boolean exito = guardarHorarios(lista);
+        procesarResultadoRegistro(exito);
+    }
+    
     private boolean validarCampos() {
         boolean valido = true;
-        StringBuilder msj = new StringBuilder();
+        String mensajeError = "Se encontraron los siguientes errores: \n";
         
         if (cbNumeroSesion.getValue() == null) {
-            valido = false; msj.append("• Seleccione una sesión.\n");
+            valido = false; 
+            mensajeError += "Seleccione una sesión.\n";
         }
         
         if (cbHora.getValue() == null) {
-            valido = false; msj.append("• Ingrese hora de inicio.\n");
+            valido = false; 
+            mensajeError += "Ingrese hora de inicio.\n";
         }
         if (cbMinutos.getValue() == null) {
-            valido = false; msj.append("• Ingrese minutos de inicio.\n");
+            valido = false; 
+            mensajeError += "Ingrese minutos de inicio.\n";
         }
         if (cbSalon.getValue() == null) {
-            valido = false; msj.append("• Seleccione un salón.\n");
+            valido = false; 
+            mensajeError += ("Seleccione un salón.\n");
         }
         if (cbModalidad.getValue() == null) {
-            valido = false; msj.append("• Seleccione una modalidad.\n");
+            valido = false; 
+            mensajeError += ("Seleccione una modalidad.\n");
         }
         
-        if (!valido) Utilidades.mostrarAlertaSimple("Datos Inválidos", msj.toString(), Alert.AlertType.WARNING);
+        if (!valido) Utilidades.mostrarAlertaSimple("Datos Inválidos", 
+                mensajeError, Alert.AlertType.WARNING);
         return valido;
     }
 }

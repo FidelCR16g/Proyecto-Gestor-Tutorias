@@ -1,18 +1,10 @@
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
-import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.dao.ProblematicaAcademicaDAO;
 import gestortutoriasfx.modelo.dao.ReporteTutoriaDAO;
-import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.modelo.pojo.ProblematicaAcademica;
 import gestortutoriasfx.modelo.pojo.ReporteTutoria;
-import gestortutoriasfx.modelo.pojo.SesionTutoria;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,36 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ReporteTutoriaImplementacion {
-    public static HashMap<String, Object> obtenerReporteActual(int idTutor, int idPeriodo, int numSesion) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-        
-        Connection conexion = ConexionBD.abrirConexionBD();
-        if (conexion != null) {
-            try {
-                ReporteTutoria reporte = ReporteTutoriaDAO.obtenerReporte(conexion, idTutor, idPeriodo, numSesion);
-                
-                if (reporte != null) {
-                    ArrayList<ProblematicaAcademica> problematicas = 
-                            ProblematicaAcademicaDAO.obtenerProblematicasPorReporte(conexion, reporte.getIdReporteTutoria());
-                    respuesta.put("problematicas", problematicas);
-                }
-                
-                respuesta.put("error", false);
-                respuesta.put("reporte", reporte);
 
-            } catch (SQLException e) {
-                respuesta.put("mensaje", "Error BD al cargar reporte: " + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                ConexionBD.cerrarConexion(conexion);
-            }
-        } else {
-            respuesta.put("mensaje", "Sin conexión con la base de datos.");
-        }
-        return respuesta;
-    }
-    
     public static HashMap<String, Object> guardarReporteCompleto(ReporteTutoria reporte, List<ProblematicaAcademica> problematicas) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
@@ -88,6 +51,36 @@ public class ReporteTutoriaImplementacion {
                 try { conexion.rollback(); } catch (SQLException ex) { }
             } finally {
                 try { conexion.setAutoCommit(true); } catch (SQLException ex) { }
+                ConexionBD.cerrarConexion(conexion);
+            }
+        } else {
+            respuesta.put("mensaje", "Sin conexión con la base de datos.");
+        }
+        return respuesta;
+    }
+    
+    public static HashMap<String, Object> obtenerReporteActual(int idTutor, int idPeriodo, int numSesion) {
+        HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
+        
+        Connection conexion = ConexionBD.abrirConexionBD();
+        if (conexion != null) {
+            try {
+                ReporteTutoria reporte = ReporteTutoriaDAO.obtenerReporte(conexion, idTutor, idPeriodo, numSesion);
+                
+                if (reporte != null) {
+                    ArrayList<ProblematicaAcademica> problematicas = 
+                            ProblematicaAcademicaDAO.obtenerProblematicasPorReporte(conexion, reporte.getIdReporteTutoria());
+                    respuesta.put("problematicas", problematicas);
+                }
+                
+                respuesta.put("error", false);
+                respuesta.put("reporte", reporte);
+
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error BD al cargar reporte: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
                 ConexionBD.cerrarConexion(conexion);
             }
         } else {
@@ -261,6 +254,5 @@ public class ReporteTutoriaImplementacion {
         }
         return resp;
     }
-
 
 }

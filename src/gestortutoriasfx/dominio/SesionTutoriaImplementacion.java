@@ -60,6 +60,38 @@ public class SesionTutoriaImplementacion {
         return respuesta;
     }
 
+
+     public static HashMap<String, Object> registrarSesion(ArrayList<SesionTutoria> horarios) {
+        HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
+
+        Connection conexion = ConexionBD.abrirConexionBD();
+        if (conexion != null) {
+            try {
+                conexion.setAutoCommit(false);
+
+                for (SesionTutoria sesionTutoria : horarios) {
+                    SesionTutoriaDAO.registrarSesion(conexion, sesionTutoria);
+                }
+
+                conexion.commit();
+                respuesta.put("error", false);
+                respuesta.put("mensaje", "Se registraron " + horarios.size() + " horarios correctamente.");
+
+            } catch (SQLException ex) {
+                respuesta.put("mensaje", "Error al guardar en BD: " + ex.getMessage());
+                ex.printStackTrace();
+                try { conexion.rollback(); } catch (SQLException e) { e.printStackTrace(); }
+            } finally {
+                try { conexion.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+                ConexionBD.cerrarConexion(conexion);
+            }
+        } else {
+            respuesta.put("mensaje", "No hay conexión con la base de datos.");
+        }
+        return respuesta;
+    }
+
     public static HashMap<String, Object> guardarAsistencias(List<SesionTutoria> lista) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
