@@ -1,10 +1,16 @@
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
+import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.dao.ProblematicaAcademicaDAO;
 import gestortutoriasfx.modelo.dao.ReporteTutoriaDAO;
+import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.modelo.pojo.ProblematicaAcademica;
 import gestortutoriasfx.modelo.pojo.ReporteTutoria;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -108,79 +114,6 @@ public class ReporteTutoriaImplementacion {
             respuesta.put("mensaje", "Sin conexión.");
         }
         return respuesta;
-    }
-    
-    public static boolean exportarReporteTextoPlano(ReporteTutoria reporteParametro, PeriodoEscolar periodo, File archivoDestino) {
-    int idTutor = Sesion.getIdTutor(); 
-
-    HashMap<String, Object> resp = obtenerReporteActual(idTutor, periodo.getIdPeriodoEscolar(), reporteParametro.getNumSesion());
-    
-    ArrayList<ProblematicaAcademica> lista = (boolean) resp.get("error") ? new ArrayList<>() : (ArrayList<ProblematicaAcademica>) resp.get("problematicas");
-    
-    ReporteTutoria reporteFresco = (ReporteTutoria) resp.get("reporte");
-    
-    ReporteTutoria reporteAUsar = (reporteFresco != null) ? reporteFresco : reporteParametro;
-
-    try (FileWriter fw = new FileWriter(archivoDestino);
-         BufferedWriter bw = new BufferedWriter(fw);
-         PrintWriter escritor = new PrintWriter(bw)) {
-        
-        escritor.println("Fechas de Tutoría:      Del " + reporteAUsar.getFechaPrimeraTutoria() + " al " + reporteAUsar.getFechaUltimaTutoria());
-        escritor.println("");
-        escritor.println("----------------------------------------------------------------");
-        
-        escritor.println("RESUMEN DE ASISTENCIA");
-        escritor.println("   > Alumnos Asistentes:  " + reporteAUsar.getNumAlumnosAsistieron()); 
-        escritor.println("   > Alumnos en Riesgo:   " + reporteAUsar.getNumAlumnosRiesgo());
-
-            escritor.println("PROBLEMÁTICAS ACADÉMICAS DETECTADAS");
-            escritor.println("");
-        
-            String formatoTabla = "%-25s | %-25s | %-30s | %-10s%n";
-        
-            escritor.printf(formatoTabla, "EXPERIENCIA ED.", "PROFESOR", "PROBLEMA", "ALUMNOS");
-            escritor.println("--------------------------+---------------------------+--------------------------------+------------");
-
-            if (lista.isEmpty()) {
-                escritor.println("                   NO SE REPORTAN PROBLEMÁTICAS                   ");
-            } else {
-                for (ProblematicaAcademica p : lista) {
-                    escritor.printf(formatoTabla,
-                            acortarTexto(p.getNombreNRC(), 25),
-                            acortarTexto(p.getNombreProfesor(), 25),
-                            acortarTexto(p.getProblema(), 30),
-                            p.getNumEstudiantes()
-                    );
-                }
-            }
-            
-            escritor.println("");
-            escritor.println("----------------------------------------------------------------");
-
-            escritor.println("COMENTARIOS GENERALES");
-            escritor.println("");
-            escritor.println(reporteAUsar.getComentarios());
-            escritor.println("");
-            escritor.println("");
-            escritor.println("");
-        
-            escritor.println("__________________________             __________________________");
-            escritor.println("     Nombre del Tutor                    Coordinador de Tutorías");
-            escritor.println("");
-            escritor.println("================================================================");
-
-            return true;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    private static String acortarTexto(String texto, int largoMax) {
-        if (texto == null) return "";
-        if (texto.length() <= largoMax) return texto;
-        return texto.substring(0, largoMax - 3) + "...";
     }
     
     
