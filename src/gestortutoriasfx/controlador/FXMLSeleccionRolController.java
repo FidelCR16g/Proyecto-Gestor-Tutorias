@@ -121,6 +121,7 @@ public class FXMLSeleccionRolController implements Initializable {
             Stage stageActual = (Stage) btnRolSuperior.getScene().getWindow();
             stageActual.setScene(new Scene(root));
             stageActual.setTitle("Inicio de Sesión");
+            stageActual.centerOnScreen();
             stageActual.show();
 
         } catch (IOException ex) {
@@ -185,6 +186,7 @@ public class FXMLSeleccionRolController implements Initializable {
             Stage stageActual = (Stage) btnRolSuperior.getScene().getWindow();
             stageActual.setScene(new Scene(vista));
             stageActual.setTitle("Sistema de Gestión de Tutorías - " + rol);
+            stageActual.centerOnScreen();
             stageActual.show();
 
         } catch (IOException e) {

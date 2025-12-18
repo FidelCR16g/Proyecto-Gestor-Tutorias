@@ -19,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -37,6 +38,8 @@ public class FXMLGestionarReporteGeneralController implements Initializable {
     @FXML private TableColumn<ReporteGeneral, String> colFecha;
     @FXML private TableColumn<ReporteGeneral, String> colEstatus;
 
+    @FXML private Button btnExportar;
+
     private StackPane panelContenido;
     private Parent vistaListado;
 
@@ -44,7 +47,6 @@ public class FXMLGestionarReporteGeneralController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Guardar raíz del listado (para regresar sin recargar)
         try {
             Node n = tvReportesGenerales;
             while (n != null && n.getParent() != null) n = n.getParent();
@@ -58,6 +60,12 @@ public class FXMLGestionarReporteGeneralController implements Initializable {
                     ? Sesion.getUsuarioSesion().getNombre()
                     : "";
             lbContexto.setText("Coordinador: " + nombre);
+        }
+
+        if (btnExportar != null) {
+            btnExportar.setDisable(true);
+            btnExportar.setVisible(false);
+            btnExportar.setManaged(false);
         }
 
         colPrograma.setCellValueFactory(d ->
@@ -135,26 +143,14 @@ public class FXMLGestionarReporteGeneralController implements Initializable {
         }
         abrirFormulario(FXMLFormularioReporteGeneralController.Modo.EDITAR, sel);
     }
-
-    @FXML
-    private void clicVer(ActionEvent e) {
-        ReporteGeneral sel = tvReportesGenerales.getSelectionModel().getSelectedItem();
-        if (sel == null) {
-            Utilidades.mostrarAlertaSimple("Atención", "Selecciona un reporte para ver.", Alert.AlertType.WARNING);
-            return;
-        }
-        abrirFormulario(FXMLFormularioReporteGeneralController.Modo.VER, sel);
-    }
-
+    
     @FXML
     private void clicExportar(ActionEvent e) {
-        ReporteGeneral sel = tvReportesGenerales.getSelectionModel().getSelectedItem();
-        if (sel == null) {
-            Utilidades.mostrarAlertaSimple("Atención", "Selecciona un reporte para exportar.", Alert.AlertType.WARNING);
-            return;
-        }
-        // Lo más práctico: abrir en modo VER y exportas desde el formulario (con FileChooser + guardar en DB).
-        abrirFormulario(FXMLFormularioReporteGeneralController.Modo.VER, sel);
+        Utilidades.mostrarAlertaSimple(
+                "Exportar",
+                "La opción Exportar está deshabilitada temporalmente.",
+                Alert.AlertType.INFORMATION
+        );
     }
 
     private void abrirFormulario(FXMLFormularioReporteGeneralController.Modo modo, ReporteGeneral base) {
@@ -173,7 +169,7 @@ public class FXMLGestionarReporteGeneralController implements Initializable {
             Runnable volver = () -> {
                 cargarTabla(tfBusqueda != null ? tfBusqueda.getText().trim() : "");
                 if (vistaListado != null) panelContenido.getChildren().setAll(vistaListado);
-                else panelContenido.getChildren().setAll(vistaForm); // fallback raro
+                else panelContenido.getChildren().setAll(vistaForm);
             };
 
             ctrl.inicializarFormulario(modo, base, volver);

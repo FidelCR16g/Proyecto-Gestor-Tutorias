@@ -5,14 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: white;"
+<AnchorPane fx:id="apRoot"
+            prefHeight="700.0" prefWidth="900.0"
+            style="-fx-background-color: white;"
             xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gestortutoriasfx.controlador.FXMLRevisarReportesTutoriaController">
 
     <children>
-
-        <!-- ENCABEZADO -->
         <VBox alignment="CENTER_LEFT" prefHeight="60.0"
               style="-fx-background-color: #0267A2; -fx-border-width: 0 0 1 0;"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -29,8 +29,6 @@
                 </Label>
             </children>
         </VBox>
-
-        <!-- CONTENIDO -->
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
                     layoutY="60.0" style="-fx-background-color: transparent;"
                     AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0"
@@ -61,8 +59,6 @@
                                         prefWidth="120"/>
                             </children>
                         </HBox>
-
-                        <!-- === 2. RESULTADOS === -->
                         <Label text="2. Reportes encontrados" textFill="#0267a2">
                             <font><Font name="System Bold" size="14.0"/></font>
                         </Label>
@@ -85,8 +81,6 @@
                 </VBox>
             </content>
         </ScrollPane>
-
-        <!-- BOTONERA -->
         <HBox alignment="CENTER_RIGHT" prefHeight="60.0" spacing="15.0"
               style="-fx-border-color: #cccccc; -fx-border-width: 1 0 0 0;"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">

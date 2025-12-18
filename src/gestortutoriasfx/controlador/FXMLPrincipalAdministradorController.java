@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -66,28 +67,9 @@ public class FXMLPrincipalAdministradorController implements Initializable, IPri
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
-        boolean confirmar = Utilidades.mostrarAlertaConfirmacion(
-                "Cerrar sesión",
-                "¿Deseas cerrar la sesión actual?"
-        );
-        if (!confirmar) return;
-
-        try {
-            FXMLLoader loader = Utilidades.obtenerVista("/gestortutoriasfx/vista/FXMLInicioSesion.fxml");
-            Parent root = loader.load();
-
-            // Cambiamos la raíz de la escena sin depender del Stage
-            borderPanePrincipal.getScene().setRoot(root);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Utilidades.mostrarAlertaSimple(
-                    "Error",
-                    "No se pudo regresar al inicio de sesión.",
-                    Alert.AlertType.ERROR
-            );
-        }
+        Utilidades.confirmarCerrarSesionYRedirigirALogin((Node) event.getSource());
     }
+
 
     private void cargarEnPanel(String ruta) {
         try {

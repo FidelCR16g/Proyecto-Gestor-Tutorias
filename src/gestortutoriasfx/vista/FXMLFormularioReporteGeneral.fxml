@@ -21,16 +21,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="650.0" prefWidth="1170.0"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gestortutoriasfx.controlador.FXMLFormularioReporteGeneralController">
+<BorderPane prefHeight="850.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLFormularioReporteGeneralController">
 
     <!-- Header -->
     <top>
         <VBox prefWidth="1206.0" style="-fx-background-color: #0267A2;">
-            <Label style="-fx-font-size: 20px; -fx-font-weight: bold;"
-                   text="Reporte General de Tutorías" textFill="WHITE">
+            <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Reporte General de Tutorías" textFill="WHITE">
                 <VBox.margin>
                     <Insets bottom="2" left="10" right="10" top="10" />
                 </VBox.margin>
@@ -54,24 +50,26 @@
                         <Insets bottom="12" left="12" right="12" top="12" />
                     </padding>
 
-                    <GridPane hgap="10" vgap="8">
+                          <GridPane hgap="10" prefHeight="100.0" prefWidth="427.0" vgap="8">
                         <Label text="Programa Educativo:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <ComboBox fx:id="cbPrograma" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbPrograma" prefHeight="25.0" prefWidth="339.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                        <Label text="Periodo:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="cbPeriodo" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Periodo:" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="cbPeriodo" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                        <Label text="No. de sesión:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="cbNumSesion" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label prefHeight="17.0" prefWidth="94.0" text="No. de sesión:" GridPane.columnIndex="2" />
+                        <ComboBox fx:id="cbNumSesion" prefHeight="25.0" prefWidth="69.0" GridPane.columnIndex="3" />
 
-                        <Label text="Fecha:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                        <DatePicker fx:id="dpFecha" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="Fecha:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <DatePicker fx:id="dpFecha" prefHeight="25.0" prefWidth="153.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                        <Label text="Lugar/Estado:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                        <TextField fx:id="tfEstadoLugar" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label text="Lugar/Estado:" GridPane.rowIndex="5" />
+                        <TextField fx:id="tfEstadoLugar" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <columnConstraints>
                             <ColumnConstraints />
                             <ColumnConstraints />
+                     <ColumnConstraints />
+                     <ColumnConstraints />
                         </columnConstraints>
                         <rowConstraints>
                             <RowConstraints />
@@ -79,33 +77,38 @@
                             <RowConstraints />
                             <RowConstraints />
                             <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
                         </rowConstraints>
                     </GridPane>
 
-                    <Label style="-fx-font-weight: bold;" text="Objetivos:" />
-                    <TextArea fx:id="taObjetivos" prefRowCount="4" wrapText="true" />
+                          <Label style="-fx-font-weight: bold;" text="Objetivos:" />
+                    <TextArea fx:id="taObjetivos" prefHeight="58.0" prefRowCount="4" prefWidth="754.0" wrapText="true" />
 
-                    <!-- Totales -->
-                    <TitledPane expanded="true" text="Estadísticas globales">
-                        <GridPane hgap="10" vgap="8">
+                          <!-- Totales -->
+                    <TitledPane expanded="true" prefHeight="107.0" prefWidth="754.0" text="Estadísticas globales">
+                        <GridPane hgap="10" prefHeight="62.0" prefWidth="752.0" vgap="8">
                             <padding>
                                 <Insets bottom="10" left="10" right="10" top="10" />
                             </padding>
 
-                            <Label text="Total alumnos registrados:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                  <Label text="Total alumnos registrados:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                             <TextField fx:id="tfTotalRegistrados" prefWidth="120" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                            <Label text="Total alumnos que asistieron:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                  <Label text="Total alumnos que asistieron:" GridPane.rowIndex="1" />
                             <TextField fx:id="tfTotalAsistieron" prefWidth="120" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                            <Label text="Porcentaje asistencia:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                            <TextField fx:id="tfPorcentaje" editable="false" prefWidth="120" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                            <Button onAction="#clicCalcularDesdeTutorias" text="Calcular desde reportes de tutoría"
-                                    GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                                  <Label text="Porcentaje asistencia:" GridPane.columnIndex="3" />
+                            <TextField fx:id="tfPorcentaje" editable="false" prefWidth="120" GridPane.columnIndex="4" />
                             <columnConstraints>
                                 <ColumnConstraints />
                                 <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints />
@@ -116,14 +119,14 @@
                         </GridPane>
                     </TitledPane>
 
-                    <!-- Problemas -->
+                          <!-- Problemas -->
                     <TitledPane expanded="true" text="Concentrado de Problemas Académicos">
                         <VBox spacing="8">
                             <padding>
                                 <Insets bottom="10" left="10" right="10" top="10" />
                             </padding>
 
-                            <TableView fx:id="tvProblemas" prefHeight="160">
+                                  <TableView fx:id="tvProblemas" prefHeight="131.0" prefWidth="732.0">
                                 <columns>
                                     <TableColumn fx:id="colEE" prefWidth="180" text="EE" />
                                     <TableColumn fx:id="colProfesor" prefWidth="180" text="Profesor" />
@@ -138,36 +141,34 @@
                         </VBox>
                     </TitledPane>
 
-                    <!-- Tutores -->
+                          <!-- Tutores -->
                     <TitledPane expanded="true" text="Lista de tutores y comentarios generales">
                         <VBox spacing="8">
                             <padding>
                                 <Insets bottom="10" left="10" right="10" top="10" />
                             </padding>
 
-                            <TableView fx:id="tvTutores" prefHeight="160">
+                                  <TableView fx:id="tvTutores" prefHeight="160">
                                 <columns>
                                     <TableColumn fx:id="colTutor" prefWidth="250" text="Tutor" />
                                     <TableColumn fx:id="colComentario" prefWidth="420" text="Comentario" />
                                 </columns>
                             </TableView>
 
-                            <HBox spacing="10">
+                                  <HBox spacing="10">
                                 <Button onAction="#clicAgregarTutorComentario" text="Agregar tutor" />
                                 <Button onAction="#clicQuitarTutorComentario" text="Quitar" />
-                                <Button onAction="#clicAutollenarTutores" text="Autollenar (desde reportes de tutoría)" />
                             </HBox>
                         </VBox>
                     </TitledPane>
 
-                    <HBox alignment="CENTER_RIGHT" spacing="10">
+                          <HBox alignment="CENTER_RIGHT" spacing="10">
                         <Button fx:id="btnGuardar" onAction="#clicGuardar" text="Guardar" />
                         <Button fx:id="btnFinalizar" onAction="#clicFinalizar" text="Finalizar" />
-                        <Button fx:id="btnExportar" onAction="#clicExportar" text="Exportar" />
                         <Button onAction="#clicCancelar" text="Cancelar" />
                     </HBox>
 
-                </VBox>
+                      </VBox>
             </ScrollPane>
 
             <!-- DERECHA (CORREGIDA) -->
@@ -181,12 +182,12 @@
                         <Label text="Filtrar por No. de sesión (1–4):" />
                         <HBox spacing="8">
                             <TextField fx:id="tfBuscarNumSesionTutoria" prefWidth="120" promptText="Ej. 1" />
-                            <Button text="Buscar" onAction="#clicBuscarReportesTutoriaPorSesion" />
-                            <Button text="Limpiar" onAction="#clicLimpiarBusquedaReportesTutoria" />
+                            <Button onAction="#clicBuscarReportesTutoriaPorSesion" text="Buscar" />
+                            <Button onAction="#clicLimpiarBusquedaReportesTutoria" text="Limpiar" />
                         </HBox>
 
                         <Label text="Selecciona un reporte para abrirlo:" />
-                        <TableView fx:id="tvTutorias" prefHeight="300">
+                        <TableView fx:id="tvTutorias" prefHeight="404.0" prefWidth="351.0">
                             <columns>
                                 <TableColumn fx:id="colTutoriaTutor" prefWidth="120.0" text="Tutor" />
                                 <TableColumn fx:id="colTutoriaFechas" prefWidth="160.0" text="Fechas" />

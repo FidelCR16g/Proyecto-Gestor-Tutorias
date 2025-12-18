@@ -73,6 +73,19 @@ public class FXMLFormularioTutoradoController implements Initializable {
 
         aplicarModoEdicion(false);
 
+        if (tfCorreo != null) {
+            tfCorreo.setDisable(true);
+            tfCorreo.setEditable(false);
+        }
+
+        if (tfMatricula != null) {
+            tfMatricula.textProperty().addListener((obs, oldV, nuevo) -> {
+                if (modoEdicion) return;
+                MatriculaInfo mi = normalizarMatricula(nuevo);
+                tfCorreo.setText(mi != null ? mi.correoCanon : "");
+            });
+        }
+
         cargarProgramas();
         limpiarTutoresYSemestres();
 
@@ -87,7 +100,6 @@ public class FXMLFormularioTutoradoController implements Initializable {
             });
         }
     }
-
 
     private void cargarProgramas() {
         if (cbPrograma == null) return;
@@ -111,7 +123,9 @@ public class FXMLFormularioTutoradoController implements Initializable {
         cbTutor.getItems().clear();
         cbTutor.getSelectionModel().clearSelection();
 
-        HashMap<String, Object> resp = TutorImplementacion.obtenerTutoresPorProgramaEducativo(idProgramaEducativo);
+        HashMap<String, Object> resp =
+                TutorImplementacion.obtenerTutoresPorProgramaEducativo(idProgramaEducativo);
+
         if (resp != null && resp.get("error") instanceof Boolean && !(boolean) resp.get("error")) {
             @SuppressWarnings("unchecked")
             ArrayList<Tutor> tutores = (ArrayList<Tutor>) resp.get("tutores");
@@ -123,11 +137,11 @@ public class FXMLFormularioTutoradoController implements Initializable {
         }
     }
 
+
     private void cargarSemestresPorPrograma(int numPeriodos) {
         if (cbSemestre == null) return;
 
         cbSemestre.getItems().clear();
-
         int max = numPeriodos;
         if (max <= 0) max = 14;
 
@@ -153,7 +167,6 @@ public class FXMLFormularioTutoradoController implements Initializable {
             tpSoloEdicion.setManaged(esEdicion);
         }
         if (lbTitulo != null) lbTitulo.setText(esEdicion ? "Editar Tutorado" : "Registrar Tutorado");
-
         if (tfMatricula != null) tfMatricula.setDisable(esEdicion);
     }
 
@@ -164,7 +177,6 @@ public class FXMLFormularioTutoradoController implements Initializable {
         aplicarModoEdicion(true);
 
         tfMatricula.setText(e.getMatricula());
-
         tfNombre.setText(e.getNombre());
         tfApellidoPaterno.setText(e.getApellidoPaterno());
         tfApellidoMaterno.setText(e.getApellidoMaterno());
@@ -239,12 +251,23 @@ public class FXMLFormularioTutoradoController implements Initializable {
         if (!validarCampos()) return;
 
         Estudiante est = new Estudiante();
-        est.setMatricula(txt(tfMatricula));
+
+        if (modoEdicion) {
+            est.setIdEstudiante(tutoradoEdicion.getIdEstudiante());
+            est.setMatricula(tutoradoEdicion.getMatricula());
+            est.setCorreoInstitucional(tutoradoEdicion.getCorreoInstitucional());
+        } else {
+            MatriculaInfo mi = normalizarMatricula(txt(tfMatricula));
+            if (mi == null) { setInfo("Matrícula inválida."); return; }
+            est.setMatricula(mi.matriculaCanon);
+            est.setCorreoInstitucional(mi.correoCanon);
+            est.setFoto(fotoBytes != null ? fotoBytes : new byte[0]);
+        }
+
         est.setNombre(txt(tfNombre));
         est.setApellidoPaterno(txt(tfApellidoPaterno));
         est.setApellidoMaterno(txt(tfApellidoMaterno));
         est.setTelefono(txt(tfTelefono));
-        est.setCorreoInstitucional(txt(tfCorreo));
 
         est.setAnioIngreso(dpIngreso != null && dpIngreso.getValue() != null
                 ? dpIngreso.getValue().getYear()
@@ -254,11 +277,10 @@ public class FXMLFormularioTutoradoController implements Initializable {
         est.setPerfilActivo(cbPerfilActivo != null && cbPerfilActivo.isSelected());
 
         est.setIdProgramaEducativo(programaSel.getIdProgramaEducativo());
-        // Nota: idTutor NO va en UPDATE estudiante; se usa para asignacionTutorado
         est.setIdTutor(tutorSel.getIdTutor());
 
         if (modoEdicion) {
-            HashMap<String, Object> resp = EstudianteImplementacion.actualizarTutorado(est);
+            HashMap<String, Object> resp = EstudianteImplementacion.actualizarTutoradoCompleto(est, tutorSel.getIdTutor());
 
             if (resp != null && resp.get("error") instanceof Boolean && !(boolean) resp.get("error")) {
                 if (fotoNueva && fotoBytes != null && fotoBytes.length > 0) {
@@ -272,9 +294,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
                         : "No se pudieron guardar los cambios.");
             }
         } else {
-            /*
-            // ===== ALTA: registrar estudiante + asignaciónTutorado (+foto opcional) =====
-            HashMap<String, Object> resp = EstudianteImplementacion.registrarTutorado(est, tutorSel.getIdTutor(), fotoBytes);
+            HashMap<String, Object> resp = EstudianteImplementacion.registrarTutorado(est, tutorSel.getIdTutor());
 
             if (resp != null && resp.get("error") instanceof Boolean && !(boolean) resp.get("error")) {
                 Utilidades.mostrarAlertaSimple("Éxito", "Tutorado registrado.", Alert.AlertType.INFORMATION);
@@ -285,7 +305,6 @@ public class FXMLFormularioTutoradoController implements Initializable {
                         : "No se pudo registrar el tutorado.";
                 setInfo(msg);
             }
-            */
         }
     }
 
@@ -295,16 +314,26 @@ public class FXMLFormularioTutoradoController implements Initializable {
     }
 
     private boolean validarCampos() {
-        String matricula = txt(tfMatricula);
-        if (matricula.isEmpty()) {
-            Utilidades.mostrarAlertaSimple("Validación", "La matrícula es obligatoria.", Alert.AlertType.WARNING);
-            tfMatricula.requestFocus();
-            return false;
-        }
-        if (!matricula.matches("^\\d{9}$")) {
-            Utilidades.mostrarAlertaSimple("Validación", "La matrícula debe tener 9 dígitos.", Alert.AlertType.WARNING);
-            tfMatricula.requestFocus();
-            return false;
+        if (!modoEdicion) {
+            MatriculaInfo mi = normalizarMatricula(txt(tfMatricula));
+            if (mi == null) {
+                Utilidades.mostrarAlertaSimple("Validación",
+                        "Matrícula inválida. Debe ser zS######## (8 dígitos).",
+                        Alert.AlertType.WARNING);
+                tfMatricula.requestFocus();
+                return false;
+            }
+            tfMatricula.setText(mi.matriculaCanon);
+            tfCorreo.setText(mi.correoCanon);
+        } else {
+            if (tutoradoEdicion == null || tutoradoEdicion.getMatricula() == null) {
+                Utilidades.mostrarAlertaSimple("Validación",
+                        "No se encontró la matrícula del tutorado en edición.",
+                        Alert.AlertType.WARNING);
+                return false;
+            }
+            tfMatricula.setText(tutoradoEdicion.getMatricula());
+            tfCorreo.setText(tutoradoEdicion.getCorreoInstitucional());
         }
 
         if (cbPrograma == null || cbPrograma.getValue() == null) {
@@ -357,22 +386,15 @@ public class FXMLFormularioTutoradoController implements Initializable {
             return false;
         }
 
-        String correo = txt(tfCorreo);
-        if (correo.isEmpty()) {
+        if (txt(tfCorreo).isEmpty()) {
             Utilidades.mostrarAlertaSimple("Validación", "El correo institucional es obligatorio.", Alert.AlertType.WARNING);
-            tfCorreo.requestFocus();
-            return false;
-        }
-        if (!correo.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            Utilidades.mostrarAlertaSimple("Validación", "Correo inválido.", Alert.AlertType.WARNING);
-            tfCorreo.requestFocus();
+            if (tfMatricula != null) tfMatricula.requestFocus();
             return false;
         }
 
         return true;
     }
 
- 
     private void regresarAGestionarTutorados(Node origen) {
         StackPane panel = null;
         try {
@@ -395,12 +417,31 @@ public class FXMLFormularioTutoradoController implements Initializable {
         }
     }
 
-
     private String txt(TextField tf) {
         return tf != null && tf.getText() != null ? tf.getText().trim() : "";
     }
 
     private void setInfo(String msg) {
         if (lbInfo != null) lbInfo.setText(msg);
+    }
+
+    private static class MatriculaInfo {
+        final String digitos;
+        final String matriculaCanon;
+        final String correoCanon;
+
+        MatriculaInfo(String digitos) {
+            this.digitos = digitos;
+            this.matriculaCanon = "zS" + digitos;
+            this.correoCanon = "zs" + digitos + "@estudiantes.uv.mx";
+        }
+    }
+
+    private MatriculaInfo normalizarMatricula(String input) {
+        if (input == null) return null;
+        String s = input.trim();
+        String dig = s.replaceAll("\\D", "");
+        if (dig.length() != 8) return null;
+        return new MatriculaInfo(dig);
     }
 }

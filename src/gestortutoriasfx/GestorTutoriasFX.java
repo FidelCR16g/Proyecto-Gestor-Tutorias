@@ -32,6 +32,7 @@ public class GestorTutoriasFX extends Application {
             primaryStage.setScene(escenaInicioSesion);
             primaryStage.setTitle("Inicio de sesión");
             primaryStage.show();
+            primaryStage.centerOnScreen();
         } catch (IOException ex) {
             ex.printStackTrace();
             System.out.println("Error: " + ex.getMessage());

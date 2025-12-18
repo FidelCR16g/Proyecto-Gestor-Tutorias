@@ -141,26 +141,30 @@ public class EstudianteDAO {
     }
     
     public static int actualizar(Connection conexion, Estudiante e) throws SQLException {
-        String q = "UPDATE estudiante SET nombre=?, apellidoPaterno=?, apellidoMaterno=?, telefono=?, " +
+        String q = "UPDATE estudiante SET " +
+                   "idProgramaEducativo=?, nombre=?, apellidoPaterno=?, apellidoMaterno=?, telefono=?, " +
                    "correoInstitucional=?, anioIngreso=?, semestre=?, creditosObtenidos=?, " +
-                   "situacionRiesgo=?, cambioTutor=?, perfilActivo=? WHERE matricula=?";
+                   "situacionRiesgo=?, cambioTutor=?, perfilActivo=? " +
+                   "WHERE idEstudiante=?";
 
         try (PreparedStatement ps = conexion.prepareStatement(q)) {
-            ps.setString(1, e.getNombre());
-            ps.setString(2, e.getApellidoPaterno());
-            ps.setString(3, e.getApellidoMaterno());
-            ps.setString(4, e.getTelefono());
-            ps.setString(5, e.getCorreoInstitucional());
-            ps.setInt(6, e.getAnioIngreso());
-            ps.setInt(7, e.getSemestre());
-            ps.setInt(8, e.getCreditosObtenidos());
-            ps.setBoolean(9, e.isSituacionRiesgo());
-            ps.setInt(10, e.getCambioTutor());
-            ps.setBoolean(11, e.isPerfilActivo());
-            ps.setString(12, e.getMatricula());
+            ps.setInt(1, e.getIdProgramaEducativo());
+            ps.setString(2, e.getNombre());
+            ps.setString(3, e.getApellidoPaterno());
+            ps.setString(4, e.getApellidoMaterno());
+            ps.setString(5, e.getTelefono());
+            ps.setString(6, e.getCorreoInstitucional());
+            ps.setInt(7, e.getAnioIngreso());
+            ps.setInt(8, e.getSemestre());
+            ps.setInt(9, e.getCreditosObtenidos());
+            ps.setBoolean(10, e.isSituacionRiesgo());
+            ps.setInt(11, e.getCambioTutor());
+            ps.setBoolean(12, e.isPerfilActivo());
+            ps.setInt(13, e.getIdEstudiante());
             return ps.executeUpdate();
         }
     }
+
     
     public static int actualizarFoto(Connection conexion, String matricula, byte[] foto) throws SQLException {
         String q = "UPDATE estudiante SET foto=? WHERE matricula=?";
@@ -243,4 +247,21 @@ public class EstudianteDAO {
         
         return e;
     }
+    
+    public static void reasignarTutorPorMatricula(Connection conexion, String matricula, int idTutorNuevo) throws SQLException {
+        Integer idEstudiante = obtenerIdPorMatricula(conexion, matricula);
+        if (idEstudiante == null) throw new SQLException("No existe estudiante con matrícula: " + matricula);
+
+        try (PreparedStatement del = conexion.prepareStatement("DELETE FROM asignacionTutorado WHERE idEstudiante=?")) {
+            del.setInt(1, idEstudiante);
+            del.executeUpdate();
+        }
+
+        try (PreparedStatement ins = conexion.prepareStatement("INSERT INTO asignacionTutorado (idTutor, idEstudiante) VALUES (?, ?)")) {
+            ins.setInt(1, idTutorNuevo);
+            ins.setInt(2, idEstudiante);
+            ins.executeUpdate();
+        }
+    }
+
 }

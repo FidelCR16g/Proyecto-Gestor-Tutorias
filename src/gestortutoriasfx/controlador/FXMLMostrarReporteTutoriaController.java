@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -42,6 +43,8 @@ public class FXMLMostrarReporteTutoriaController implements Initializable {
     @FXML private Label lbMensaje;
     @FXML private CheckBox chRevisado;
     @FXML private Label lbEstatus;
+    
+    @FXML private Button btnRegresar;
 
     private ReporteTutoria reporteActual;
     private Runnable onCerrar;
@@ -75,10 +78,16 @@ public class FXMLMostrarReporteTutoriaController implements Initializable {
         }
     }
 
-    public void inicializarReporte(ReporteTutoria reporte, Runnable onCerrar, boolean cerrarVentanaAlSalir) {
+    public void inicializarReporte(ReporteTutoria reporte, Runnable onCerrar, boolean cerrarVentanaAlSalir, boolean mostrarBotonVolver) {
         this.reporteActual = reporte;
         this.onCerrar = onCerrar;
         this.cerrarVentanaAlSalir = cerrarVentanaAlSalir;
+
+        if (btnRegresar != null) {
+            btnRegresar.setVisible(mostrarBotonVolver);
+            btnRegresar.setManaged(mostrarBotonVolver);
+        }
+        
         pintarReporte();
         cargarProblematicas();
     }

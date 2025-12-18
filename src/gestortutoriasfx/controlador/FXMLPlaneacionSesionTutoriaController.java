@@ -1,6 +1,8 @@
 package gestortutoriasfx.controlador;
 
 import gestortutoriasfx.modelo.ConexionBD;
+import gestortutoriasfx.modelo.dao.FechaTutoriaDAO;
+import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.utilidad.Utilidades;
 import java.sql.Connection;
@@ -36,10 +38,17 @@ public class FXMLPlaneacionSesionTutoriaController {
     private Integer idFechaTutoriaEdicion = null;
     private Runnable alGuardarCallback;
 
-    // ✅ Navegación embebida
     private StackPane panelContenido;
     private Parent vistaSesion;
     private Runnable volverCallback;
+    
+    @FXML private javafx.scene.control.Button btnSeleccionarFecha;
+    @FXML private javafx.scene.control.Button btnGuardar;
+    @FXML private javafx.scene.control.Button btnCancelar;
+
+    private boolean soloLectura = false;
+
+    
 
     public void configurarNavegacionEmbebida(StackPane panelContenido, Parent vistaSesion, Runnable volverCallback) {
         this.panelContenido = panelContenido;
@@ -62,50 +71,38 @@ public class FXMLPlaneacionSesionTutoriaController {
         if (lbSesion != null) {
             lbSesion.setText("Tutoría " + numSesion);
         }
-
+        
         cargarExistenteSiHay();
+        aplicarModoSoloLectura();
     }
 
     private void cargarExistenteSiHay() {
         limpiarMensaje();
-
         if (periodo == null) {
             mostrarMensajeError("No se recibió el periodo escolar.");
             setFechaUI(null);
             return;
         }
-
-        String sql = "SELECT idFechaTutoria, descripcion, fecha "
-                   + "FROM fechaTutoria "
-                   + "WHERE idPeriodoEscolar = ? AND numSesion = ? "
-                   + "LIMIT 1";
-
         try (Connection conn = ConexionBD.abrirConexionBD()) {
             if (conn == null) {
                 mostrarMensajeError("No se pudo conectar a la base de datos.");
                 return;
             }
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, periodo.getIdPeriodoEscolar());
-                ps.setInt(2, numSesion);
+            FechaTutoria ft = FechaTutoriaDAO.obtenerPorPeriodoYNumSesion(conn, periodo.getIdPeriodoEscolar(), numSesion);
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        idFechaTutoriaEdicion = rs.getInt("idFechaTutoria");
-                        String descripcion = rs.getString("descripcion");
-                        String fechaStr = rs.getString("fecha");
+            if (ft != null) {
+                idFechaTutoriaEdicion = ft.getIdFechaTutoria();
+                taDescripcion.setText(ft.getDescripcion() != null ? ft.getDescripcion() : "");
 
-                        taDescripcion.setText(descripcion != null ? descripcion : "");
-                        fechaSeleccionada = parseFechaSeguro(fechaStr);
-                        setFechaUI(fechaSeleccionada);
-                    } else {
-                        idFechaTutoriaEdicion = null;
-                        taDescripcion.setText("");
-                        fechaSeleccionada = null;
-                        setFechaUI(null);
-                    }
-                }
+                // ft.getFechaInicio viene del DAO mapear()
+                fechaSeleccionada = parseFechaSeguro(ft.getFechaInicio());
+                setFechaUI(fechaSeleccionada);
+            } else {
+                idFechaTutoriaEdicion = null;
+                taDescripcion.setText("");
+                fechaSeleccionada = null;
+                setFechaUI(null);
             }
 
         } catch (SQLException ex) {
@@ -116,8 +113,9 @@ public class FXMLPlaneacionSesionTutoriaController {
 
     @FXML
     private void clicSeleccionarFecha() {
-        limpiarMensaje();
+        if (soloLectura) return;
 
+        limpiarMensaje();
         if (periodo == null) {
             mostrarMensajeError("No hay periodo seleccionado.");
             return;
@@ -170,6 +168,8 @@ public class FXMLPlaneacionSesionTutoriaController {
 
     @FXML
     private void clicGuardar() {
+        if (soloLectura) return;
+        
         limpiarMensaje();
 
         if (periodo == null) {
@@ -332,4 +332,24 @@ public class FXMLPlaneacionSesionTutoriaController {
             return null;
         }
     }
+    
+    public void setSoloLectura(boolean soloLectura) {
+            this.soloLectura = soloLectura;
+            aplicarModoSoloLectura();
+        }
+        private void aplicarModoSoloLectura() {
+        if (!soloLectura) return;
+
+        if (taDescripcion != null) {
+            taDescripcion.setEditable(false);
+            taDescripcion.setMouseTransparent(false);
+        }
+
+        if (btnSeleccionarFecha != null) btnSeleccionarFecha.setDisable(true);
+        if (btnGuardar != null) btnGuardar.setDisable(true);
+
+        if (btnCancelar != null) btnCancelar.setText("Regresar");
+    }
+
+
 }

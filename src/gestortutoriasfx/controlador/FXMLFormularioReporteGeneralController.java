@@ -12,17 +12,14 @@ import gestortutoriasfx.modelo.pojo.ReporteGeneral;
 import gestortutoriasfx.modelo.pojo.ReporteTutoria;
 import gestortutoriasfx.modelo.pojo.TutorComentarioGeneral;
 import gestortutoriasfx.utilidad.Utilidades;
-import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -34,7 +31,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -45,7 +44,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.converter.IntegerStringConverter;
 
 public class FXMLFormularioReporteGeneralController implements Initializable {
@@ -85,6 +86,9 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     @FXML private TableColumn<ReporteTutoria, String> colTutoriaRiesgo;
     @FXML private TableColumn<ReporteTutoria, String> colTutoriaEstatus;
 
+    @FXML private Button btnGuardar;
+    @FXML private Button btnFinalizar;
+
     private StackPane panelContenido;
     private Parent vistaFormulario;
 
@@ -102,7 +106,7 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Guardar raíz del formulario (para volver aquí si abres "MostrarReporteTutoria")
+        // Guardar raíz del formulario (para volver desde MostrarReporteTutoria)
         try {
             Node n = tvProblemas;
             while (n != null && n.getParent() != null) n = n.getParent();
@@ -111,7 +115,6 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
             vistaFormulario = null;
         }
 
-        // Contexto
         if (lbContexto != null) {
             String nombre = (Sesion.getUsuarioSesion() != null && Sesion.getUsuarioSesion().getNombre() != null)
                     ? Sesion.getUsuarioSesion().getNombre()
@@ -119,20 +122,19 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
             lbContexto.setText("Coordinador: " + nombre);
         }
 
-        // Combos
-        cbNumSesion.setItems(FXCollections.observableArrayList(1, 2, 3, 4));
+        if (cbNumSesion != null) {
+            cbNumSesion.setItems(FXCollections.observableArrayList(1, 2, 3, 4));
+        }
 
         cargarProgramas();
         cargarPeriodoActual();
 
-        // Tablas editables
         configurarTablaProblemas();
         configurarTablaTutores();
 
-        tvProblemas.setItems(obsProblemas);
-        tvTutores.setItems(obsTutores);
+        if (tvProblemas != null) tvProblemas.setItems(obsProblemas);
+        if (tvTutores != null) tvTutores.setItems(obsTutores);
 
-        // Totales: actualizar porcentaje al cambiar
         if (tfPorcentaje != null) tfPorcentaje.setEditable(false);
 
         if (tfTotalRegistrados != null) {
@@ -142,9 +144,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
             tfTotalAsistieron.textProperty().addListener((o, a, b) -> actualizarPorcentaje());
         }
 
-        // Lateral: reportes tutoría
         configurarTablaTutorias();
-        tvTutorias.setItems(obsTutorias);
+        if (tvTutorias != null) tvTutorias.setItems(obsTutorias);
         cargarTutoriasParaLateral();
     }
 
@@ -159,11 +160,21 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         if (this.modo == Modo.CREAR) {
             this.reporteActual = new ReporteGeneral();
             this.reporteActual.setEstatus(ReporteGeneral.Estatus.Borrador);
+
+            obsProblemas.clear();
+            obsTutores.clear();
+
+            if (dpFecha != null) dpFecha.setValue(LocalDate.now());
+            if (tfEstadoLugar != null) tfEstadoLugar.clear();
+            if (taObjetivos != null) taObjetivos.clear();
+            if (tfTotalRegistrados != null) tfTotalRegistrados.setText("0");
+            if (tfTotalAsistieron != null) tfTotalAsistieron.setText("0");
+            actualizarPorcentaje();
+
             aplicarModo();
             return;
         }
 
-        // CORRECCIÓN 1: Comparar int primitivo con <= 0 en lugar de == null
         if (base == null || base.getIdReporteGeneral() <= 0) {
             Utilidades.mostrarAlertaSimple("Error", "No se recibió un reporte válido.", Alert.AlertType.ERROR);
             this.reporteActual = new ReporteGeneral();
@@ -172,7 +183,6 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
             return;
         }
 
-        // Traer completo (reporte + tablas hijas)
         HashMap<String, Object> resp = ReporteGeneralImplementacion.obtenerReporteGeneralCompleto(base.getIdReporteGeneral());
         if (resp == null || (boolean) resp.getOrDefault("error", true)) {
             String msg = (resp != null) ? (String) resp.getOrDefault("mensaje", "No se pudo cargar el reporte.") : "No se pudo cargar el reporte.";
@@ -191,36 +201,38 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         obsProblemas.setAll(problemas != null ? problemas : new ArrayList<>());
         obsTutores.setAll(tutores != null ? tutores : new ArrayList<>());
 
-        // Cargar campos base
         precargarCamposDesdeReporte();
-
         aplicarModo();
     }
 
     private void aplicarModo() {
+        if (reporteActual != null && reporteActual.getEstatus() == ReporteGeneral.Estatus.Finalizado) {
+            modo = Modo.VER;
+        }
         boolean soloLectura = (modo == Modo.VER);
 
-        cbPrograma.setDisable(soloLectura);
-        cbPeriodo.setDisable(true); 
-        cbNumSesion.setDisable(soloLectura);
-        dpFecha.setDisable(soloLectura);
-        tfEstadoLugar.setDisable(soloLectura);
-        taObjetivos.setDisable(soloLectura);
+        if (cbPrograma != null) cbPrograma.setDisable(soloLectura);
+        if (cbPeriodo != null) cbPeriodo.setDisable(true);
+        if (cbNumSesion != null) cbNumSesion.setDisable(soloLectura);
+        if (dpFecha != null) dpFecha.setDisable(soloLectura);
+        if (tfEstadoLugar != null) tfEstadoLugar.setDisable(soloLectura);
+        if (taObjetivos != null) taObjetivos.setDisable(soloLectura);
 
-        tfTotalRegistrados.setDisable(soloLectura);
-        tfTotalAsistieron.setDisable(soloLectura);
+        if (tfTotalRegistrados != null) tfTotalRegistrados.setDisable(soloLectura);
+        if (tfTotalAsistieron != null) tfTotalAsistieron.setDisable(soloLectura);
 
-        tvProblemas.setEditable(!soloLectura);
-        tvTutores.setEditable(!soloLectura);
+        if (tvProblemas != null) tvProblemas.setEditable(!soloLectura);
+        if (tvTutores != null) tvTutores.setEditable(!soloLectura);
+
+        if (btnGuardar != null) btnGuardar.setDisable(soloLectura);
+        if (btnFinalizar != null) btnFinalizar.setDisable(soloLectura);
     }
 
     private void precargarCamposDesdeReporte() {
         if (reporteActual == null) return;
 
-        // CORRECCIÓN 2: Verificar ID > 0 en lugar de != null
-        if (reporteActual.getIdProgramaEducativo() > 0 && cbPrograma.getItems() != null) {
+        if (reporteActual.getIdProgramaEducativo() > 0 && cbPrograma != null && cbPrograma.getItems() != null) {
             for (ProgramaEducativo pe : cbPrograma.getItems()) {
-                // CORRECCIÓN 3: Comparar primitivos con ==
                 if (pe != null && pe.getIdProgramaEducativo() == reporteActual.getIdProgramaEducativo()) {
                     cbPrograma.getSelectionModel().select(pe);
                     break;
@@ -228,18 +240,22 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
             }
         }
 
-        cbNumSesion.getSelectionModel().select(Integer.valueOf(reporteActual.getNumSesion()));
+        if (cbNumSesion != null) cbNumSesion.getSelectionModel().select(Integer.valueOf(reporteActual.getNumSesion()));
+        if (dpFecha != null && reporteActual.getFecha() != null) dpFecha.setValue(reporteActual.getFecha());
+        if (tfEstadoLugar != null) tfEstadoLugar.setText(reporteActual.getEstadoLugar() != null ? reporteActual.getEstadoLugar() : "");
+        if (taObjetivos != null) taObjetivos.setText(reporteActual.getObjetivos() != null ? reporteActual.getObjetivos() : "");
 
-        if (reporteActual.getFecha() != null) dpFecha.setValue(reporteActual.getFecha());
-        tfEstadoLugar.setText(reporteActual.getEstadoLugar() != null ? reporteActual.getEstadoLugar() : "");
-        taObjetivos.setText(reporteActual.getObjetivos() != null ? reporteActual.getObjetivos() : "");
+        if (tfTotalRegistrados != null) tfTotalRegistrados.setText(String.valueOf(reporteActual.getTotalAlumnosRegistrados()));
+        if (tfTotalAsistieron != null) tfTotalAsistieron.setText(String.valueOf(reporteActual.getTotalAlumnosAsistieron()));
 
-        tfTotalRegistrados.setText(String.valueOf(reporteActual.getTotalAlumnosRegistrados()));
-        tfTotalAsistieron.setText(String.valueOf(reporteActual.getTotalAlumnosAsistieron()));
-        tfPorcentaje.setText(reporteActual.getPorcentajeAsistencia() != null ? reporteActual.getPorcentajeAsistencia().toString() : "");
+        BigDecimal pct = reporteActual.getPorcentajeAsistencia();
+        if (tfPorcentaje != null) tfPorcentaje.setText(pct != null ? pct.toString() : "");
+        actualizarPorcentaje();
     }
 
     private void cargarProgramas() {
+        if (cbPrograma == null) return;
+
         HashMap<String, Object> resp = ProgramaEducativoImplementacion.obtenerProgramas();
         if (resp == null || (boolean) resp.getOrDefault("error", true)) return;
 
@@ -249,10 +265,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
 
         cbPrograma.setItems(FXCollections.observableArrayList(lista));
 
-        // Selección automática: programa asignado al coordinador
         int idCoord = Sesion.getIdCoordinador();
         for (ProgramaEducativo pe : lista) {
-            // CORRECCIÓN 4: idCoordinador es primitivo int
             if (pe != null && pe.getIdCoordinador() == idCoord) {
                 cbPrograma.getSelectionModel().select(pe);
                 break;
@@ -261,6 +275,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private void cargarPeriodoActual() {
+        if (cbPeriodo == null) return;
+
         HashMap<String, Object> resp = PeriodoEscolarImplementacion.obtenerPeriodoActual();
         if (resp == null || (boolean) resp.getOrDefault("error", true)) return;
 
@@ -273,6 +289,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private void configurarTablaProblemas() {
+        if (tvProblemas == null) return;
+
         tvProblemas.setEditable(true);
 
         colEE.setCellValueFactory(d ->
@@ -316,6 +334,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private void configurarTablaTutores() {
+        if (tvTutores == null) return;
+
         tvTutores.setEditable(true);
 
         colTutor.setCellValueFactory(d ->
@@ -340,6 +360,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private void configurarTablaTutorias() {
+        if (tvTutorias == null) return;
+
         colTutoriaTutor.setCellValueFactory(d ->
             new SimpleStringProperty(d.getValue() != null && d.getValue().getNombreTutor() != null
                 ? d.getValue().getNombreTutor() : "")
@@ -388,16 +410,22 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private void actualizarPorcentaje() {
+        if (tfPorcentaje == null) return;
+
         try {
-            int registrados = parseIntSeguro(tfTotalRegistrados.getText());
-            int asistieron = parseIntSeguro(tfTotalAsistieron.getText());
+            int registrados = parseIntSeguro(tfTotalRegistrados != null ? tfTotalRegistrados.getText() : null);
+            int asistieron = parseIntSeguro(tfTotalAsistieron != null ? tfTotalAsistieron.getText() : null);
 
             if (registrados <= 0) {
                 tfPorcentaje.setText("0.00");
                 return;
             }
-            double pct = (asistieron * 100.0) / registrados;
-            tfPorcentaje.setText(String.format(java.util.Locale.US, "%.2f", pct));
+
+            BigDecimal pct = BigDecimal.valueOf(asistieron)
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(registrados), 2, RoundingMode.HALF_UP);
+
+            tfPorcentaje.setText(pct.toString());
         } catch (Exception e) {
             tfPorcentaje.setText("");
         }
@@ -410,69 +438,51 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         return Integer.parseInt(t);
     }
 
-    // ======= BOTONES =======
 
     @FXML
     private void clicAgregarProblema(ActionEvent e) {
-        //obsProblemas.add(new ProblemaAcademicoReportadoGeneral("", "", "", 0));
+        if (modo == Modo.VER) return;
+
+        ProblemaAcademicoReportadoGeneral p = new ProblemaAcademicoReportadoGeneral();
+        p.setNombreExperienciaEducativa("");
+        p.setNombreProfesor("");
+        p.setProblema("");
+        p.setNumEstudiantes(1); 
+
+        obsProblemas.add(p);
+
+        if (tvProblemas != null) {
+            int idx = obsProblemas.size() - 1;
+            tvProblemas.getSelectionModel().select(idx);
+            tvProblemas.scrollTo(idx);
+            tvProblemas.requestFocus();
+            tvProblemas.edit(idx, colEE); 
+        }
     }
+
 
     @FXML
     private void clicQuitarProblema(ActionEvent e) {
-        ProblemaAcademicoReportadoGeneral sel = tvProblemas.getSelectionModel().getSelectedItem();
+        if (modo == Modo.VER) return;
+        ProblemaAcademicoReportadoGeneral sel = tvProblemas != null ? tvProblemas.getSelectionModel().getSelectedItem() : null;
         if (sel != null) obsProblemas.remove(sel);
     }
 
     @FXML
     private void clicAgregarTutorComentario(ActionEvent e) {
-        //obsTutores.add(new TutorComentarioGeneral("", ""));
+        if (modo == Modo.VER) return;
+        TutorComentarioGeneral t = new TutorComentarioGeneral();
+        t.setNombreTutor("");
+        t.setComentario("");
+        obsTutores.add(t);
+        if (tvTutores != null) tvTutores.getSelectionModel().select(t);
     }
 
     @FXML
     private void clicQuitarTutorComentario(ActionEvent e) {
-        TutorComentarioGeneral sel = tvTutores.getSelectionModel().getSelectedItem();
+        if (modo == Modo.VER) return;
+        TutorComentarioGeneral sel = tvTutores != null ? tvTutores.getSelectionModel().getSelectedItem() : null;
         if (sel != null) obsTutores.remove(sel);
-    }
-
-    @FXML
-    private void clicAutollenarTutores(ActionEvent e) {
-        LinkedHashMap<String, TutorComentarioGeneral> existentes = new LinkedHashMap<>();
-        for (TutorComentarioGeneral t : obsTutores) {
-            if (t == null) continue;
-            String key = (t.getNombreTutor() != null) ? t.getNombreTutor().trim() : "";
-            if (!key.isEmpty()) existentes.put(key, t);
-        }
-
-        LinkedHashSet<String> nombres = new LinkedHashSet<>();
-        for (ReporteTutoria rt : obsTutorias) {
-            if (rt == null) continue;
-            String n = (rt.getNombreTutor() != null) ? rt.getNombreTutor().trim() : "";
-            if (!n.isEmpty()) nombres.add(n);
-        }
-
-        for (String n : nombres) {
-            if (!existentes.containsKey(n)) {
-                //obsTutores.add(new TutorComentarioGeneral(n, ""));
-            }
-        }
-    }
-
-    @FXML
-    private void clicCalcularDesdeTutorias(ActionEvent e) {
-        int totalAsist = 0;
-        for (ReporteTutoria rt : obsTutorias) {
-            if (rt == null) continue;
-            totalAsist += rt.getNumAlumnosAsistieron();
-        }
-        tfTotalAsistieron.setText(String.valueOf(totalAsist));
-        actualizarPorcentaje();
-
-        Utilidades.mostrarAlertaSimple(
-                "Cálculo",
-                "Se calculó 'Total alumnos que asistieron' sumando los reportes de tutoría visibles.\n" +
-                "Si deseas un total de registrados real (tutorados asignados), ese dato debe capturarse o consultarse aparte.",
-                Alert.AlertType.INFORMATION
-        );
     }
 
     @FXML
@@ -504,9 +514,10 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         obsTutorias.setAll(baseTutorias);
     }
 
-    @FXML
+
+        @FXML
     private void clicAbrirReporteTutoria(ActionEvent e) {
-        ReporteTutoria sel = tvTutorias.getSelectionModel().getSelectedItem();
+        ReporteTutoria sel = (tvTutorias != null) ? tvTutorias.getSelectionModel().getSelectedItem() : null;
         if (sel == null) {
             Utilidades.mostrarAlertaSimple("Atención", "Selecciona un reporte de tutoría.", Alert.AlertType.WARNING);
             return;
@@ -528,24 +539,22 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gestortutoriasfx/vista/FXMLMostrarReporteTutoria.fxml"));
             Parent vista = loader.load();
-            // Asumiendo que existe esta clase controladora, verifica tu paquete
-            // FXMLMostrarReporteTutoriaController ctrl = loader.getController();
+            FXMLMostrarReporteTutoriaController ctrl = loader.getController();
 
-            // Runnable volverAqui = () -> {
-            //     if (panelContenido != null && vistaFormulario != null) {
-            //         panelContenido.getChildren().setAll(vistaFormulario);
-            //     }
-            // };
+            ctrl.inicializarReporte(detalle, null, true, false);
 
-            // ctrl.inicializarReporte(detalle, volverAqui, panelContenido == null);
+            Stage st = new Stage();
+            st.setTitle("Reporte de Tutoría");
+            st.setScene(new Scene(vista));
 
-            // if (panelContenido != null) {
-            //     panelContenido.getChildren().setAll(vista);
-            // }
-            
-            // NOTA: He dejado comentada la lógica de navegación a "MostrarReporteTutoria" 
-            // porque no me has dado ese controlador para refactorizar. 
-            // Si funciona bien, descoméntalo. Lo importante eran los errores de int vs null.
+            // opcional pero recomendado: que sea modal respecto a la ventana actual
+            Window owner = (tvTutorias != null && tvTutorias.getScene() != null) ? tvTutorias.getScene().getWindow() : null;
+            if (owner != null) {
+                st.initOwner(owner);
+                st.initModality(Modality.WINDOW_MODAL);
+            }
+
+            st.show();
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -555,6 +564,8 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent e) {
+        if (modo == Modo.VER) return;
+        if (!validarFilasNoVaciasNiInvalidas()) return;
         if (!armarDesdeFormulario(ReporteGeneral.Estatus.Borrador)) return;
 
         ArrayList<ProblemaAcademicoReportadoGeneral> problemas = filtrarProblemas();
@@ -571,10 +582,13 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         if (id != null) reporteActual.setIdReporteGeneral(id);
 
         Utilidades.mostrarAlertaSimple("OK", "Reporte guardado correctamente.", Alert.AlertType.INFORMATION);
+        cerrarYRegresar(e);
     }
 
     @FXML
     private void clicFinalizar(ActionEvent e) {
+        if (modo == Modo.VER) return;
+        if (!validarFilasNoVaciasNiInvalidas()) return;
         if (!armarDesdeFormulario(ReporteGeneral.Estatus.Finalizado)) return;
 
         ArrayList<ProblemaAcademicoReportadoGeneral> problemas = filtrarProblemas();
@@ -593,52 +607,7 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         Utilidades.mostrarAlertaSimple("Listo", "Reporte finalizado.", Alert.AlertType.INFORMATION);
         this.modo = Modo.VER;
         aplicarModo();
-    }
-
-    @FXML
-    private void clicExportar(ActionEvent e) {
-        // CORRECCIÓN 5: Comparar int primitivo con <= 0
-        if (reporteActual == null || reporteActual.getIdReporteGeneral() <= 0) {
-            Utilidades.mostrarAlertaSimple("Atención", "Primero guarda el reporte para poder exportar.", Alert.AlertType.WARNING);
-            return;
-        }
-
-        byte[] bytes = generarTXT();
-        String nombre = "ReporteGeneral_" + reporteActual.getIdReporteGeneral() + ".txt";
-
-        // Guardar en archivo local
-        try {
-            FileChooser fc = new FileChooser();
-            fc.setTitle("Guardar reporte");
-            fc.setInitialFileName(nombre);
-            fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Texto (*.txt)", "*.txt"));
-
-            File f = fc.showSaveDialog(((Node) e.getSource()).getScene().getWindow());
-            if (f == null) return;
-
-            Files.write(f.toPath(), bytes);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error", "No se pudo guardar el archivo local.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        // Guardar en BD (documentoReporteGeneral)
-        // Ojo: Asegúrate de tener DocumentoReporteGeneralDAO y su implementación si vas a usar esto.
-        /*
-        HashMap<String, Object> resp = ReporteGeneralImplementacion.guardarDocumentoReporteGeneral(
-                reporteActual.getIdReporteGeneral(), nombre, "TXT", bytes
-        );
-
-        if (resp == null || (boolean) resp.getOrDefault("error", true)) {
-            String msg = (resp != null) ? (String) resp.getOrDefault("mensaje", "Se guardó el archivo local, pero no en BD.") : "Se guardó el archivo local, pero no en BD.";
-            Utilidades.mostrarAlertaSimple("Aviso", msg, Alert.AlertType.WARNING);
-            return;
-        }
-        */
-
-        Utilidades.mostrarAlertaSimple("OK", "Exportado (archivo local).", Alert.AlertType.INFORMATION);
+        cerrarYRegresar(e);
     }
 
     @FXML
@@ -647,10 +616,10 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
     }
 
     private boolean armarDesdeFormulario(ReporteGeneral.Estatus estatus) {
-        ProgramaEducativo pe = cbPrograma.getValue();
-        PeriodoEscolar per = cbPeriodo.getValue();
-        Integer ses = cbNumSesion.getValue();
-        LocalDate fecha = dpFecha.getValue();
+        ProgramaEducativo pe = cbPrograma != null ? cbPrograma.getValue() : null;
+        PeriodoEscolar per = cbPeriodo != null ? cbPeriodo.getValue() : null;
+        Integer ses = cbNumSesion != null ? cbNumSesion.getValue() : null;
+        LocalDate fecha = dpFecha != null ? dpFecha.getValue() : null;
 
         if (pe == null) {
             Utilidades.mostrarAlertaSimple("Validación", "Selecciona un Programa Educativo.", Alert.AlertType.WARNING);
@@ -682,14 +651,28 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
 
         reporteActual.setNumSesion(ses);
         reporteActual.setFecha(fecha);
-        reporteActual.setEstadoLugar(tfEstadoLugar.getText() != null ? tfEstadoLugar.getText().trim() : "");
-        reporteActual.setObjetivos(taObjetivos.getText() != null ? taObjetivos.getText().trim() : "");
 
-        reporteActual.setTotalAlumnosRegistrados(parseIntSeguro(tfTotalRegistrados.getText()));
-        reporteActual.setTotalAlumnosAsistieron(parseIntSeguro(tfTotalAsistieron.getText()));
+        String lugar = tfEstadoLugar != null && tfEstadoLugar.getText() != null ? tfEstadoLugar.getText().trim() : "";
+        reporteActual.setEstadoLugar(lugar);
+
+        String obj = taObjetivos != null && taObjetivos.getText() != null ? taObjetivos.getText().trim() : "";
+        reporteActual.setObjetivos(obj);
+
+        int registrados = parseIntSeguro(tfTotalRegistrados != null ? tfTotalRegistrados.getText() : null);
+        int asistieron = parseIntSeguro(tfTotalAsistieron != null ? tfTotalAsistieron.getText() : null);
+
+        reporteActual.setTotalAlumnosRegistrados(registrados);
+        reporteActual.setTotalAlumnosAsistieron(asistieron);
+
+        BigDecimal pct = (registrados <= 0)
+                ? BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.valueOf(asistieron).multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(registrados), 2, RoundingMode.HALF_UP);
+
+        reporteActual.setPorcentajeAsistencia(pct);
+        if (tfPorcentaje != null) tfPorcentaje.setText(pct.toString());
 
         reporteActual.setEstatus(estatus);
-
         return true;
     }
 
@@ -697,9 +680,10 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         ArrayList<ProblemaAcademicoReportadoGeneral> out = new ArrayList<>();
         for (ProblemaAcademicoReportadoGeneral p : obsProblemas) {
             if (p == null) continue;
-            String ee = (p.getNombreExperienciaEducativa() != null) ? p.getNombreExperienciaEducativa().trim() : "";
-            String prof = (p.getNombreProfesor() != null) ? p.getNombreProfesor().trim() : "";
-            String prob = (p.getProblema() != null) ? p.getProblema().trim() : "";
+
+            String ee = p.getNombreExperienciaEducativa() != null ? p.getNombreExperienciaEducativa().trim() : "";
+            String prof = p.getNombreProfesor() != null ? p.getNombreProfesor().trim() : "";
+            String prob = p.getProblema() != null ? p.getProblema().trim() : "";
 
             if (ee.isEmpty() && prof.isEmpty() && prob.isEmpty() && p.getNumEstudiantes() <= 0) continue;
             out.add(p);
@@ -711,54 +695,106 @@ public class FXMLFormularioReporteGeneralController implements Initializable {
         ArrayList<TutorComentarioGeneral> out = new ArrayList<>();
         for (TutorComentarioGeneral t : obsTutores) {
             if (t == null) continue;
-            String nom = (t.getNombreTutor() != null) ? t.getNombreTutor().trim() : "";
-            String com = (t.getComentario() != null) ? t.getComentario().trim() : "";
+
+            String nom = t.getNombreTutor() != null ? t.getNombreTutor().trim() : "";
+            String com = t.getComentario() != null ? t.getComentario().trim() : "";
+
             if (nom.isEmpty() && com.isEmpty()) continue;
             out.add(t);
         }
         return out;
     }
+    
+    private void cerrarYRegresar(ActionEvent e) {
+        if (alRegresar != null) alRegresar.run();
 
-    private byte[] generarTXT() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("REPORTE GENERAL DE TUTORÍAS\n");
-        sb.append("====================================\n\n");
-
-        sb.append("Programa: ").append(reporteActual.getNombreProgramaEducativo()).append("\n");
-        sb.append("Periodo: ").append(reporteActual.getNombrePeriodoEscolar()).append("\n");
-        sb.append("Sesión: ").append(reporteActual.getNumSesion()).append("\n");
-        sb.append("Fecha: ").append(reporteActual.getFecha() != null ? reporteActual.getFecha().format(fmt) : "").append("\n");
-        sb.append("Lugar/Estado: ").append(reporteActual.getEstadoLugar() != null ? reporteActual.getEstadoLugar() : "").append("\n");
-        sb.append("Estatus: ").append(reporteActual.getEstatus() != null ? reporteActual.getEstatus().name() : "").append("\n\n");
-
-        sb.append("Objetivos:\n").append(reporteActual.getObjetivos() != null ? reporteActual.getObjetivos() : "").append("\n\n");
-
-        sb.append("Estadísticas globales:\n");
-        sb.append(" - Registrados: ").append(reporteActual.getTotalAlumnosRegistrados()).append("\n");
-        sb.append(" - Asistieron: ").append(reporteActual.getTotalAlumnosAsistieron()).append("\n");
-        sb.append(" - % Asistencia: ").append(reporteActual.getPorcentajeAsistencia()).append("\n\n");
-
-        sb.append("Problemas Académicos:\n");
-        if (obsProblemas.isEmpty()) {
-            sb.append(" (Sin registros)\n");
-        } else {
-            for (ProblemaAcademicoReportadoGeneral p : obsProblemas) {
-                sb.append(" - EE: ").append(p.getNombreExperienciaEducativa()).append(" | Prof: ").append(p.getNombreProfesor()).append("\n");
-                sb.append("    Problema: ").append(p.getProblema()).append(" | #Est: ").append(p.getNumEstudiantes()).append("\n");
+        try {
+            if (e != null && e.getSource() instanceof Node) {
+                Window w = ((Node) e.getSource()).getScene().getWindow();
+                if (w instanceof Stage) {
+                    Stage st = (Stage) w;
+                    if (panelContenido == null || st.getOwner() != null) {
+                        st.close();
+                    }
+                }
             }
-        }
-        sb.append("\n");
-
-        sb.append("Tutores y comentarios:\n");
-        if (obsTutores.isEmpty()) {
-            sb.append(" (Sin registros)\n");
-        } else {
-            for (TutorComentarioGeneral t : obsTutores) {
-                sb.append(" - ").append(t.getNombreTutor()).append(": ").append(t.getComentario()).append("\n");
-            }
-        }
-
-        return sb.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (Exception ex) {}
     }
+    
+    private boolean validarFilasNoVaciasNiInvalidas() {
+        for (int i = 0; i < obsProblemas.size(); i++) {
+            ProblemaAcademicoReportadoGeneral p = obsProblemas.get(i);
+            if (p == null) {
+                Utilidades.mostrarAlertaSimple("Validación",
+                        "Problemas: existe una fila nula en la tabla.",
+                        Alert.AlertType.WARNING);
+                return false;
+            }
+
+            String ee = p.getNombreExperienciaEducativa() != null ? p.getNombreExperienciaEducativa().trim() : "";
+            String prof = p.getNombreProfesor() != null ? p.getNombreProfesor().trim() : "";
+            String prob = p.getProblema() != null ? p.getProblema().trim() : "";
+            int cant = p.getNumEstudiantes();
+
+            if (ee.isEmpty() || prof.isEmpty() || prob.isEmpty() || cant <= 0) {
+                Utilidades.mostrarAlertaSimple(
+                    "Validación",
+                    "Problemas: no puedes dejar filas vacías.\n" +
+                    "Revisa la fila " + (i + 1) + " (EE, Profesor, Problema y Cant. Alum > 0).",
+                    Alert.AlertType.WARNING
+                );
+                if (tvProblemas != null) {
+                    tvProblemas.getSelectionModel().select(i);
+                    tvProblemas.scrollTo(i);
+                }
+                return false;
+            }
+        }
+
+        for (int i = 0; i < obsTutores.size(); i++) {
+            TutorComentarioGeneral t = obsTutores.get(i);
+            if (t == null) {
+                Utilidades.mostrarAlertaSimple("Validación",
+                        "Tutores: existe una fila nula en la tabla.",
+                        Alert.AlertType.WARNING);
+                return false;
+            }
+
+            String nom = t.getNombreTutor() != null ? t.getNombreTutor().trim() : "";
+            String com = t.getComentario() != null ? t.getComentario().trim() : "";
+
+            if (nom.isEmpty() || com.isEmpty()) {
+                Utilidades.mostrarAlertaSimple(
+                    "Validación",
+                    "Tutores: no puedes dejar filas vacías.\n" +
+                    "Revisa la fila " + (i + 1) + " (Tutor y Comentario).",
+                    Alert.AlertType.WARNING
+                );
+                if (tvTutores != null) {
+                    tvTutores.getSelectionModel().select(i);
+                    tvTutores.scrollTo(i);
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    private boolean filaProblemaVacia(ProblemaAcademicoReportadoGeneral p) {
+        if (p == null) return true;
+        String ee = p.getNombreExperienciaEducativa() == null ? "" : p.getNombreExperienciaEducativa().trim();
+        String pr = p.getNombreProfesor() == null ? "" : p.getNombreProfesor().trim();
+        String pb = p.getProblema() == null ? "" : p.getProblema().trim();
+        return ee.isEmpty() && pr.isEmpty() && pb.isEmpty() && p.getNumEstudiantes() <= 0;
+    }
+
+    private boolean filaTutorVacia(TutorComentarioGeneral t) {
+        if (t == null) return true;
+        String nom = t.getNombreTutor() == null ? "" : t.getNombreTutor().trim();
+        String com = t.getComentario() == null ? "" : t.getComentario().trim();
+        return nom.isEmpty() && com.isEmpty();
+    }
+
 }

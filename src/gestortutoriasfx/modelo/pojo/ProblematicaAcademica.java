@@ -1,9 +1,6 @@
 package gestortutoriasfx.modelo.pojo;
 
-/**
- *
- * @author fave6
- */
+
 public class ProblematicaAcademica {
     private int idProblematicaAcademica;
     private int idReporteTutoria;

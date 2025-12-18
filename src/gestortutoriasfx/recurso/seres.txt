@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 
 public class FXMLRevisarReportesTutoriaController implements Initializable {
 
+    @FXML private AnchorPane apRoot;
+
     @FXML private TextField tfBusqueda;
 
     @FXML private TableView<ReporteTutoria> tvReportes;
@@ -35,8 +37,9 @@ public class FXMLRevisarReportesTutoriaController implements Initializable {
     @FXML private TableColumn<ReporteTutoria, String> tcSesion;
     @FXML private TableColumn<ReporteTutoria, String> tcFecha;
     @FXML private TableColumn<ReporteTutoria, String> tcEstado;
+
     @FXML private Label lbMensaje;
-    @FXML private AnchorPane apRoot;    
+
     private StackPane panelContenido;
 
     @Override
@@ -169,7 +172,7 @@ public class FXMLRevisarReportesTutoriaController implements Initializable {
                 }
             };
 
-            ctrl.inicializarReporte(detalle, volver, panelContenido == null, true);
+            ctrl.inicializarReporte(detalle, volver, panelContenido == null);
 
             if (panelContenido != null) {
                 panelContenido.getChildren().setAll(vista);

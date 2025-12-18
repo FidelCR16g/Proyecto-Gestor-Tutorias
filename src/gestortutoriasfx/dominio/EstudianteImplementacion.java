@@ -247,4 +247,32 @@ public class EstudianteImplementacion {
         }
         return resp;
     }
+    
+    public static HashMap<String, Object> actualizarTutoradoCompleto(Estudiante e, int idTutorNuevo) {
+        HashMap<String, Object> resp = new LinkedHashMap<>();
+        Connection con = null;
+
+        try {
+            con = ConexionBD.abrirConexionBD();
+            con.setAutoCommit(false);
+
+            int filas = EstudianteDAO.actualizar(con, e); // lo vamos a mejorar en DAO (incluye programa)
+            EstudianteDAO.reasignarTutorPorMatricula(con, e.getMatricula(), idTutorNuevo);
+
+            con.commit();
+            resp.put("error", false);
+            resp.put("filas", filas);
+
+        } catch (SQLException ex) {
+            resp.put("error", true);
+            resp.put("mensaje", "Error BD: " + ex.getMessage());
+            try { if (con != null) con.rollback(); } catch (SQLException ignore) {}
+        } finally {
+            try { if (con != null) con.setAutoCommit(true); } catch (SQLException ignore) {}
+            ConexionBD.cerrarConexion(con);
+        }
+
+        return resp;
+    }
+
 }

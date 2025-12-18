@@ -60,8 +60,6 @@ public class FXMLInicioSesionController implements Initializable {
             );
             return;
         }
-
-        // Normalizar roles (trim) y eliminar nulls
         ArrayList<String> rolesLimpios = new ArrayList<>();
         for (String r : roles) {
             if (r != null && !r.trim().isEmpty()) rolesLimpios.add(r.trim());
@@ -74,8 +72,6 @@ public class FXMLInicioSesionController implements Initializable {
             );
             return;
         }
-
-        // Administrador: entra directo SIEMPRE
         boolean esAdmin = rolesLimpios.stream().anyMatch(r -> "Administrador".equalsIgnoreCase(r));
         if (esAdmin) {
             ingresarAlSistema(usuario, "Administrador");
@@ -151,7 +147,7 @@ public class FXMLInicioSesionController implements Initializable {
 
         if ("Tutor".equalsIgnoreCase(rol)) {
             cargarDatosTutor(usuario);
-            return; // OJO: cargarDatosTutor ya redirige
+            return; 
         }
 
         Sesion.setIdTutor(0);

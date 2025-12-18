@@ -89,15 +89,9 @@ public class FXMLPrincipalCoordinadorController implements Initializable, IPrinc
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
-        boolean deseaSalir = Utilidades.mostrarAlertaVerificacion(
-            "Cerrar Sesión",
-            "¿Está seguro de que desea salir?",
-            "Se regresará a la pantalla de selección de rol."
-        );
-        if (!deseaSalir) return;
-
-        regresarASeleccionRol(event);
+        Utilidades.confirmarCerrarSesionYRedirigirALogin((Node) event.getSource());
     }
+
 
     // ====== Navegación ======
 

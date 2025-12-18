@@ -89,12 +89,9 @@
                 <Button fx:id="btnEditar" text="Editar" onAction="#clicEditar"
                         style="-fx-background-color: white; -fx-text-fill: #0267A2; -fx-font-weight: bold; -fx-border-color: #0267A2; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 16;"/>
 
-                <Button fx:id="btnVer" text="Ver" onAction="#clicVer"
-                        style="-fx-background-color: white; -fx-text-fill: #0267A2; -fx-font-weight: bold; -fx-border-color: #0267A2; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 16;"/>
-
                 <Button fx:id="btnExportar" text="Exportar" onAction="#clicExportar"
                         style="-fx-background-color: #0267A2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;"/>
-
+                
             </HBox>
 
         </VBox>

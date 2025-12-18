@@ -2,14 +2,15 @@ package gestortutoriasfx.controlador;
 
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.Sesion;
+import gestortutoriasfx.modelo.dao.FechaTutoriaDAO;
 import gestortutoriasfx.modelo.dao.PeriodoEscolarDAO;
+import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.modelo.pojo.Usuario;
 import gestortutoriasfx.utilidad.Utilidades;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -92,10 +93,8 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
         try {
             Usuario u = Sesion.getUsuarioSesion();
             if (u == null) return "----";
-
             String nombre = (u.getNombre() != null) ? u.getNombre().trim() : "";
             return nombre.isEmpty() ? "----" : nombre;
-
         } catch (Exception e) {
             return "----";
         }
@@ -109,18 +108,19 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
 
         if (periodoActual == null) return;
 
-        String sql = "SELECT numSesion, descripcion, fecha FROM fechaTutoria WHERE idPeriodoEscolar = ?";
+        try {
+            ArrayList<FechaTutoria> fechas = FechaTutoriaDAO.obtenerPorPeriodo(con, periodoActual.getIdPeriodoEscolar());
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, periodoActual.getIdPeriodoEscolar());
+            for (FechaTutoria ft : fechas) {
+                int s = ft.getNumSesion();
+                String desc = ft.getDescripcion();
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int s = rs.getInt("numSesion");
-                    String desc = rs.getString("descripcion");
-                    String fecha = rs.getString("fecha");
-                    ponerSesionPlaneada(s, fecha, desc);
+                String fecha = ft.getFechaInicio();
+                if (fecha == null || fecha.trim().isEmpty()) {
+                    fecha = ft.getFecha();
                 }
+
+                ponerSesionPlaneada(s, fecha, desc);
             }
 
         } catch (Exception e) {
@@ -129,17 +129,23 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
         }
     }
 
-    @FXML private void clicAccionSesion1(ActionEvent e){ abrirPlaneacionSesion(1); }
-    @FXML private void clicAccionSesion2(ActionEvent e){ abrirPlaneacionSesion(2); }
-    @FXML private void clicAccionSesion3(ActionEvent e){ abrirPlaneacionSesion(3); }
-    @FXML private void clicAccionSesion4(ActionEvent e){ abrirPlaneacionSesion(4); }
+    @FXML private void clicAccionSesion1(ActionEvent e){ abrirPlaneacionSesion(1, false); }
+    @FXML private void clicAccionSesion2(ActionEvent e){ abrirPlaneacionSesion(2, false); }
+    @FXML private void clicAccionSesion3(ActionEvent e){ abrirPlaneacionSesion(3, false); }
+    @FXML private void clicAccionSesion4(ActionEvent e){ abrirPlaneacionSesion(4, false); }
 
     @FXML private void clicConsultarSesion1(ActionEvent e){ consultarSesion(1); }
     @FXML private void clicConsultarSesion2(ActionEvent e){ consultarSesion(2); }
     @FXML private void clicConsultarSesion3(ActionEvent e){ consultarSesion(3); }
     @FXML private void clicConsultarSesion4(ActionEvent e){ consultarSesion(4); }
 
-    private void abrirPlaneacionSesion(int sesion) {
+    private void consultarSesion(int sesion) {
+        Button btn = getBtnVer(sesion);
+        if (btn == null || btn.isDisable()) return;
+        abrirPlaneacionSesion(sesion, true);
+    }
+
+    private void abrirPlaneacionSesion(int sesion, boolean soloLectura) {
         if (periodoActual == null) {
             Utilidades.mostrarAlertaSimple("Error", "No hay periodo escolar activo.", Alert.AlertType.ERROR);
             return;
@@ -153,8 +159,8 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
 
             FXMLPlaneacionSesionTutoriaController ctrl = loader.getController();
             ctrl.inicializar(periodoActual, sesion, this::refrescarTarjetas);
+            ctrl.setSoloLectura(soloLectura);
 
-            // ✅ EMBEBIDO en panelContenido (sin Stage)
             if (panelContenido != null && vistaPlaneacion != null) {
                 Runnable volver = () -> {
                     refrescarTarjetas();
@@ -165,9 +171,8 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
                 return;
             }
 
-            // Fallback (si se usa fuera del Principal)
             Stage stage = new Stage();
-            stage.setTitle("Planeación de la sesión " + sesion);
+            stage.setTitle((soloLectura ? "Consultar" : "Planeación") + " de la sesión " + sesion);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             stage.showAndWait();
@@ -176,10 +181,6 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
             ex.printStackTrace();
             Utilidades.mostrarAlertaSimple("Error", "No se pudo abrir la planeación de la sesión.", Alert.AlertType.ERROR);
         }
-    }
-
-    private void consultarSesion(int sesion) {
-        abrirPlaneacionSesion(sesion);
     }
 
     private void refrescarTarjetas() {

@@ -7,78 +7,50 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="520.0" prefWidth="820.0"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gestortutoriasfx.controlador.FXMLSeleccionRolController">
+<AnchorPane prefHeight="350.0" prefWidth="622.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gestortutoriasfx.controlador.FXMLSeleccionRolController">
 
-    <VBox prefHeight="60.0"
-          AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          style="-fx-background-color: #0267A2;">
-        <Label text="Seleccionar Perfil" textFill="WHITE"
-               style="-fx-font-size: 20px; -fx-font-weight: bold;">
+    <VBox prefHeight="60.0" style="-fx-background-color: #0267A2;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Seleccionar Perfil" textFill="WHITE">
             <VBox.margin>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </VBox.margin>
         </Label>
     </VBox>
 
-    <VBox spacing="12"
-          AnchorPane.topAnchor="60.0" AnchorPane.bottomAnchor="60.0"
-          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          style="-fx-background-color: #F5F7FA;">
+    <VBox layoutY="84.0" prefHeight="236.0" prefWidth="622.0" spacing="12" style="-fx-background-color: #F5F7FA;" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
         <padding>
-            <Insets top="18" right="18" bottom="18" left="18"/>
+            <Insets bottom="18" left="18" right="18" top="18" />
         </padding>
 
-        <VBox spacing="10"
-              style="-fx-background-color: white; -fx-border-color: #CFD8DC; -fx-border-radius: 10; -fx-background-radius: 10;">
+        <VBox prefHeight="199.0" prefWidth="599.0" spacing="10" style="-fx-background-color: white; -fx-border-color: #CFD8DC; -fx-border-radius: 10; -fx-background-radius: 10;">
             <padding>
-                <Insets top="16" right="16" bottom="16" left="16"/>
+                <Insets bottom="16" left="16" right="16" top="16" />
             </padding>
 
-            <Label fx:id="labelBienvenida" text="Bienvenido(a) ..."
-                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #263238;"/>
+            <Label fx:id="labelBienvenida" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #263238;" text="Bienvenido(a) ..." />
 
-            <Label text="Se han detectado múltiples roles para su usuario.\nPor favor, elija con cuál desea ingresar:"
-                   wrapText="true"
-                   style="-fx-font-size: 13px; -fx-text-fill: #455A64;"/>
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #455A64;" text="Se han detectado múltiples roles para su usuario.\nPor favor, elija con cuál desea ingresar:" wrapText="true" />
 
 
             <HBox spacing="12" style="-fx-alignment: CENTER_LEFT;">
-                <Button fx:id="btnTutor"
-                        mnemonicParsing="false"
-                        onAction="#btnIngresarTutor"
-                        prefHeight="44.0" prefWidth="240.0"
-                        text="Ingresar como Tutor"
-                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                <Button fx:id="btnTutor" mnemonicParsing="false" onAction="#btnIngresarTutor" prefHeight="25.0" prefWidth="282.0" style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Ingresar como Tutor" />
 
 
-                <Button fx:id="btnRolSuperior"
-                        mnemonicParsing="false"
-                        onAction="#btnIngresarRolSuperior"
-                        prefHeight="44.0" prefWidth="260.0"
-                        text="Ingresar como "
-                        style="-fx-background-color: #1565C0; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                <Button fx:id="btnRolSuperior" mnemonicParsing="false" onAction="#btnIngresarRolSuperior" prefHeight="80.0" prefWidth="388.0" style="-fx-background-color: #1565C0; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Ingresar como " />
             </HBox>
 
             <!-- Mensaje opcional (si tu controller lo usa después) -->
-            <Label fx:id="lbMensaje" text=""
-                   style="-fx-text-fill: #C62828; -fx-font-size: 12px;"/>
+            <Label fx:id="lbMensaje" style="-fx-text-fill: #C62828; -fx-font-size: 12px;" text="" />
+      
+          <!-- Footer -->
+          <HBox prefHeight="0.0" prefWidth="544.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-alignment: CENTER_RIGHT;">
+              <padding>
+                  <Insets bottom="10" left="10" right="10" top="10" />
+              </padding>
+      
+              <Button mnemonicParsing="false" onAction="#btnCerrarSesion" style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Cerrar sesión" />
+          </HBox>
         </VBox>
     </VBox>
-
-    <!-- Footer -->
-    <HBox spacing="10" prefHeight="60.0"
-          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          style="-fx-background-color: #FFFFFF; -fx-alignment: CENTER_RIGHT;">
-        <padding>
-            <Insets top="10" right="10" bottom="10" left="10"/>
-        </padding>
-
-        <Button mnemonicParsing="false"
-                onAction="#btnCerrarSesion"
-                text="Cerrar sesión"
-                style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
-    </HBox>
 
 </AnchorPane>

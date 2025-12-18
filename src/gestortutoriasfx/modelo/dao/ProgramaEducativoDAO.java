@@ -20,16 +20,17 @@ public class ProgramaEducativoDAO {
 
         ArrayList<ProgramaEducativo> lista = new ArrayList<>();
 
-        String q = "SELECT pe.*, f.nombre AS nombreFacultad, " +
-                   "CONCAT(p_coord.nombre, ' ', p_coord.apellidoPaterno) AS nombreCoordinador, " +
-                   "CONCAT(p_super.nombre, ' ', p_super.apellidoPaterno) AS nombreSupervisor " +
-                   "FROM programaEducativo pe " +
-                   "INNER JOIN facultad f ON pe.idFacultad = f.idFacultad " +
-                   "LEFT JOIN coordinador c ON pe.idCoordinador = c.idCoordinador " +
-                   "LEFT JOIN profesor p_coord ON c.idProfesor = p_coord.idProfesor " +
-                   "LEFT JOIN supervisor s ON pe.idSupervisor = s.idSupervisor " +
-                   "LEFT JOIN profesor p_super ON s.idProfesor = p_super.idProfesor " +
-                   "ORDER BY pe.nombre";
+    String q =
+        "SELECT pe.*, f.nombreFacultad AS nombreFacultad, " +
+        "CONCAT(p_coord.nombre, ' ', p_coord.apellidoPaterno) AS nombreCoordinador, " +
+        "CONCAT(p_super.nombre, ' ', p_super.apellidoPaterno) AS nombreSupervisor " +
+        "FROM programaEducativo pe " +
+        "INNER JOIN facultad f ON pe.idFacultad = f.idFacultad " +
+        "LEFT JOIN coordinador c ON pe.idCoordinador = c.idCoordinador " +
+        "LEFT JOIN profesor p_coord ON c.idProfesor = p_coord.idProfesor " +
+        "LEFT JOIN supervisor s ON pe.idSupervisor = s.idSupervisor " +
+        "LEFT JOIN profesor p_super ON s.idProfesor = p_super.idProfesor " +
+        "ORDER BY pe.nombre";
 
         try (PreparedStatement ps = con.prepareStatement(q);
              ResultSet rs = ps.executeQuery()) {

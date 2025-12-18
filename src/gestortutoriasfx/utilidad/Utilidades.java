@@ -5,6 +5,14 @@ import java.util.Optional;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import gestortutoriasfx.modelo.ConexionBD;
+import gestortutoriasfx.modelo.Sesion;
+import java.io.IOException;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 
 /**
  * Nombre de la Clase: Utilidades
@@ -56,4 +64,39 @@ public class Utilidades {
     public static FXMLLoader obtenerVista(String url){
         return new FXMLLoader(GestorTutoriasFX.class.getResource(url));
     }
+    
+    public static void cerrarSesionYRedirigirALogin(Node nodoActual) {
+        Sesion.cerrarSesion();
+        ConexionBD.establecerCredenciales("login");
+
+        try {
+            FXMLLoader loader = obtenerVista("/gestortutoriasfx/vista/FXMLInicioSesion.fxml");
+            Parent root = loader.load();
+
+            Stage stageActual = (Stage) nodoActual.getScene().getWindow();
+            stageActual.setScene(new Scene(root));
+            stageActual.setTitle("Inicio de Sesión");
+            stageActual.centerOnScreen();
+            stageActual.show();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            mostrarAlertaSimple(
+                    "Error",
+                    "No se pudo cargar la pantalla de inicio de sesión.",
+                    Alert.AlertType.ERROR
+            );
+        }
+    }
+
+    public static void confirmarCerrarSesionYRedirigirALogin(Node nodoActual) {
+        boolean deseaSalir = mostrarAlertaVerificacion(
+                "Cerrar Sesión",
+                "¿Está seguro de que desea salir?",
+                "Se regresará a la pantalla de inicio de sesión."
+        );
+        if (!deseaSalir) return;
+        cerrarSesionYRedirigirALogin(nodoActual);
+    }
 }
+
+

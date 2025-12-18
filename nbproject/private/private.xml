@@ -3,77 +3,27 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLAsignarTutoradosController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLFormularioEvidenciaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLFormularioReporteGeneralController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLFormularioReporteTutoriaController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/vista/FXMLGestionarTutorado.fxml</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/vista/FXMLFormularioTutorado.fxml</file>
             <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLFormularioTutoradoController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLGestionarEvidenciasController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLGestionarReporteDeTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLGestionarReporteGeneralController.java</file>
             <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLGestionarTutoradoController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLInicioSesionController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLMesCalendarioController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLMostrarReporteTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPlaneacionSesionTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPlaneacionTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPrincipalAdministradorController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPrincipalTutorController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLRegistrarAsistenciaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLRegistrarFechaTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLRegistrarHorarioController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLRevisarReportesTutoriaController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLSeleccionRolController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLSeleccionTutorController.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/EstudianteImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/EvidenciaImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/ProblematicaAcademicaImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/ProgramaEducativoImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/ReporteGeneralImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/ReporteTutoriaImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/SalonImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/SesionTutoriaImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/TutorImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/UsuarioImplementacion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/interfaz/IPrincipalControlador.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/ConexionBD.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/Sesion.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/CalendarioDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/DocumentoReporteGeneralDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/EstudianteDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/EvidenciaDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/FechaTutoriaDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ListaTutoresComentariosDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/PeriodoEscolarDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ProblemasAcademicosReportadosGeneralesDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ProblematicaAcademicaDAO.java</file>
             <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ProgramaEducativoDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ReporteGeneralDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ReporteTutoriaDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/SalonDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/SesionTutoriaDAO.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/ProgramaEducativoImplementacion.java</file>
             <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/TutorDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/UsuarioDAO.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Administrador.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/CategoriaDia.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Coordinador.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/DiaCalendario.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/DocumentoReporteGeneral.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Evidencia.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Estudiante.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ExperienciaEducativa.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/FechaTutoria.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/PeriodoEscolar.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ProblemaAcademicoReportadoGeneral.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Profesor.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ProgramaEducativo.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ReporteGeneral.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ReporteTutoria.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/SesionTutoria.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Tutor.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/TutorComentarioGeneral.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/Usuario.java</file>
-            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/utilidad/ArrastrarSoltarUtilidad.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/TutorImplementacion.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/EstudianteDAO.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/dominio/EstudianteImplementacion.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPlaneacionSesionTutoriaController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/FechaTutoriaDAO.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/dao/ProblematicaAcademicaDAO.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/modelo/pojo/ProblematicaAcademica.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLFormularioReporteGeneralController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/vista/FXMLFormularioReporteGeneral.fxml</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLPlaneacionTutoriaController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLGestionarReporteGeneralController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/vista/FXMLGestionarReporteGeneral.fxml</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLMostrarReporteTutoriaController.java</file>
+            <file>file:/C:/Users/USER/Desktop/Proyecto-Gestor-Tutorias/src/gestortutoriasfx/controlador/FXMLRevisarReportesTutoriaController.java</file>
         </group>
     </open-files>
 </project-private>

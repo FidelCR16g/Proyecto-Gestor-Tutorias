@@ -2,139 +2,184 @@ package gestortutoriasfx.modelo.dao;
 
 import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class FechaTutoriaDAO {
 
-    public static List<FechaTutoria> obtenerPorPeriodo(Connection conexion, int idPeriodoEscolar)
-            throws SQLException {
+    public static FechaTutoria obtenerPorPeriodoYNumSesion(Connection c, int idPeriodoEscolar, int numSesion) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        String sql = "SELECT idFechaTutoria, idPeriodoEscolar, descripcion, numSesion, fechaInicio, fechaCierre " +
+                     "FROM fechaTutoria WHERE idPeriodoEscolar=? AND numSesion=?";
 
-        String sql = "SELECT * FROM fechaTutoria WHERE idPeriodoEscolar = ? ORDER BY numSesion ASC";
-        List<FechaTutoria> lista = new ArrayList<>();
-
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setInt(1, idPeriodoEscolar);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    FechaTutoria ft = new FechaTutoria();
-                    ft.setIdFechaTutoria(rs.getInt("idFechaTutoria"));
-                    ft.setIdPeriodoEscolar(rs.getInt("idPeriodoEscolar"));
-                    ft.setNumSesion(rs.getInt("numSesion"));
-                    ft.setDescripcion(rs.getString("descripcion"));
-                    ft.setFecha(rs.getDate("fecha").toString()); // yyyy-MM-dd
-                    lista.add(ft);
-                }
-            }
-        }
-        return lista;
-    }
-
-    public static FechaTutoria obtenerPorPeriodoYSesion(Connection conexion, int idPeriodoEscolar, int numSesion)
-            throws SQLException {
-
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
-        String sql = "SELECT * FROM fechaTutoria WHERE idPeriodoEscolar = ? AND numSesion = ? LIMIT 1";
-
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idPeriodoEscolar);
             ps.setInt(2, numSesion);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    FechaTutoria ft = new FechaTutoria();
-                    ft.setIdFechaTutoria(rs.getInt("idFechaTutoria"));
-                    ft.setIdPeriodoEscolar(rs.getInt("idPeriodoEscolar"));
-                    ft.setNumSesion(rs.getInt("numSesion"));
-                    ft.setDescripcion(rs.getString("descripcion"));
-                    ft.setFecha(rs.getDate("fecha").toString());
-                    return ft;
+                    return mapear(rs);
                 }
             }
         }
         return null;
     }
 
-    /**
-     * Para bloquear días ya ocupados por otras sesiones.
-     */
-    public static Set<LocalDate> obtenerFechasOcupadas(Connection conexion, int idPeriodoEscolar)
-            throws SQLException {
+    public static ArrayList<FechaTutoria> obtenerPorPeriodo(Connection c, int idPeriodoEscolar) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        String sql = "SELECT idFechaTutoria, idPeriodoEscolar, descripcion, numSesion, fechaInicio, fechaCierre " +
+                     "FROM fechaTutoria WHERE idPeriodoEscolar=? ORDER BY numSesion ASC";
 
-        String sql = "SELECT fecha FROM fechaTutoria WHERE idPeriodoEscolar = ?";
-        Set<LocalDate> set = new HashSet<>();
-
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+        ArrayList<FechaTutoria> lista = new ArrayList<>();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idPeriodoEscolar);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    set.add(rs.getDate("fecha").toLocalDate());
+                    lista.add(mapear(rs));
                 }
             }
         }
-        return set;
+        return lista;
     }
 
+    public static int insertar(Connection c, FechaTutoria ft) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (ft == null) throw new SQLException("No hay información de FechaTutoria.");
 
-    public static void guardarOActualizar(Connection conexion, FechaTutoria ft) throws SQLException {
+        String sql = "INSERT INTO fechaTutoria (idPeriodoEscolar, descripcion, numSesion, fechaInicio, fechaCierre) " +
+                     "VALUES (?, ?, ?, ?, ?)";
 
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-        if (ft == null) throw new SQLException("FechaTutoria es null.");
-
-        // 1) ¿Ya existe por periodo + sesión?
-        Integer idExistente = null;
-        String sqlExiste = "SELECT idFechaTutoria FROM fechaTutoria WHERE idPeriodoEscolar = ? AND numSesion = ? LIMIT 1";
-
-        try (PreparedStatement ps = conexion.prepareStatement(sqlExiste)) {
+        try (PreparedStatement ps = c.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, ft.getIdPeriodoEscolar());
-            ps.setInt(2, ft.getNumSesion());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) idExistente = rs.getInt("idFechaTutoria");
+            ps.setString(2, ft.getDescripcion());
+            ps.setInt(3, ft.getNumSesion());
+
+            Date fechaIni = Date.valueOf(ft.getFechaInicio());
+            ps.setDate(4, fechaIni);
+
+            if (ft.getFechaCierre() == null || ft.getFechaCierre().trim().isEmpty()) {
+                ps.setNull(5, Types.DATE);
+            } else {
+                ps.setDate(5, Date.valueOf(ft.getFechaCierre().trim()));
             }
-        }
 
-        if (idExistente == null) {
-            String sqlInsert =
-                "INSERT INTO fechaTutoria (idPeriodoEscolar, descripcion, numSesion, fecha) " +
-                "VALUES (?, ?, ?, ?)";
-
-            try (PreparedStatement ps = conexion.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, ft.getIdPeriodoEscolar());
-                ps.setString(2, ft.getDescripcion());
-                ps.setInt(3, ft.getNumSesion());
-                ps.setDate(4, java.sql.Date.valueOf(LocalDate.parse(ft.getFecha())));
-
-                ps.executeUpdate();
-
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
                 try (ResultSet keys = ps.getGeneratedKeys()) {
-                    if (keys.next()) ft.setIdFechaTutoria(keys.getInt(1));
+                    if (keys.next()) return keys.getInt(1);
                 }
             }
-        } else {
-            String sqlUpdate =
-                "UPDATE fechaTutoria SET descripcion = ?, fecha = ? " +
-                "WHERE idFechaTutoria = ?";
+        }
+        return -1;
+    }
 
-            try (PreparedStatement ps = conexion.prepareStatement(sqlUpdate)) {
-                ps.setString(1, ft.getDescripcion());
-                ps.setDate(2, java.sql.Date.valueOf(LocalDate.parse(ft.getFecha())));
-                ps.setInt(3, idExistente);
+    public static int actualizar(Connection c, FechaTutoria ft) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (ft == null) throw new SQLException("No hay información de FechaTutoria.");
 
-                ps.executeUpdate();
-                ft.setIdFechaTutoria(idExistente);
+        String sql = "UPDATE fechaTutoria SET descripcion=?, fechaInicio=?, fechaCierre=? WHERE idFechaTutoria=?";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, ft.getDescripcion());
+            ps.setDate(2, Date.valueOf(ft.getFechaInicio()));
+
+            if (ft.getFechaCierre() == null || ft.getFechaCierre().trim().isEmpty()) {
+                ps.setNull(3, Types.DATE);
+            } else {
+                ps.setDate(3, Date.valueOf(ft.getFechaCierre().trim()));
+            }
+
+            ps.setInt(4, ft.getIdFechaTutoria());
+            return ps.executeUpdate();
+        }
+    }
+
+    public static int eliminarPorPeriodo(Connection c, int idPeriodoEscolar) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
+
+        String sql = "DELETE FROM fechaTutoria WHERE idPeriodoEscolar=?";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idPeriodoEscolar);
+            return ps.executeUpdate();
+        }
+    }
+
+    private static FechaTutoria mapear(ResultSet rs) throws SQLException {
+        FechaTutoria ft = new FechaTutoria();
+        ft.setIdFechaTutoria(rs.getInt("idFechaTutoria"));
+        ft.setIdPeriodoEscolar(rs.getInt("idPeriodoEscolar"));
+        ft.setDescripcion(rs.getString("descripcion"));
+        ft.setNumSesion(rs.getInt("numSesion"));
+
+        Date inicio = rs.getDate("fechaInicio");
+        Date cierre = (Date) rs.getObject("fechaCierre");
+
+        if (inicio != null) {
+            ft.setFecha(inicio.toString());
+            ft.setFechaInicio();
+        }
+        if (cierre != null) {
+            ft.setFecha(cierre.toString());
+            ft.setFechaCierre();
+        }
+
+        // para que toString() y getFecha() representen siempre el inicio
+        if (inicio != null) {
+            ft.setFecha(inicio.toString());
+        }
+
+        return ft;
+    }
+
+    
+    public static Set<LocalDate> obtenerFechasOcupadas(Connection c, int idPeriodoEscolar) throws SQLException {
+        if (c == null) throw new SQLException("No hay conexión con la base de datos.");
+
+        String sql = "SELECT fechaInicio, fechaCierre FROM fechaTutoria WHERE idPeriodoEscolar=?";
+
+        Set<LocalDate> ocupadas = new HashSet<>();
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idPeriodoEscolar);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    java.sql.Date iniSql = rs.getDate("fechaInicio");   // NOT NULL en BD
+                    java.sql.Date cieSql = (java.sql.Date) rs.getObject("fechaCierre"); // puede ser NULL
+
+                    if (iniSql == null) continue;
+
+                    LocalDate ini = iniSql.toLocalDate();
+
+                    if (cieSql == null) {
+                        ocupadas.add(ini);
+                    } else {
+                        LocalDate cie = cieSql.toLocalDate();
+                        if (cie.isBefore(ini)) {
+                            ocupadas.add(ini);
+                        } else {
+                            LocalDate tmp = ini;
+                            while (!tmp.isAfter(cie)) {
+                                ocupadas.add(tmp);
+                                tmp = tmp.plusDays(1);
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        return ocupadas;
     }
 }
