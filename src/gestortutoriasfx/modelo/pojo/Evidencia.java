@@ -83,6 +83,4 @@ public class Evidencia {
     public void setTamanoKB(double tamanoKB) {
         this.tamanoKB = tamanoKB;
     }
-    
-    
 }

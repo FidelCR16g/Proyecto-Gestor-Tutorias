@@ -17,34 +17,51 @@ package gestortutoriasfx.modelo.pojo;
 
 public class ReporteTutoria {
     private int idReporteTutoria;
-
-    // En BD pueden ser NULL
-    private Integer idTutor;
+    private int idTutor;
     private int idPeriodoEscolar;
-    private Integer idProgramaEducativo;
+    private int idProgramaEducativo;
 
     private String nombreTutor;
-    private String nombreProgramaEducativo; 
+    private String nombreProgramaEducativo;
     private String nombrePeriodoEscolar;
-
-    private String estatus; 
-
+    
+    private String estatus;
     private String fechaPrimeraTutoria;
     private String fechaUltimaTutoria;
-
     private int numSesion;
     private int numAlumnosAsistieron;
     private int numAlumnosRiesgo;
-
     private String comentarios;
     private String estadoLugar;
-
     private String fechaCreacionReporte;
 
     public ReporteTutoria() {
-        this.estatus = "En Llenado";
+        this.estatus = "En Llenado"; 
         this.numAlumnosAsistieron = 0;
         this.numAlumnosRiesgo = 0;
+    }
+    
+    public ReporteTutoria(int idReporteTutoria, int idTutor, int idPeriodoEscolar, int idProgramaEducativo, 
+                          String nombreTutor, String nombreProgramaEducativo, String nombrePeriodoEscolar, 
+                          String estatus, String fechaPrimeraTutoria, String fechaUltimaTutoria, 
+                          int numSesion, int numAlumnosAsistieron, int numAlumnosRiesgo, 
+                          String comentarios, String estadoLugar, String fechaCreacionReporte) {
+        this.idReporteTutoria = idReporteTutoria;
+        this.idTutor = idTutor;
+        this.idPeriodoEscolar = idPeriodoEscolar;
+        this.idProgramaEducativo = idProgramaEducativo;
+        this.nombreTutor = nombreTutor;
+        this.nombreProgramaEducativo = nombreProgramaEducativo;
+        this.nombrePeriodoEscolar = nombrePeriodoEscolar;
+        this.estatus = estatus;
+        this.fechaPrimeraTutoria = fechaPrimeraTutoria;
+        this.fechaUltimaTutoria = fechaUltimaTutoria;
+        this.numSesion = numSesion;
+        this.numAlumnosAsistieron = numAlumnosAsistieron;
+        this.numAlumnosRiesgo = numAlumnosRiesgo;
+        this.comentarios = comentarios;
+        this.estadoLugar = estadoLugar;
+        this.fechaCreacionReporte = fechaCreacionReporte;
     }
 
     public int getIdReporteTutoria() {
@@ -55,11 +72,11 @@ public class ReporteTutoria {
         this.idReporteTutoria = idReporteTutoria;
     }
 
-    public Integer getIdTutor() {
+    public int getIdTutor() {
         return idTutor;
     }
 
-    public void setIdTutor(Integer idTutor) {
+    public void setIdTutor(int idTutor) {
         this.idTutor = idTutor;
     }
 
@@ -71,11 +88,11 @@ public class ReporteTutoria {
         this.idPeriodoEscolar = idPeriodoEscolar;
     }
 
-    public Integer getIdProgramaEducativo() {
+    public int getIdProgramaEducativo() {
         return idProgramaEducativo;
     }
 
-    public void setIdProgramaEducativo(Integer idProgramaEducativo) {
+    public void setIdProgramaEducativo(int idProgramaEducativo) {
         this.idProgramaEducativo = idProgramaEducativo;
     }
 
@@ -93,14 +110,6 @@ public class ReporteTutoria {
 
     public void setNombreProgramaEducativo(String nombreProgramaEducativo) {
         this.nombreProgramaEducativo = nombreProgramaEducativo;
-    }
-
-    public String getNombrePrograma() {
-        return nombreProgramaEducativo;
-    }
-
-    public void setNombrePrograma(String nombrePrograma) {
-        this.nombreProgramaEducativo = nombrePrograma;
     }
 
     public String getNombrePeriodoEscolar() {
@@ -182,9 +191,9 @@ public class ReporteTutoria {
     public void setFechaCreacionReporte(String fechaCreacionReporte) {
         this.fechaCreacionReporte = fechaCreacionReporte;
     }
-
+    
     @Override
     public String toString() {
-        return "Reporte Sesión " + numSesion + " (" + estatus + ")";
+        return "Reporte Sesión " + numSesion + " - " + nombreProgramaEducativo + " (" + estatus + ")";
     }
 }

@@ -17,13 +17,14 @@ package gestortutoriasfx.modelo.pojo;
 
 public class PeriodoEscolar {
     private int idPeriodoEscolar;
-    private String rangoPeriodo;
+    private String rangoPeriodo; 
     private String fechaInicio;
     private String fechaFin;
     private boolean estado;
-    private String nombrePeriodoEscolar;
-
-    public PeriodoEscolar() {
+    
+    private String nombrePeriodoEscolar; 
+    
+    public PeriodoEscolar(){
     }
 
     public PeriodoEscolar(int idPeriodoEscolar, String rangoPeriodo, String fechaInicio, String fechaFin, boolean estado, String nombrePeriodoEscolar) {
@@ -85,6 +86,6 @@ public class PeriodoEscolar {
 
     @Override
     public String toString() {
-        return nombrePeriodoEscolar != null ? nombrePeriodoEscolar : (rangoPeriodo + " (" + fechaInicio + " - " + fechaFin + ")");
+        return (nombrePeriodoEscolar != null) ? nombrePeriodoEscolar : rangoPeriodo;
     }
 }

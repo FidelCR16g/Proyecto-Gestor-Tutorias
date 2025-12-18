@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class ProgramaEducativo implements Serializable {
 
-    private Integer idProgramaEducativo; 
+    private int idProgramaEducativo; 
     private int idFacultad;             
-    private Integer idSupervisor;       
-    private Integer idCoordinador;      
+    private int idSupervisor;       
+    private int idCoordinador;      
     private String nombre;              
     private int plan;                   
     private Area area;                  
@@ -17,6 +17,10 @@ public class ProgramaEducativo implements Serializable {
     private int creditos;
     private int cupo;
     private int numPeriodos;
+    
+    private String nombreFacultad;
+    private String nombreCoordinador;
+    private String nombreSupervisor;
 
     public enum Area {
         Artes,
@@ -46,9 +50,7 @@ public class ProgramaEducativo implements Serializable {
 
     public ProgramaEducativo() {}
 
-    public ProgramaEducativo(Integer idProgramaEducativo, int idFacultad, Integer idSupervisor, Integer idCoordinador,
-                             String nombre, int plan, Area area, Nivel nivel, Modalidad modalidad,
-                             int creditos, int cupo, int numPeriodos) {
+    public ProgramaEducativo(int idProgramaEducativo, int idFacultad, int idSupervisor, int idCoordinador, String nombre, int plan, Area area, Nivel nivel, Modalidad modalidad, int creditos, int cupo, int numPeriodos, String nombreFacultad, String nombreCoordinador, String nombreSupervisor) {
         this.idProgramaEducativo = idProgramaEducativo;
         this.idFacultad = idFacultad;
         this.idSupervisor = idSupervisor;
@@ -61,43 +63,130 @@ public class ProgramaEducativo implements Serializable {
         this.creditos = creditos;
         this.cupo = cupo;
         this.numPeriodos = numPeriodos;
+        this.nombreFacultad = nombreFacultad;
+        this.nombreCoordinador = nombreCoordinador;
+        this.nombreSupervisor = nombreSupervisor;
     }
 
-    public Integer getIdProgramaEducativo() { return idProgramaEducativo; }
-    public void setIdProgramaEducativo(Integer idProgramaEducativo) { this.idProgramaEducativo = idProgramaEducativo; }
+    public int getIdProgramaEducativo() {
+        return idProgramaEducativo;
+    }
 
-    public int getIdFacultad() { return idFacultad; }
-    public void setIdFacultad(int idFacultad) { this.idFacultad = idFacultad; }
+    public void setIdProgramaEducativo(int idProgramaEducativo) {
+        this.idProgramaEducativo = idProgramaEducativo;
+    }
 
-    public Integer getIdSupervisor() { return idSupervisor; }
-    public void setIdSupervisor(Integer idSupervisor) { this.idSupervisor = idSupervisor; }
+    public int getIdFacultad() {
+        return idFacultad;
+    }
 
-    public Integer getIdCoordinador() { return idCoordinador; }
-    public void setIdCoordinador(Integer idCoordinador) { this.idCoordinador = idCoordinador; }
+    public void setIdFacultad(int idFacultad) {
+        this.idFacultad = idFacultad;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public int getIdSupervisor() {
+        return idSupervisor;
+    }
 
-    public int getPlan() { return plan; }
-    public void setPlan(int plan) { this.plan = plan; }
+    public void setIdSupervisor(int idSupervisor) {
+        this.idSupervisor = idSupervisor;
+    }
 
-    public Area getArea() { return area; }
-    public void setArea(Area area) { this.area = area; }
+    public int getIdCoordinador() {
+        return idCoordinador;
+    }
 
-    public Nivel getNivel() { return nivel; }
-    public void setNivel(Nivel nivel) { this.nivel = nivel; }
+    public void setIdCoordinador(int idCoordinador) {
+        this.idCoordinador = idCoordinador;
+    }
 
-    public Modalidad getModalidad() { return modalidad; }
-    public void setModalidad(Modalidad modalidad) { this.modalidad = modalidad; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public int getCreditos() { return creditos; }
-    public void setCreditos(int creditos) { this.creditos = creditos; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public int getCupo() { return cupo; }
-    public void setCupo(int cupo) { this.cupo = cupo; }
+    public int getPlan() {
+        return plan;
+    }
 
-    public int getNumPeriodos() { return numPeriodos; }
-    public void setNumPeriodos(int numPeriodos) { this.numPeriodos = numPeriodos; }
+    public void setPlan(int plan) {
+        this.plan = plan;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
+
+    public Nivel getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(int creditos) {
+        this.creditos = creditos;
+    }
+
+    public int getCupo() {
+        return cupo;
+    }
+
+    public void setCupo(int cupo) {
+        this.cupo = cupo;
+    }
+
+    public int getNumPeriodos() {
+        return numPeriodos;
+    }
+
+    public void setNumPeriodos(int numPeriodos) {
+        this.numPeriodos = numPeriodos;
+    }
+
+    public String getNombreFacultad() {
+        return nombreFacultad;
+    }
+
+    public void setNombreFacultad(String nombreFacultad) {
+        this.nombreFacultad = nombreFacultad;
+    }
+
+    public String getNombreCoordinador() {
+        return nombreCoordinador;
+    }
+
+    public void setNombreCoordinador(String nombreCoordinador) {
+        this.nombreCoordinador = nombreCoordinador;
+    }
+
+    public String getNombreSupervisor() {
+        return nombreSupervisor;
+    }
+
+    public void setNombreSupervisor(String nombreSupervisor) {
+        this.nombreSupervisor = nombreSupervisor;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -114,7 +203,7 @@ public class ProgramaEducativo implements Serializable {
 
     @Override
     public String toString() {
-        String n = (nombre != null) ? nombre : "Programa";
-        return n + " (Plan " + plan + ")";
+        String programa = (nombre != null) ? nombre : "Programa";
+        return programa + " (Plan " + plan + ")";
     }
 }

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Profesor implements Serializable {
 
-    private Integer idProfesor;          
+    private int idProfesor;          
     private String numPersonal;          
     private String nombre;
     private String apellidoPaterno;
@@ -16,14 +16,17 @@ public class Profesor implements Serializable {
     private String telefono;
     private String email;
     private String gradoEstudios;
-    private Integer antiguedadAnios;     
+    
+    private int antiguedadAnios;     
     private Boolean perfilActivo;        
 
-    public Profesor() {}
+    public Profesor() {
+        this.perfilActivo = true;
+    }
 
-    public Profesor(Integer idProfesor, String numPersonal, String nombre, String apellidoPaterno,
+    public Profesor(int idProfesor, String numPersonal, String nombre, String apellidoPaterno,
                     String apellidoMaterno, LocalDate fechaNacimiento, LocalDate fechaContratacion,
-                    String telefono, String email, String gradoEstudios, Integer antiguedadAnios,
+                    String telefono, String email, String gradoEstudios, int antiguedadAnios,
                     Boolean perfilActivo) {
         this.idProfesor = idProfesor;
         this.numPersonal = numPersonal;
@@ -39,44 +42,104 @@ public class Profesor implements Serializable {
         this.perfilActivo = perfilActivo;
     }
 
-    public Integer getIdProfesor() { return idProfesor; }
-    public void setIdProfesor(Integer idProfesor) { this.idProfesor = idProfesor; }
+    public int getIdProfesor() {
+        return idProfesor;
+    }
 
-    public String getNumPersonal() { return numPersonal; }
-    public void setNumPersonal(String numPersonal) { this.numPersonal = numPersonal; }
+    public void setIdProfesor(int idProfesor) {
+        this.idProfesor = idProfesor;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getNumPersonal() {
+        return numPersonal;
+    }
 
-    public String getApellidoPaterno() { return apellidoPaterno; }
-    public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
+    public void setNumPersonal(String numPersonal) {
+        this.numPersonal = numPersonal;
+    }
 
-    public String getApellidoMaterno() { return apellidoMaterno; }
-    public void setApellidoMaterno(String apellidoMaterno) { this.apellidoMaterno = apellidoMaterno; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public LocalDate getFechaContratacion() { return fechaContratacion; }
-    public void setFechaContratacion(LocalDate fechaContratacion) { this.fechaContratacion = fechaContratacion; }
+    public String getApellidoPaterno() {
+        return apellidoPaterno;
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setApellidoPaterno(String apellidoPaterno) {
+        this.apellidoPaterno = apellidoPaterno;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getApellidoMaterno() {
+        return apellidoMaterno;
+    }
 
-    public String getGradoEstudios() { return gradoEstudios; }
-    public void setGradoEstudios(String gradoEstudios) { this.gradoEstudios = gradoEstudios; }
+    public void setApellidoMaterno(String apellidoMaterno) {
+        this.apellidoMaterno = apellidoMaterno;
+    }
 
-    public Integer getAntiguedadAnios() { return antiguedadAnios; }
-    public void setAntiguedadAnios(Integer antiguedadAnios) { this.antiguedadAnios = antiguedadAnios; }
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
 
-    public Boolean getPerfilActivo() { return perfilActivo; }
-    public void setPerfilActivo(Boolean perfilActivo) { this.perfilActivo = perfilActivo; }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
 
+    public LocalDate getFechaContratacion() {
+        return fechaContratacion;
+    }
+
+    public void setFechaContratacion(LocalDate fechaContratacion) {
+        this.fechaContratacion = fechaContratacion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGradoEstudios() {
+        return gradoEstudios;
+    }
+
+    public void setGradoEstudios(String gradoEstudios) {
+        this.gradoEstudios = gradoEstudios;
+    }
+
+    public int getAntiguedadAnios() {
+        return antiguedadAnios;
+    }
+
+    public void setAntiguedadAnios(int antiguedadAnios) {
+        this.antiguedadAnios = antiguedadAnios;
+    }
+
+    public Boolean getPerfilActivo() {
+        return perfilActivo;
+    }
+
+    public void setPerfilActivo(Boolean perfilActivo) {
+        this.perfilActivo = perfilActivo;
+    }
+    
     public String getNombreCompleto() {
-        return String.format("%s %s %s", nombre, apellidoPaterno, apellidoMaterno).trim();
+        return (nombre + " " + apellidoPaterno + " " + apellidoMaterno).trim();
     }
 
     @Override
@@ -94,19 +157,6 @@ public class Profesor implements Serializable {
 
     @Override
     public String toString() {
-        return "Profesor{" +
-                "idProfesor=" + idProfesor +
-                ", numPersonal='" + numPersonal + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", apellidoPaterno='" + apellidoPaterno + '\'' +
-                ", apellidoMaterno='" + apellidoMaterno + '\'' +
-                ", fechaNacimiento=" + fechaNacimiento +
-                ", fechaContratacion=" + fechaContratacion +
-                ", telefono='" + telefono + '\'' +
-                ", email='" + email + '\'' +
-                ", gradoEstudios='" + gradoEstudios + '\'' +
-                ", antiguedadAnios=" + antiguedadAnios +
-                ", perfilActivo=" + perfilActivo +
-                '}';
+        return getNombreCompleto() + " (" + numPersonal + ")";
     }
 }

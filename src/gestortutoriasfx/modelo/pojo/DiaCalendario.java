@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class DiaCalendario implements Serializable {
 
-    private Integer idDiaCalendario;  
+    private int idDiaCalendario;  
     private LocalDate fecha;          
     private int idPeriodoEscolar;      
 

@@ -19,12 +19,19 @@ public class Administrador {
     private int idRolAdministrador;
     private int idUsuario;
 
+    private String nombreCompleto;
+    private String numPersonal;
+    private String email;
+
     public Administrador() {
     }
 
-    public Administrador(int idRolAdministrador, int idUsuario) {
+    public Administrador(int idRolAdministrador, int idUsuario, String nombreCompleto, String numPersonal, String email) {
         this.idRolAdministrador = idRolAdministrador;
         this.idUsuario = idUsuario;
+        this.nombreCompleto = nombreCompleto;
+        this.numPersonal = numPersonal;
+        this.email = email;
     }
 
     public int getIdRolAdministrador() {
@@ -43,11 +50,35 @@ public class Administrador {
         this.idUsuario = idUsuario;
     }
 
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+    }
+
+    public String getNumPersonal() {
+        return numPersonal;
+    }
+
+    public void setNumPersonal(String numPersonal) {
+        this.numPersonal = numPersonal;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
-        return "Administrador{" +
-                "idRolAdministrador=" + idRolAdministrador +
-                ", idUsuario=" + idUsuario +
-                '}';
+        if (nombreCompleto != null) {
+            return nombreCompleto + " (Admin)";
+        }
+        return "Admin ID: " + idRolAdministrador;
     }
 }

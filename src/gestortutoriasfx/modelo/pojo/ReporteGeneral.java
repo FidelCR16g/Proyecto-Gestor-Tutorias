@@ -8,11 +8,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ReporteGeneral implements Serializable {
-
-    private Integer idReporteGeneral;            
+    private int idReporteGeneral;            
     private int idPeriodoEscolar;                
-    private Integer idProgramaEducativo;         
-    private Integer idCoordinador;               
+    private int idProgramaEducativo;         
+    private int idCoordinador;               
 
     private String nombreProgramaEducativo;      
     private String nombreCoordinador;            
@@ -38,9 +37,14 @@ public class ReporteGeneral implements Serializable {
         Revisado
     }
 
-    public ReporteGeneral() {}
+    public ReporteGeneral() {
+        this.estatus = Estatus.Borrador;
+        this.totalAlumnosRegistrados = 0;
+        this.totalAlumnosAsistieron = 0;
+        this.fechaGeneracion = LocalDateTime.now();
+    }
 
-    public ReporteGeneral(Integer idReporteGeneral, int idPeriodoEscolar, Integer idProgramaEducativo, Integer idCoordinador,
+    public ReporteGeneral(int idReporteGeneral, int idPeriodoEscolar, int idProgramaEducativo, int idCoordinador,
                           String nombreProgramaEducativo, String nombreCoordinador, String nombrePeriodoEscolar,
                           int numSesion, LocalDate fecha, String objetivos,
                           int totalAlumnosRegistrados, int totalAlumnosAsistieron,
@@ -64,41 +68,101 @@ public class ReporteGeneral implements Serializable {
         this.estadoLugar = estadoLugar;
     }
 
-    public Integer getIdReporteGeneral() { return idReporteGeneral; }
-    public void setIdReporteGeneral(Integer idReporteGeneral) { this.idReporteGeneral = idReporteGeneral; }
+    public int getIdReporteGeneral() {
+        return idReporteGeneral;
+    }
 
-    public int getIdPeriodoEscolar() { return idPeriodoEscolar; }
-    public void setIdPeriodoEscolar(int idPeriodoEscolar) { this.idPeriodoEscolar = idPeriodoEscolar; }
+    public void setIdReporteGeneral(int idReporteGeneral) {
+        this.idReporteGeneral = idReporteGeneral;
+    }
 
-    public Integer getIdProgramaEducativo() { return idProgramaEducativo; }
-    public void setIdProgramaEducativo(Integer idProgramaEducativo) { this.idProgramaEducativo = idProgramaEducativo; }
+    public int getIdPeriodoEscolar() {
+        return idPeriodoEscolar;
+    }
 
-    public Integer getIdCoordinador() { return idCoordinador; }
-    public void setIdCoordinador(Integer idCoordinador) { this.idCoordinador = idCoordinador; }
+    public void setIdPeriodoEscolar(int idPeriodoEscolar) {
+        this.idPeriodoEscolar = idPeriodoEscolar;
+    }
 
-    public String getNombreProgramaEducativo() { return nombreProgramaEducativo; }
-    public void setNombreProgramaEducativo(String nombreProgramaEducativo) { this.nombreProgramaEducativo = nombreProgramaEducativo; }
+    public int getIdProgramaEducativo() {
+        return idProgramaEducativo;
+    }
 
-    public String getNombreCoordinador() { return nombreCoordinador; }
-    public void setNombreCoordinador(String nombreCoordinador) { this.nombreCoordinador = nombreCoordinador; }
+    public void setIdProgramaEducativo(int idProgramaEducativo) {
+        this.idProgramaEducativo = idProgramaEducativo;
+    }
 
-    public String getNombrePeriodoEscolar() { return nombrePeriodoEscolar; }
-    public void setNombrePeriodoEscolar(String nombrePeriodoEscolar) { this.nombrePeriodoEscolar = nombrePeriodoEscolar; }
+    public int getIdCoordinador() {
+        return idCoordinador;
+    }
 
-    public int getNumSesion() { return numSesion; }
-    public void setNumSesion(int numSesion) { this.numSesion = numSesion; }
+    public void setIdCoordinador(int idCoordinador) {
+        this.idCoordinador = idCoordinador;
+    }
 
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public String getNombreProgramaEducativo() {
+        return nombreProgramaEducativo;
+    }
 
-    public String getObjetivos() { return objetivos; }
-    public void setObjetivos(String objetivos) { this.objetivos = objetivos; }
+    public void setNombreProgramaEducativo(String nombreProgramaEducativo) {
+        this.nombreProgramaEducativo = nombreProgramaEducativo;
+    }
 
-    public int getTotalAlumnosRegistrados() { return totalAlumnosRegistrados; }
-    public void setTotalAlumnosRegistrados(int totalAlumnosRegistrados) { this.totalAlumnosRegistrados = totalAlumnosRegistrados; }
+    public String getNombreCoordinador() {
+        return nombreCoordinador;
+    }
 
-    public int getTotalAlumnosAsistieron() { return totalAlumnosAsistieron; }
-    public void setTotalAlumnosAsistieron(int totalAlumnosAsistieron) { this.totalAlumnosAsistieron = totalAlumnosAsistieron; }
+    public void setNombreCoordinador(String nombreCoordinador) {
+        this.nombreCoordinador = nombreCoordinador;
+    }
+
+    public String getNombrePeriodoEscolar() {
+        return nombrePeriodoEscolar;
+    }
+
+    public void setNombrePeriodoEscolar(String nombrePeriodoEscolar) {
+        this.nombrePeriodoEscolar = nombrePeriodoEscolar;
+    }
+
+    public int getNumSesion() {
+        return numSesion;
+    }
+
+    public void setNumSesion(int numSesion) {
+        this.numSesion = numSesion;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getObjetivos() {
+        return objetivos;
+    }
+
+    public void setObjetivos(String objetivos) {
+        this.objetivos = objetivos;
+    }
+
+    public int getTotalAlumnosRegistrados() {
+        return totalAlumnosRegistrados;
+    }
+
+    public void setTotalAlumnosRegistrados(int totalAlumnosRegistrados) {
+        this.totalAlumnosRegistrados = totalAlumnosRegistrados;
+    }
+
+    public int getTotalAlumnosAsistieron() {
+        return totalAlumnosAsistieron;
+    }
+
+    public void setTotalAlumnosAsistieron(int totalAlumnosAsistieron) {
+        this.totalAlumnosAsistieron = totalAlumnosAsistieron;
+    }
 
     public BigDecimal getPorcentajeAsistencia() {
         if (porcentajeAsistencia != null) return porcentajeAsistencia;
@@ -118,14 +182,29 @@ public class ReporteGeneral implements Serializable {
         this.porcentajeAsistencia = porcentajeAsistencia;
     }
 
-    public Estatus getEstatus() { return estatus; }
-    public void setEstatus(Estatus estatus) { this.estatus = estatus; }
+    public Estatus getEstatus() {
+        return estatus;
+    }
 
-    public LocalDateTime getFechaGeneracion() { return fechaGeneracion; }
-    public void setFechaGeneracion(LocalDateTime fechaGeneracion) { this.fechaGeneracion = fechaGeneracion; }
+    public void setEstatus(Estatus estatus) {
+        this.estatus = estatus;
+    }
 
-    public String getEstadoLugar() { return estadoLugar; }
-    public void setEstadoLugar(String estadoLugar) { this.estadoLugar = estadoLugar; }
+    public LocalDateTime getFechaGeneracion() {
+        return fechaGeneracion;
+    }
+
+    public void setFechaGeneracion(LocalDateTime fechaGeneracion) {
+        this.fechaGeneracion = fechaGeneracion;
+    }
+
+    public String getEstadoLugar() {
+        return estadoLugar;
+    }
+
+    public void setEstadoLugar(String estadoLugar) {
+        this.estadoLugar = estadoLugar;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -142,23 +221,6 @@ public class ReporteGeneral implements Serializable {
 
     @Override
     public String toString() {
-        return "ReporteGeneral{" +
-                "idReporteGeneral=" + idReporteGeneral +
-                ", idPeriodoEscolar=" + idPeriodoEscolar +
-                ", idProgramaEducativo=" + idProgramaEducativo +
-                ", idCoordinador=" + idCoordinador +
-                ", nombreProgramaEducativo='" + nombreProgramaEducativo + '\'' +
-                ", nombreCoordinador='" + nombreCoordinador + '\'' +
-                ", nombrePeriodoEscolar='" + nombrePeriodoEscolar + '\'' +
-                ", numSesion=" + numSesion +
-                ", fecha=" + fecha +
-                ", objetivos='" + objetivos + '\'' +
-                ", totalAlumnosRegistrados=" + totalAlumnosRegistrados +
-                ", totalAlumnosAsistieron=" + totalAlumnosAsistieron +
-                ", porcentajeAsistencia=" + getPorcentajeAsistencia() +
-                ", estatus=" + estatus +
-                ", fechaGeneracion=" + fechaGeneracion +
-                ", estadoLugar='" + estadoLugar + '\'' +
-                '}';
+        return "Reporte General Sesión " + numSesion + " - " + nombreProgramaEducativo + " (" + estatus + ")";
     }
 }

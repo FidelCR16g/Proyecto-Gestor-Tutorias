@@ -16,10 +16,10 @@ package gestortutoriasfx.modelo.pojo;
  */
 
 public class Estudiante {
-    private int idEstudiante;                 
+    private int idEstudiante;
     private String matricula;
     private int idProgramaEducativo;
-    private Integer idTutor;                  
+    private int idTutor;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
@@ -31,17 +31,15 @@ public class Estudiante {
     private int creditosObtenidos;
     private boolean situacionRiesgo;
     private int cambioTutor;
-    private boolean perfilActivo;             
+
+    private boolean perfilActivo;
+    
     private String nombreProgramaEducativo;
 
     public Estudiante() {
     }
 
-    public Estudiante(int idEstudiante, String matricula, int idProgramaEducativo, Integer idTutor,
-                      String nombre, String apellidoPaterno, String apellidoMaterno, String telefono,
-                      byte[] foto, String correoInstitucional, int anioIngreso, int semestre,
-                      int creditosObtenidos, boolean situacionRiesgo, int cambioTutor,
-                      boolean perfilActivo, String nombreProgramaEducativo) {
+    public Estudiante(int idEstudiante, String matricula, int idProgramaEducativo, int idTutor, String nombre, String apellidoPaterno, String apellidoMaterno, String telefono, byte[] foto, String correoInstitucional, int anioIngreso, int semestre, int creditosObtenidos, boolean situacionRiesgo, int cambioTutor, boolean perfilActivo, String nombreProgramaEducativo) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.idProgramaEducativo = idProgramaEducativo;
@@ -69,6 +67,14 @@ public class Estudiante {
         this.idEstudiante = idEstudiante;
     }
 
+    public boolean isPerfilActivo() {
+        return perfilActivo;
+    }
+
+    public void setPerfilActivo(boolean perfilActivo) {
+        this.perfilActivo = perfilActivo;
+    }
+
     public String getMatricula() {
         return matricula;
     }
@@ -85,11 +91,11 @@ public class Estudiante {
         this.idProgramaEducativo = idProgramaEducativo;
     }
 
-    public Integer getIdTutor() {
+    public int getIdTutor() {
         return idTutor;
     }
 
-    public void setIdTutor(Integer idTutor) {
+    public void setIdTutor(int idTutor) {
         this.idTutor = idTutor;
     }
 
@@ -181,14 +187,6 @@ public class Estudiante {
         this.cambioTutor = cambioTutor;
     }
 
-    public boolean isPerfilActivo() {
-        return perfilActivo;
-    }
-
-    public void setPerfilActivo(boolean perfilActivo) {
-        this.perfilActivo = perfilActivo;
-    }
-
     public String getNombreProgramaEducativo() {
         return nombreProgramaEducativo;
     }
@@ -196,11 +194,11 @@ public class Estudiante {
     public void setNombreProgramaEducativo(String nombreProgramaEducativo) {
         this.nombreProgramaEducativo = nombreProgramaEducativo;
     }
-
+    
     public String getNombreCompleto() {
         return nombre + " " + apellidoPaterno + " " + apellidoMaterno;
     }
-
+    
     public void setNombreCompleto(String nombre, String apellidoPaterno, String apellidoMaterno) {
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;

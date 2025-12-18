@@ -4,45 +4,82 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class ProblemaAcademicoReportadoGeneral implements Serializable {
-
-    private Integer idProblemasAcademicosReportadosGenerales; 
-    private Integer idReporteGeneral;                          
-    private Integer idExperienciaEducativa;                    
-
-    private String nombreExperienciaEducativa;                 
-    private String nombreProfesor;                             
+    private int idProblemasAcademicosReportadosGenerales; 
+    private int idReporteGeneral;                          
+    private int idExperienciaEducativa;
+    private String nombreExperienciaEducativa;            
+    private String nombreProfesor;
     private String problema;                                   
     private int numEstudiantes;                                
 
     public ProblemaAcademicoReportadoGeneral() { }
 
-    public ProblemaAcademicoReportadoGeneral(String nombreExperienciaEducativa, String nombreProfesor, String problema, int numEstudiantes) {
+    public ProblemaAcademicoReportadoGeneral(int idReporteGeneral, int idExperienciaEducativa, 
+                                             String nombreExperienciaEducativa, String nombreProfesor, 
+                                             String problema, int numEstudiantes) {
+        this.idReporteGeneral = idReporteGeneral;
+        this.idExperienciaEducativa = idExperienciaEducativa;
         this.nombreExperienciaEducativa = nombreExperienciaEducativa;
         this.nombreProfesor = nombreProfesor;
         this.problema = problema;
         this.numEstudiantes = numEstudiantes;
     }
 
-    public Integer getIdProblemasAcademicosReportadosGenerales() { return idProblemasAcademicosReportadosGenerales; }
-    public void setIdProblemasAcademicosReportadosGenerales(Integer id) { this.idProblemasAcademicosReportadosGenerales = id; }
+    public int getIdProblemasAcademicosReportadosGenerales() {
+        return idProblemasAcademicosReportadosGenerales;
+    }
 
-    public Integer getIdReporteGeneral() { return idReporteGeneral; }
-    public void setIdReporteGeneral(Integer idReporteGeneral) { this.idReporteGeneral = idReporteGeneral; }
+    public void setIdProblemasAcademicosReportadosGenerales(int idProblemasAcademicosReportadosGenerales) {
+        this.idProblemasAcademicosReportadosGenerales = idProblemasAcademicosReportadosGenerales;
+    }
 
-    public Integer getIdExperienciaEducativa() { return idExperienciaEducativa; }
-    public void setIdExperienciaEducativa(Integer idExperienciaEducativa) { this.idExperienciaEducativa = idExperienciaEducativa; }
+    public int getIdReporteGeneral() {
+        return idReporteGeneral;
+    }
 
-    public String getNombreExperienciaEducativa() { return nombreExperienciaEducativa; }
-    public void setNombreExperienciaEducativa(String nombreExperienciaEducativa) { this.nombreExperienciaEducativa = nombreExperienciaEducativa; }
+    public void setIdReporteGeneral(int idReporteGeneral) {
+        this.idReporteGeneral = idReporteGeneral;
+    }
 
-    public String getNombreProfesor() { return nombreProfesor; }
-    public void setNombreProfesor(String nombreProfesor) { this.nombreProfesor = nombreProfesor; }
+    public int getIdExperienciaEducativa() {
+        return idExperienciaEducativa;
+    }
 
-    public String getProblema() { return problema; }
-    public void setProblema(String problema) { this.problema = problema; }
+    public void setIdExperienciaEducativa(int idExperienciaEducativa) {
+        this.idExperienciaEducativa = idExperienciaEducativa;
+    }
 
-    public int getNumEstudiantes() { return numEstudiantes; }
-    public void setNumEstudiantes(int numEstudiantes) { this.numEstudiantes = numEstudiantes; }
+    public String getNombreExperienciaEducativa() {
+        return nombreExperienciaEducativa;
+    }
+
+    public void setNombreExperienciaEducativa(String nombreExperienciaEducativa) {
+        this.nombreExperienciaEducativa = nombreExperienciaEducativa;
+    }
+
+    public String getNombreProfesor() {
+        return nombreProfesor;
+    }
+
+    public void setNombreProfesor(String nombreProfesor) {
+        this.nombreProfesor = nombreProfesor;
+    }
+
+    public String getProblema() {
+        return problema;
+    }
+
+    public void setProblema(String problema) {
+        this.problema = problema;
+    }
+
+    public int getNumEstudiantes() {
+        return numEstudiantes;
+    }
+
+    public void setNumEstudiantes(int numEstudiantes) {
+        this.numEstudiantes = numEstudiantes;
+    }
 
     @Override
     public boolean equals(Object o) {

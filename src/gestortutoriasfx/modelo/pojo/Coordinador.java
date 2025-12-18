@@ -83,13 +83,9 @@ public class Coordinador {
 
     @Override
     public String toString() {
-        return "Coordinador{" +
-                "idCoordinador=" + idCoordinador +
-                ", idProfesor=" + idProfesor +
-                ", aniosCargo=" + aniosCargo +
-                ", numPersonal='" + numPersonal + '\'' +
-                ", nombreCompleto='" + nombreCompleto + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        if (nombreCompleto != null) {
+            return nombreCompleto + " (Coord.)";
+        }
+        return "Coordinador #" + numPersonal;
     }
 }

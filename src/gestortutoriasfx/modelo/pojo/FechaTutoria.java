@@ -18,51 +18,82 @@ package gestortutoriasfx.modelo.pojo;
 public class FechaTutoria {
     private int idFechaTutoria;
     private int idPeriodoEscolar;
-    private int numSesion;
     private String descripcion;
-    private String fecha; 
+    private int numSesion;
+    private String fecha;
     private String fechaInicio;
     private String fechaCierre;
 
     public FechaTutoria() {
     }
 
-    public int getIdFechaTutoria() { return idFechaTutoria; }
-    public void setIdFechaTutoria(int idFechaTutoria) { this.idFechaTutoria = idFechaTutoria; }
+    public FechaTutoria(int idFechaTutoria, int idPeriodoEscolar, String descripcion, int numSesion, String fecha, String fechaInicio, String fechaCierre) {
+        this.idFechaTutoria = idFechaTutoria;
+        this.idPeriodoEscolar = idPeriodoEscolar;
+        this.descripcion = descripcion;
+        this.numSesion = numSesion;
+        this.fecha = fecha;
+        this.fechaInicio = fechaInicio;
+        this.fechaCierre = fechaCierre;
+    }
 
-    public int getIdPeriodoEscolar() { return idPeriodoEscolar; }
-    public void setIdPeriodoEscolar(int idPeriodoEscolar) { this.idPeriodoEscolar = idPeriodoEscolar; }
+    public int getIdFechaTutoria() {
+        return idFechaTutoria;
+    }
 
-    public int getNumSesion() { return numSesion; }
-    public void setNumSesion(int numSesion) { this.numSesion = numSesion; }
+    public void setIdFechaTutoria(int idFechaTutoria) {
+        this.idFechaTutoria = idFechaTutoria;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public int getIdPeriodoEscolar() {
+        return idPeriodoEscolar;
+    }
 
-    public String getFecha() { return fecha; }
+    public void setIdPeriodoEscolar(int idPeriodo) {
+        this.idPeriodoEscolar = idPeriodo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public int getNumSesion() {
+        return numSesion;
+    }
+
+    public void setNumSesion(int numSesion) {
+        this.numSesion = numSesion;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
-        // sincroniza compatibilidad
-        this.fechaInicio = fecha;
-        this.fechaCierre = fecha;
     }
 
-    public String getFechaInicio() { return (fechaInicio != null) ? fechaInicio : fecha; }
-    public void setFechaInicio(String fechaInicio) {
-        this.fechaInicio = fechaInicio;
-        this.fecha = fechaInicio;
-        this.fechaCierre = fechaInicio;
+    public String getFechaInicio() {
+        return fechaInicio;
     }
 
-    public String getFechaCierre() { return (fechaCierre != null) ? fechaCierre : fecha; }
-    public void setFechaCierre(String fechaCierre) {
-        this.fechaCierre = fechaCierre;
-        this.fecha = (this.fecha != null) ? this.fecha : fechaCierre;
-        this.fechaInicio = (this.fechaInicio != null) ? this.fechaInicio : fechaCierre;
+    public void setFechaInicio() {
+        this.fechaInicio = this.fecha;
     }
 
-    @Override
+    public String getFechaCierre() {
+        return fechaCierre;
+    }
+
+    public void setFechaCierre() {
+        this.fechaCierre = this.fecha;
+    }
+    
     public String toString() {
-        return numSesion + ". Sesión (" + getFechaInicio() + " - " + getFechaCierre() + ")";
+        return numSesion + ". Sesión (" + fechaInicio + " - " + fechaCierre + ")";
     }
 }

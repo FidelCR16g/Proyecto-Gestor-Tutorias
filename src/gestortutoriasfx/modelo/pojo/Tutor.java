@@ -22,15 +22,18 @@ public class Tutor {
 
     private String numPersonal;
     private String nombreCompleto;
-    private String email;
+    private String correoInstitucional;
 
     public Tutor() {
+        this.espaciosTutorados = 20;
     }
 
-    public Tutor(int idTutor, int idProfesor, int espaciosTutorados) {
+    public Tutor(int idTutor, int idProfesor, int espaciosTutorados, String numPersonal, String nombreCompleto) {
         this.idTutor = idTutor;
         this.idProfesor = idProfesor;
         this.espaciosTutorados = espaciosTutorados;
+        this.numPersonal = numPersonal;
+        this.nombreCompleto = nombreCompleto;
     }
 
     public int getIdTutor() {
@@ -72,18 +75,17 @@ public class Tutor {
     public void setNombreCompleto(String nombreCompleto) {
         this.nombreCompleto = nombreCompleto;
     }
-
-    public String getEmail() {
-        return email;
+    
+    public String getCorreoInstitucional() {
+        return correoInstitucional;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCorreoInstitucional(String correoInstitucional) {
+        this.correoInstitucional = correoInstitucional;
     }
 
     @Override
     public String toString() {
-        return (nombreCompleto != null ? nombreCompleto : "Tutor") +
-                " | Cupo: " + espaciosTutorados;
+        return nombreCompleto + " (" + espaciosTutorados + " espacios)";
     }
 }

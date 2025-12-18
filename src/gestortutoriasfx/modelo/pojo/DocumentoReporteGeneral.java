@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class DocumentoReporteGeneral implements Serializable {
 
-    private Integer idDocumentoGeneral;   
+    private int idDocumentoGeneral;   
     private int idReporteGeneral;         
     private String nombreArchivo;         
     private String tipoArchivo;           

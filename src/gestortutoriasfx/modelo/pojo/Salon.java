@@ -21,14 +21,17 @@ public class Salon {
     private String nombreSalon;
     private int cupo;
 
+    private String nombreEdificio;
+    
     public Salon(){
     }
-    
-    public Salon(int idSalon, int idEdificio, String nombreSalon, int cupo) {
+
+    public Salon(int idSalon, int idEdificio, String nombreSalon, int cupo, String nombreEdificio) {
         this.idSalon = idSalon;
         this.idEdificio = idEdificio;
         this.nombreSalon = nombreSalon;
         this.cupo = cupo;
+        this.nombreEdificio = nombreEdificio;
     }
 
     public int getIdSalon() {
@@ -63,8 +66,16 @@ public class Salon {
         this.cupo = cupo;
     }
 
+    public String getNombreEdificio() {
+        return nombreEdificio;
+    }
+
+    public void setNombreEdificio(String nombreEdificio) {
+        this.nombreEdificio = nombreEdificio;
+    }
+
     @Override
     public String toString() {
-        return "Salon: " + nombreSalon;
+        return "Salon: " + nombreSalon + " - " + "Edificio: " + nombreEdificio;
     }
 }
