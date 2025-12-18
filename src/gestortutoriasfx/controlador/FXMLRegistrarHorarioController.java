@@ -192,7 +192,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         ArrayList<Integer> sesionesOcupadas = (ArrayList<Integer>) respOcupadas.get("ocupadas");
         
         rangosFechas = todasLasFechas; 
-
+        
         ObservableList<FechaTutoria> sesionesValidas = filtrarSesionesValidas(todasLasFechas, sesionesOcupadas);
         actualizarComboSesiones(sesionesValidas);
     }

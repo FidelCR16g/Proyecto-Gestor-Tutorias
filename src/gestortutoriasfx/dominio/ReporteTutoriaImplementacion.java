@@ -1,16 +1,10 @@
 package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
-import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.dao.ProblematicaAcademicaDAO;
 import gestortutoriasfx.modelo.dao.ReporteTutoriaDAO;
-import gestortutoriasfx.modelo.pojo.PeriodoEscolar;
 import gestortutoriasfx.modelo.pojo.ProblematicaAcademica;
 import gestortutoriasfx.modelo.pojo.ReporteTutoria;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;

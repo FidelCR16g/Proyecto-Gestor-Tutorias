@@ -1,2 +1,35 @@
-/dist/
+# --- NetBeans (¡Súper Importante!) ---
+/nbproject/private/
 /build/
+/dist/
+/nbdist/
+.nb-gradle/
+
+# --- Archivos Compilados de Java ---
+*.class
+*.log
+*.ctxt
+
+# --- Archivos de Sistema y OneDrive ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+# Archivos temporales de Word/Excel/OneDrive (empiezan con ~$)
+~$*
+*.tmp
+
+# --- Empaquetados (Opcional) ---
+# Si tus librerías (libs) están dentro del proyecto, NO descomentes la siguiente línea.
+# Si usas Maven/Gradle, entonces sí descomenta:
+# *.jar
+
+# --- Excepciones ---
+# Mantener el gitignore mismo
+!.gitignore
+
+# Ignorar archivos de diagramas de NetBeans
+*.udg
+
+# Ignorar carpeta de escaneos de Sonar/Analisis
+scannerwork/
+*.proto
