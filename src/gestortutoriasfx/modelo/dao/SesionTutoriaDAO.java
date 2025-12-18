@@ -69,7 +69,7 @@ public class SesionTutoriaDAO {
                     SesionTutoria fila = new SesionTutoria();
                     fila.setIdSesion(rs.getInt("idSesion"));
                     fila.setIdEstudiante((Integer) rs.getObject("idEstudiante"));
-                    fila.setMatriculaEstudiante(rs.getString("matricula")); // ✅ compat
+                    fila.setMatriculaEstudiante(rs.getString("matricula"));
                     fila.setNombreEstudiante(rs.getString("nombreEstudiante"));
                     fila.setEstado(rs.getString("estado"));
                     lista.add(fila);
