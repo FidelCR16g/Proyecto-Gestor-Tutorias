@@ -30,20 +30,16 @@ public class ProblematicaAcademicaDAO {
         int filas = 0;
 
         String consulta = "INSERT INTO problemasAcademicosReportadosTutoria "
-                + "(idReporteTutoria, NRC, nombreNRC, nombreProfesor, problema, numEstudiantes) "
+                + "(idReporteTutoria, idExperienciaEducativa, nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idReporte);
-            
-            int nrc = (problematicaAcademica.getNrc() > 0) ? problematicaAcademica.getNrc() : 10001;
-            sentencia.setInt(2, nrc);
-
-            sentencia.setString(3, problematicaAcademica.getNombreNRC());
+            sentencia.setInt(2, problematicaAcademica.getIdExperienciaEducativa());
+            sentencia.setString(3, problematicaAcademica.getNombreExperienciaEducativa());
             sentencia.setString(4, problematicaAcademica.getNombreProfesor());
             sentencia.setString(5, problematicaAcademica.getProblema());
             sentencia.setInt(6, problematicaAcademica.getNumEstudiantes());
-
             filas = sentencia.executeUpdate();
         }
         return filas;
@@ -68,7 +64,8 @@ public class ProblematicaAcademicaDAO {
 
         ArrayList<ProblematicaAcademica> lista = new ArrayList<>();
 
-        String consulta = "SELECT idProblemasAcademicosReportadosTutoria, idReporteTutoria, NRC, nombreNRC, nombreProfesor, problema, numEstudiantes "
+        String consulta = "SELECT idProblemasAcademicosReportadosTutoria, idReporteTutoria, idExperienciaEducativa, "
+                + "nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes "
                 + "FROM problemasAcademicosReportadosTutoria "
                 + "WHERE idReporteTutoria = ?";
 
@@ -77,15 +74,19 @@ public class ProblematicaAcademicaDAO {
 
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
-                    ProblematicaAcademica p = new ProblematicaAcademica(
-                            resultado.getString("nombreNRC"),
-                            resultado.getString("nombreProfesor"),
-                            resultado.getString("problema"),
-                            resultado.getInt("numEstudiantes")
-                    );
+                    ProblematicaAcademica p = new ProblematicaAcademica();
+                    
                     p.setIdProblematicaAcademica(resultado.getInt("idProblemasAcademicosReportadosTutoria"));
                     p.setIdReporteTutoria(resultado.getInt("idReporteTutoria"));
-                    p.setNrc(resultado.getInt("NRC"));
+                    
+                    int idEE = resultado.getInt("idExperienciaEducativa");
+                    p.setIdExperienciaEducativa(resultado.wasNull() ? 0 : idEE);
+                    
+                    p.setNombreExperienciaEducativa(resultado.getString("nombreExperienciaEducativa"));
+                    p.setNombreProfesor(resultado.getString("nombreProfesor"));
+                    p.setProblema(resultado.getString("problema"));
+                    p.setNumEstudiantes(resultado.getInt("numEstudiantes"));
+                    
                     lista.add(p);
                 }
             }

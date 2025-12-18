@@ -94,6 +94,6 @@ public class FechaTutoria {
     }
     
     public String toString() {
-        return numSesion + ". Sesión (" + fechaInicio + " - " + fechaCierre + ")";
+        return numSesion + ". Sesión (" + getFecha() + ")";
     }
 }

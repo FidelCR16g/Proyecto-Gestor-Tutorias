@@ -17,34 +17,36 @@ public class ReporteTutoriaImplementacion {
     public static HashMap<String, Object> guardarReporteCompleto(ReporteTutoria reporte, List<ProblematicaAcademica> problematicas) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
-        
+
         Connection conexion = ConexionBD.abrirConexionBD();
         if (conexion != null) {
             try {
                 conexion.setAutoCommit(false);
-                
+
                 int idReporte = reporte.getIdReporteTutoria();
-                
-                if (idReporte == 0) {
+
+                if (idReporte <= 0) {
                     idReporte = ReporteTutoriaDAO.registrarReporte(conexion, reporte);
-                    if (idReporte == 0) throw new SQLException("No se generó el ID del reporte.");
+                    if (idReporte <= 0) throw new SQLException("No se generó el ID del reporte.");
                     reporte.setIdReporteTutoria(idReporte);
                 } else {
-                    ReporteTutoriaDAO.actualizarReporte(conexion, reporte);
+                    int filas = ReporteTutoriaDAO.actualizarReporte(conexion, reporte);
+                    if (filas == 0) throw new SQLException("No se actualizó el reporte (ID no encontrado o sin cambios).");
                 }
-                
+
                 ProblematicaAcademicaDAO.eliminarProblematicasPorReporte(conexion, idReporte);
-                
-                if (problematicas != null) {
+
+                if (problematicas != null && !problematicas.isEmpty()) {
                     for (ProblematicaAcademica prob : problematicas) {
                         ProblematicaAcademicaDAO.registrarProblematica(conexion, prob, idReporte);
                     }
                 }
-                
+
                 conexion.commit();
                 respuesta.put("error", false);
                 respuesta.put("mensaje", "Reporte guardado exitosamente.");
-                
+                respuesta.put("idReporteTutoria", idReporte);
+
             } catch (SQLException e) {
                 respuesta.put("mensaje", "Error al guardar: " + e.getMessage());
                 e.printStackTrace();
@@ -58,22 +60,22 @@ public class ReporteTutoriaImplementacion {
         }
         return respuesta;
     }
-    
+
     public static HashMap<String, Object> obtenerReporteActual(int idTutor, int idPeriodo, int numSesion) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
-        
+
         Connection conexion = ConexionBD.abrirConexionBD();
         if (conexion != null) {
             try {
                 ReporteTutoria reporte = ReporteTutoriaDAO.obtenerReporte(conexion, idTutor, idPeriodo, numSesion);
-                
+
                 if (reporte != null) {
-                    ArrayList<ProblematicaAcademica> problematicas = 
+                    ArrayList<ProblematicaAcademica> problematicas =
                             ProblematicaAcademicaDAO.obtenerProblematicasPorReporte(conexion, reporte.getIdReporteTutoria());
                     respuesta.put("problematicas", problematicas);
                 }
-                
+
                 respuesta.put("error", false);
                 respuesta.put("reporte", reporte);
 
@@ -88,7 +90,7 @@ public class ReporteTutoriaImplementacion {
         }
         return respuesta;
     }
-    
+
     public static HashMap<String, Object> obtenerReportesPorPeriodo(int idTutor, int idPeriodo) {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("error", true);
@@ -109,8 +111,7 @@ public class ReporteTutoriaImplementacion {
         }
         return respuesta;
     }
-    
-    
+
     public static HashMap<String, Object> buscarReportesParaRevision(String busqueda) {
         HashMap<String, Object> resp = new LinkedHashMap<>();
         resp.put("error", true);
@@ -159,7 +160,7 @@ public class ReporteTutoriaImplementacion {
         }
         return resp;
     }
-    
+
     public static HashMap<String, Object> obtenerReportePorId(int idReporteTutoria) {
         HashMap<String, Object> resp = new LinkedHashMap<>();
         resp.put("error", true);
@@ -168,8 +169,17 @@ public class ReporteTutoriaImplementacion {
         if (c != null) {
             try {
                 ReporteTutoria r = ReporteTutoriaDAO.obtenerReportePorId(c, idReporteTutoria);
-                resp.put("error", false);
-                resp.put("reporte", r);
+                
+                if (r != null) {
+                    ArrayList<ProblematicaAcademica> problematicas = 
+                            ProblematicaAcademicaDAO.obtenerProblematicasPorReporte(c, idReporteTutoria);
+                    resp.put("problematicas", problematicas);
+                    
+                    resp.put("error", false);
+                    resp.put("reporte", r);
+                } else {
+                    resp.put("mensaje", "No se encontró el reporte.");
+                }
             } catch (SQLException e) {
                 resp.put("mensaje", "Error BD al cargar reporte: " + e.getMessage());
                 e.printStackTrace();
@@ -181,5 +191,4 @@ public class ReporteTutoriaImplementacion {
         }
         return resp;
     }
-
 }

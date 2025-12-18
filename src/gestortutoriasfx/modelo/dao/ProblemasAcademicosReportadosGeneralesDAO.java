@@ -5,11 +5,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProblemasAcademicosReportadosGeneralesDAO {
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
+public class ProblemasAcademicosReportadosGeneralesDAO {
     public static int eliminarPorReporte(Connection c, int idReporteGeneral) throws SQLException {
         if (c == null) throw new SQLException("No hay conexión con la base de datos.");
+        
         String sql = "DELETE FROM problemasAcademicosReportadosGenerales WHERE idReporteGeneral=?";
+        
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idReporteGeneral);
             return ps.executeUpdate();
@@ -26,8 +35,11 @@ public class ProblemasAcademicosReportadosGeneralesDAO {
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idReporteGeneral);
 
-            if (fila.getIdExperienciaEducativa() == null) ps.setNull(2, Types.INTEGER);
-            else ps.setInt(2, fila.getIdExperienciaEducativa());
+            if (fila.getIdExperienciaEducativa() == null || fila.getIdExperienciaEducativa() <= 0) {
+                ps.setNull(2, Types.INTEGER);
+            } else {
+                ps.setInt(2, fila.getIdExperienciaEducativa());
+            }
 
             ps.setString(3, fila.getNombreExperienciaEducativa());
             ps.setString(4, fila.getNombreProfesor());
@@ -54,23 +66,29 @@ public class ProblemasAcademicosReportadosGeneralesDAO {
         if (c == null) throw new SQLException("No hay conexión con la base de datos.");
 
         String sql = "SELECT idProblemasAcademicosReportadosGenerales, idReporteGeneral, idExperienciaEducativa, " +
-                     "       nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes " +
+                     "nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes " +
                      "FROM problemasAcademicosReportadosGenerales WHERE idReporteGeneral=?";
 
         ArrayList<ProblemaAcademicoReportadoGeneral> lista = new ArrayList<>();
+        
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idReporteGeneral);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ProblemaAcademicoReportadoGeneral p = new ProblemaAcademicoReportadoGeneral();
+                    
                     p.setIdProblemasAcademicosReportadosGenerales(rs.getInt("idProblemasAcademicosReportadosGenerales"));
                     p.setIdReporteGeneral(rs.getInt("idReporteGeneral"));
-                    p.setIdExperienciaEducativa((Integer) rs.getObject("idExperienciaEducativa"));
+                    
+                    int idEE = rs.getInt("idExperienciaEducativa");
+                    p.setIdExperienciaEducativa(rs.wasNull() ? null : idEE);
+
                     p.setNombreExperienciaEducativa(rs.getString("nombreExperienciaEducativa"));
                     p.setNombreProfesor(rs.getString("nombreProfesor"));
                     p.setProblema(rs.getString("problema"));
                     p.setNumEstudiantes(rs.getInt("numEstudiantes"));
+                    
                     lista.add(p);
                 }
             }

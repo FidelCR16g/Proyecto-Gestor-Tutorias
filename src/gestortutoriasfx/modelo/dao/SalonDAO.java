@@ -27,17 +27,21 @@ public class SalonDAO {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
         
         ArrayList<Salon> salones = new ArrayList<>(); 
-        String consulta = "SELECT s.*, e.nombreEdificio FROM salon s " + 
-               "INNER JOIN edificio e ON s.idEdificio = e.idEdificio " +
-               "ORDER BY s.nombreSalon ASC";
+        
+        String consulta = "SELECT s.idSalon, s.nombreSalon, e.nombreEdificio " +
+                          "FROM salon s " +
+                          "INNER JOIN edificio e ON s.idEdificio = e.idEdificio " +
+                          "ORDER BY s.nombreSalon ASC";
         
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
-            ResultSet resultado = sentencia.executeQuery()) {
+             ResultSet resultado = sentencia.executeQuery()) {
+
             while (resultado.next()) {
                 Salon salon = new Salon();
-                salon.setIdSalon(resultado.getInt("idSalon"));
-                salon.setNombreSalon(resultado.getString("nombreSalon") 
-                        + " (" + resultado.getString("nombreEdificio") + ")");
+                salon.setIdSalon(resultado.getInt("idSalon"));                
+                String nombreCompleto = resultado.getString("nombreSalon") + 
+                                        " (" + resultado.getString("nombreEdificio") + ")";
+                salon.setNombreSalon(nombreCompleto);
                 salones.add(salon);
             }
         }

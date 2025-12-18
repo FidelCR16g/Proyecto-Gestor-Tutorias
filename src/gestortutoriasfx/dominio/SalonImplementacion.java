@@ -12,19 +12,25 @@ import java.util.LinkedHashMap;
 public class SalonImplementacion {
     public static HashMap<String, Object> obtenerTodosSalones() {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("error", true);
+
         Connection conexion = ConexionBD.abrirConexionBD();
 
-        try {
-            ArrayList<Salon> listaSalones = SalonDAO.obtenerTodosSalones(conexion);
-            respuesta.put("error", false);
-            respuesta.put("salones", listaSalones);
+        if (conexion != null) {
+            try {
+                ArrayList<Salon> listaSalones = SalonDAO.obtenerTodosSalones(conexion);
+                
+                respuesta.put("error", false);
+                respuesta.put("salones", listaSalones);
 
-        } catch (SQLException e) {
-            respuesta.put("error", true);
-            respuesta.put("mensaje", "Error al cargar las fechas de tutoría: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            ConexionBD.cerrarConexion(conexion);
+            } catch (SQLException e) {
+                respuesta.put("mensaje", "Error BD al cargar salones: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                ConexionBD.cerrarConexion(conexion);
+            }
+        } else {
+            respuesta.put("mensaje", "Sin conexión con la base de datos.");
         }
         
         return respuesta;

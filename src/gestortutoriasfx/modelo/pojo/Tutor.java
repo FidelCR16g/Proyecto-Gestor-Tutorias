@@ -1,5 +1,8 @@
 package gestortutoriasfx.modelo.pojo;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Nombre de la Clase: Tutor
  *
@@ -15,25 +18,28 @@ package gestortutoriasfx.modelo.pojo;
  * Clase encargada de contener los datos del tutor.
  */
 
-public class Tutor {
+public class Tutor extends Profesor implements Serializable {
     private int idTutor;
-    private int idProfesor;           
     private int espaciosTutorados;
 
-    private String numPersonal;
-    private String nombreCompleto;
-    private String correoInstitucional;
-
     public Tutor() {
+        super();
         this.espaciosTutorados = 20;
     }
 
-    public Tutor(int idTutor, int idProfesor, int espaciosTutorados, String numPersonal, String nombreCompleto) {
+    public Tutor(int idTutor, int espaciosTutorados, int idProfesor, String numPersonal, 
+                 String nombre, String apellidoPaterno, String apellidoMaterno, String email) {
+        
+        super(); 
+        this.setIdProfesor(idProfesor);
+        this.setNumPersonal(numPersonal);
+        this.setNombre(nombre);
+        this.setApellidoPaterno(apellidoPaterno);
+        this.setApellidoMaterno(apellidoMaterno);
+        this.setEmail(email);
+        
         this.idTutor = idTutor;
-        this.idProfesor = idProfesor;
         this.espaciosTutorados = espaciosTutorados;
-        this.numPersonal = numPersonal;
-        this.nombreCompleto = nombreCompleto;
     }
 
     public int getIdTutor() {
@@ -44,14 +50,6 @@ public class Tutor {
         this.idTutor = idTutor;
     }
 
-    public int getIdProfesor() {
-        return idProfesor;
-    }
-
-    public void setIdProfesor(int idProfesor) {
-        this.idProfesor = idProfesor;
-    }
-
     public int getEspaciosTutorados() {
         return espaciosTutorados;
     }
@@ -59,33 +57,30 @@ public class Tutor {
     public void setEspaciosTutorados(int espaciosTutorados) {
         this.espaciosTutorados = espaciosTutorados;
     }
-
-    public String getNumPersonal() {
-        return numPersonal;
-    }
-
-    public void setNumPersonal(String numPersonal) {
-        this.numPersonal = numPersonal;
-    }
-
-    public String getNombreCompleto() {
-        return nombreCompleto;
-    }
-
-    public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
-    }
     
     public String getCorreoInstitucional() {
-        return correoInstitucional;
+        return super.getEmail();
     }
 
     public void setCorreoInstitucional(String correoInstitucional) {
-        this.correoInstitucional = correoInstitucional;
+        super.setEmail(correoInstitucional);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tutor)) return false;
+        Tutor tutor = (Tutor) o;
+        return idTutor == tutor.idTutor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idTutor);
     }
 
     @Override
     public String toString() {
-        return nombreCompleto + " (" + espaciosTutorados + " espacios)";
+        return getNombreCompleto() + " (" + espaciosTutorados + " espacios)";
     }
 }

@@ -3,6 +3,7 @@ package gestortutoriasfx.modelo.dao;
 import gestortutoriasfx.modelo.pojo.FechaTutoria;
 import gestortutoriasfx.modelo.pojo.SesionTutoria;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,8 +55,11 @@ public class SesionTutoriaDAO {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<SesionTutoria> lista = new ArrayList<>();
+        
         String consulta =
-                "SELECT s.idSesion, s.idEstudiante, e.matricula, s.nombreEstudiante, s.estado " +
+                "SELECT s.idSesion, s.idEstudiante, e.matricula, " +
+                "CONCAT(e.nombre, ' ', e.apellidoPaterno, ' ', e.apellidoMaterno) AS nombreCompleto, " +
+                "s.estado " +
                 "FROM sesionTutoria s " +
                 "LEFT JOIN estudiante e ON s.idEstudiante = e.idEstudiante " +
                 "WHERE s.idTutor = ? AND s.numSesion = ?";
@@ -68,10 +72,14 @@ public class SesionTutoriaDAO {
                 while(rs.next()){
                     SesionTutoria fila = new SesionTutoria();
                     fila.setIdSesion(rs.getInt("idSesion"));
-                    fila.setIdEstudiante((Integer) rs.getObject("idEstudiante"));
+                    
+                    int idEst = rs.getInt("idEstudiante");
+                    fila.setIdEstudiante(rs.wasNull() ? null : idEst);
+                    
                     fila.setMatriculaEstudiante(rs.getString("matricula"));
-                    fila.setNombreEstudiante(rs.getString("nombreEstudiante"));
+                    fila.setNombreEstudiante(rs.getString("nombreCompleto"));
                     fila.setEstado(rs.getString("estado"));
+                    
                     lista.add(fila);
                 }
             }
@@ -95,7 +103,8 @@ public class SesionTutoriaDAO {
                     ft.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
                     ft.setNumSesion(resultado.getInt("numSesion"));
                     ft.setDescripcion(resultado.getString("descripcion"));
-                    ft.setFecha(resultado.getString("fecha")); 
+                    ft.setFecha(resultado.getDate("fecha").toString()); 
+                    
                     fechas.add(ft);
                 }
             }
@@ -140,7 +149,10 @@ public class SesionTutoriaDAO {
                     SesionTutoria sesion = new SesionTutoria();
                     sesion.setNumSesion(resultado.getInt("numSesion"));
                     sesion.setPeriodo(resultado.getString("nombrePeriodo"));
-                    sesion.setFecha(resultado.getString("fecha"));
+                    
+                    java.sql.Date fechaSql = resultado.getDate("fecha");
+                    sesion.setFecha(fechaSql != null ? fechaSql.toString() : "");
+                    
                     lista.add(sesion);
                 }
             }
@@ -153,12 +165,14 @@ public class SesionTutoriaDAO {
 
         Integer idEst = sesion.getIdEstudiante();
 
-        if (idEst == null && sesion.getMatriculaEstudiante() != null) {
+        if ((idEst == null || idEst <= 0) && sesion.getMatriculaEstudiante() != null) {
             idEst = obtenerIdEstudiantePorMatricula(conexion, sesion.getMatriculaEstudiante());
         }
-        if (idEst == null) throw new SQLException("No se pudo determinar idEstudiante (ni por id ni por matrícula).");
-
-        int filas;
+        
+        if (idEst == null) {
+            throw new SQLException("No se pudo determinar el estudiante (matricula no encontrada: " 
+                + sesion.getMatriculaEstudiante() + ")");
+        }
 
         String consulta = "INSERT INTO sesionTutoria "
                 + "(idPeriodoEscolar, idTutor, idEstudiante, numSesion, fecha, horaInicio, horaFin, estado, idSalon, modalidad) "
@@ -172,11 +186,12 @@ public class SesionTutoriaDAO {
             sentencia.setString(5, sesion.getFecha());
             sentencia.setString(6, sesion.getHoraInicio());
             sentencia.setString(7, sesion.getHoraFin());
+            
             sentencia.setString(8, "Programada");
             sentencia.setInt(9, sesion.getIdSalon());
             sentencia.setString(10, sesion.getModalidad());
-            filas = sentencia.executeUpdate();
+            
+            return sentencia.executeUpdate();
         }
-        return filas;
     }
 }

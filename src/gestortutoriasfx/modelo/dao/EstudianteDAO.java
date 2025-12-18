@@ -22,47 +22,31 @@ import java.util.ArrayList;
  * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
  */
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
 public class EstudianteDAO {
-
-    private static Integer obtenerIdEstudiantePorMatricula(Connection conexion, String matricula) throws SQLException {
-        String q = "SELECT idEstudiante FROM estudiante WHERE matricula = ?";
-        try (PreparedStatement ps = conexion.prepareStatement(q)) {
-            ps.setString(1, matricula);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt("idEstudiante");
-            }
-        }
-        return null;
-    }
-
     public static ArrayList<Estudiante> obtenerTutoradosPorTutor(Connection conexion, int idTutor) throws SQLException {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<Estudiante> listaEstudiantes = new ArrayList<>();
 
-        String consulta =
-                "SELECT e.*, pe.nombre AS nombrePrograma " +
-                "FROM estudiante e " +
-                "INNER JOIN asignacionTutorado a ON e.idEstudiante = a.idEstudiante " +
-                "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
-                "WHERE a.idTutor = ?";
+        String consulta = 
+            "SELECT e.*, pe.nombre AS nombrePrograma " +
+            "FROM estudiante e " +
+            "INNER JOIN asignacionTutorado a ON e.idEstudiante = a.idEstudiante " +
+            "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
+            "WHERE a.idTutor = ? AND e.perfilActivo = true";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
-                    Estudiante estudiante = new Estudiante();
-                    estudiante.setIdEstudiante(resultado.getInt("idEstudiante"));
-                    estudiante.setMatricula(resultado.getString("matricula"));
-                    estudiante.setNombre(resultado.getString("nombre"));
-                    estudiante.setApellidoPaterno(resultado.getString("apellidoPaterno"));
-                    estudiante.setApellidoMaterno(resultado.getString("apellidoMaterno"));
-                    estudiante.setCorreoInstitucional(resultado.getString("correoInstitucional"));
-                    estudiante.setSemestre(resultado.getInt("semestre"));
-                    estudiante.setIdProgramaEducativo(resultado.getInt("idProgramaEducativo"));
-                    estudiante.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
-                    estudiante.setSituacionRiesgo(resultado.getBoolean("situacionRiesgo"));
-                    listaEstudiantes.add(estudiante);
+                    listaEstudiantes.add(mapearEstudiante(resultado));
                 }
             }
         }
@@ -71,43 +55,37 @@ public class EstudianteDAO {
 
     public static ArrayList<Estudiante> obtenerEstudiantesSinTutor(Connection conexion) throws SQLException {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
+        
         ArrayList<Estudiante> estudiantes = new ArrayList<>();
 
-        String consulta =
-                "SELECT e.*, pe.nombre AS nombrePrograma " +
-                "FROM estudiante e " +
-                "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
-                "LEFT JOIN asignacionTutorado a ON e.idEstudiante = a.idEstudiante " +
-                "WHERE a.idAsignacionTutorado IS NULL " +
-                "ORDER BY e.semestre, e.apellidoPaterno";
+        String consulta = 
+            "SELECT e.*, pe.nombre AS nombrePrograma " +
+            "FROM estudiante e " +
+            "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
+            "LEFT JOIN asignacionTutorado a ON e.idEstudiante = a.idEstudiante " +
+            "WHERE a.idAsignacionTutorado IS NULL AND e.perfilActivo = true " +
+            "ORDER BY e.semestre, e.apellidoPaterno";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
              ResultSet resultado = sentencia.executeQuery()) {
-
             while (resultado.next()) {
-                Estudiante estudiante = new Estudiante();
-                estudiante.setIdEstudiante(resultado.getInt("idEstudiante"));
-                estudiante.setMatricula(resultado.getString("matricula"));
-                estudiante.setNombre(resultado.getString("nombre"));
-                estudiante.setApellidoPaterno(resultado.getString("apellidoPaterno"));
-                estudiante.setApellidoMaterno(resultado.getString("apellidoMaterno"));
-                estudiante.setSemestre(resultado.getInt("semestre"));
-                estudiante.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
-                estudiantes.add(estudiante);
+                estudiantes.add(mapearEstudiante(resultado));
             }
         }
-
         return estudiantes;
     }
 
     public static int asignarTutor(Connection conexion, String matricula, int idTutor) throws SQLException {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        Integer idEstudiante = obtenerIdEstudiantePorMatricula(conexion, matricula);
-        if (idEstudiante == null) throw new SQLException("No existe estudiante con matrícula: " + matricula);
+        Integer idEstudiante = obtenerIdPorMatricula(conexion, matricula);
+        
+        if (idEstudiante == null) {
+            return 0; 
+        }
 
         String consulta = "INSERT INTO asignacionTutorado (idTutor, idEstudiante) VALUES (?, ?)";
+        
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
             sentencia.setInt(2, idEstudiante);
@@ -118,10 +96,12 @@ public class EstudianteDAO {
     public static int desasignarTutor(Connection conexion, String matricula, int idTutor) throws SQLException {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        Integer idEstudiante = obtenerIdEstudiantePorMatricula(conexion, matricula);
-        if (idEstudiante == null) throw new SQLException("No existe estudiante con matrícula: " + matricula);
+        Integer idEstudiante = obtenerIdPorMatricula(conexion, matricula);
+        
+        if (idEstudiante == null) return 0;
 
         String consulta = "DELETE FROM asignacionTutorado WHERE idTutor = ? AND idEstudiante = ?";
+        
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
             sentencia.setInt(2, idEstudiante);
@@ -129,73 +109,41 @@ public class EstudianteDAO {
         }
     }
 
-    public static ArrayList<Estudiante> obtenerTodos(Connection conexion) throws SQLException {
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+    public static int insertar(Connection con, Estudiante e) throws SQLException {
+        String q = "INSERT INTO estudiante " +
+                "(matricula, idProgramaEducativo, nombre, apellidoPaterno, apellidoMaterno, telefono, " +
+                "foto, correoInstitucional, anioIngreso, semestre, creditosObtenidos, situacionRiesgo, " +
+                "cambioTutor, perfilActivo) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        ArrayList<Estudiante> lista = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(q, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, e.getMatricula());
+            ps.setInt(2, e.getIdProgramaEducativo());
+            ps.setString(3, e.getNombre());
+            ps.setString(4, e.getApellidoPaterno());
+            ps.setString(5, e.getApellidoMaterno());
+            ps.setString(6, e.getTelefono());
+            ps.setBytes(7, e.getFoto() != null ? e.getFoto() : new byte[0]);
+            ps.setString(8, e.getCorreoInstitucional());
+            ps.setInt(9, e.getAnioIngreso());
+            ps.setInt(10, e.getSemestre());
+            ps.setInt(11, e.getCreditosObtenidos());
+            ps.setBoolean(12, e.isSituacionRiesgo());
+            ps.setInt(13, e.getCambioTutor());
+            ps.setBoolean(14, e.isPerfilActivo());
 
-        String consulta =
-                "SELECT e.*, pe.nombre AS nombrePrograma " +
-                "FROM estudiante e " +
-                "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
-                "ORDER BY e.apellidoPaterno, e.apellidoMaterno, e.nombre";
-
-        try (PreparedStatement ps = conexion.prepareStatement(consulta);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Estudiante est = new Estudiante();
-                est.setIdEstudiante(rs.getInt("idEstudiante"));
-                est.setMatricula(rs.getString("matricula"));
-                est.setNombre(rs.getString("nombre"));
-                est.setApellidoPaterno(rs.getString("apellidoPaterno"));
-                est.setApellidoMaterno(rs.getString("apellidoMaterno"));
-                est.setTelefono(rs.getString("telefono"));
-                est.setCorreoInstitucional(rs.getString("correoInstitucional"));
-                est.setAnioIngreso(rs.getInt("anioIngreso"));
-                est.setSemestre(rs.getInt("semestre"));
-                est.setCreditosObtenidos(rs.getInt("creditosObtenidos"));
-                est.setSituacionRiesgo(rs.getBoolean("situacionRiesgo"));
-                est.setCambioTutor(rs.getInt("cambioTutor"));
-                est.setPerfilActivo(rs.getBoolean("perfilActivo"));
-                est.setIdProgramaEducativo(rs.getInt("idProgramaEducativo"));
-                est.setNombreProgramaEducativo(rs.getString("nombrePrograma"));
-                lista.add(est);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
             }
         }
-
-        return lista;
+        throw new SQLException("No se pudo obtener el ID generado.");
     }
-
-    public static int eliminarPorMatricula(Connection conexion, String matricula) throws SQLException {
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
-        Integer idEstudiante = obtenerIdEstudiantePorMatricula(conexion, matricula);
-        if (idEstudiante == null) throw new SQLException("No existe estudiante con matrícula: " + matricula);
-
-        int total = 0;
-
-        String q1 = "DELETE FROM asignacionTutorado WHERE idEstudiante = ?";
-        try (PreparedStatement ps = conexion.prepareStatement(q1)) {
-            ps.setInt(1, idEstudiante);
-            total += ps.executeUpdate();
-        }
-
-        String q2 = "DELETE FROM estudiante WHERE idEstudiante = ?";
-        try (PreparedStatement ps = conexion.prepareStatement(q2)) {
-            ps.setInt(1, idEstudiante);
-            total += ps.executeUpdate();
-        }
-
-        return total;
-    }
-
+    
     public static int actualizar(Connection conexion, Estudiante e) throws SQLException {
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
         String q = "UPDATE estudiante SET nombre=?, apellidoPaterno=?, apellidoMaterno=?, telefono=?, " +
-                   "correoInstitucional=?, anioIngreso=?, semestre=?, perfilActivo=? " +
-                   "WHERE matricula=?";
+                   "correoInstitucional=?, anioIngreso=?, semestre=?, creditosObtenidos=?, " +
+                   "situacionRiesgo=?, cambioTutor=?, perfilActivo=? WHERE matricula=?";
 
         try (PreparedStatement ps = conexion.prepareStatement(q)) {
             ps.setString(1, e.getNombre());
@@ -205,105 +153,94 @@ public class EstudianteDAO {
             ps.setString(5, e.getCorreoInstitucional());
             ps.setInt(6, e.getAnioIngreso());
             ps.setInt(7, e.getSemestre());
-            ps.setBoolean(8, e.isPerfilActivo());
-            ps.setString(9, e.getMatricula());
+            ps.setInt(8, e.getCreditosObtenidos());
+            ps.setBoolean(9, e.isSituacionRiesgo());
+            ps.setInt(10, e.getCambioTutor());
+            ps.setBoolean(11, e.isPerfilActivo());
+            ps.setString(12, e.getMatricula());
             return ps.executeUpdate();
         }
     }
-
+    
     public static int actualizarFoto(Connection conexion, String matricula, byte[] foto) throws SQLException {
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
         String q = "UPDATE estudiante SET foto=? WHERE matricula=?";
         try (PreparedStatement ps = conexion.prepareStatement(q)) {
-            ps.setBytes(1, foto);
+            ps.setBytes(1, foto != null ? foto : new byte[0]);
             ps.setString(2, matricula);
             return ps.executeUpdate();
         }
     }
 
+    public static int eliminarPorMatricula(Connection conexion, String matricula) throws SQLException {
+        String q = "UPDATE estudiante SET perfilActivo = false WHERE matricula = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(q)) {
+            ps.setString(1, matricula);
+            return ps.executeUpdate();
+        }
+    }
+    
     public static Estudiante obtenerPorMatricula(Connection conexion, String matricula) throws SQLException {
-        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
-
-        String q =
-            "SELECT e.*, pe.nombre AS nombrePrograma, at.idTutor AS idTutorAsignado " +
-            "FROM estudiante e " +
-            "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
-            "LEFT JOIN asignacionTutorado at ON at.idEstudiante = e.idEstudiante " +
-            "WHERE e.matricula = ?";
-
+        String q = "SELECT e.*, pe.nombre AS nombrePrograma, at.idTutor AS idTutorAsignado " +
+                   "FROM estudiante e " +
+                   "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
+                   "LEFT JOIN asignacionTutorado at ON at.idEstudiante = e.idEstudiante " +
+                   "WHERE e.matricula = ?";
         try (PreparedStatement ps = conexion.prepareStatement(q)) {
             ps.setString(1, matricula);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Estudiante est = new Estudiante();
-                    est.setIdEstudiante(rs.getInt("idEstudiante"));
-                    est.setMatricula(rs.getString("matricula"));
-                    est.setNombre(rs.getString("nombre"));
-                    est.setApellidoPaterno(rs.getString("apellidoPaterno"));
-                    est.setApellidoMaterno(rs.getString("apellidoMaterno"));
-                    est.setTelefono(rs.getString("telefono"));
-                    est.setCorreoInstitucional(rs.getString("correoInstitucional"));
-                    est.setAnioIngreso(rs.getInt("anioIngreso"));
-                    est.setSemestre(rs.getInt("semestre"));
-                    est.setCreditosObtenidos(rs.getInt("creditosObtenidos"));
-                    est.setSituacionRiesgo(rs.getBoolean("situacionRiesgo"));
-                    est.setCambioTutor(rs.getInt("cambioTutor"));
-                    est.setPerfilActivo(rs.getBoolean("perfilActivo"));
-                    est.setIdProgramaEducativo(rs.getInt("idProgramaEducativo"));
-                    est.setNombreProgramaEducativo(rs.getString("nombrePrograma"));
-                    est.setFoto(rs.getBytes("foto"));
+                    Estudiante est = mapearEstudiante(rs);
+                    est.setFoto(rs.getBytes("foto")); // Cargamos la foto solo al buscar individualmente
                     int idTutor = rs.getInt("idTutorAsignado");
-                    est.setIdTutor(rs.wasNull() ? null : idTutor);
-
+                    if (!rs.wasNull()) est.setIdTutor(idTutor);
                     return est;
                 }
             }
         }
         return null;
     }
- 
-    public static int insertar(Connection con, Estudiante e) throws SQLException {
-        if (con == null) throw new SQLException("No hay conexión con la base de datos.");
+    
+    public static ArrayList<Estudiante> obtenerTodos(Connection conexion) throws SQLException {
+        ArrayList<Estudiante> lista = new ArrayList<>();
+        String consulta = "SELECT e.*, pe.nombre AS nombrePrograma FROM estudiante e " +
+                          "INNER JOIN programaEducativo pe ON e.idProgramaEducativo = pe.idProgramaEducativo " +
+                          "WHERE e.perfilActivo = true ORDER BY e.apellidoPaterno";
+        try (PreparedStatement ps = conexion.prepareStatement(consulta); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) lista.add(mapearEstudiante(rs));
+        }
+        return lista;
+    }
 
-        String q = "INSERT INTO estudiante " +
-                "(matricula, nombre, apellidoPaterno, apellidoMaterno, telefono, correoInstitucional, " +
-                "anioIngreso, semestre, perfilActivo, idProgramaEducativo) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (PreparedStatement ps = con.prepareStatement(q, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, e.getMatricula());
-            ps.setString(2, e.getNombre());
-            ps.setString(3, e.getApellidoPaterno());
-            ps.setString(4, e.getApellidoMaterno());
-            ps.setString(5, e.getTelefono());
-            ps.setString(6, e.getCorreoInstitucional());
-            ps.setInt(7, e.getAnioIngreso());
-            ps.setInt(8, e.getSemestre());
-            ps.setBoolean(9, e.isPerfilActivo());
-            ps.setInt(10, e.getIdProgramaEducativo());
-
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
+    private static Integer obtenerIdPorMatricula(Connection conexion, String matricula) throws SQLException {
+        String q = "SELECT idEstudiante FROM estudiante WHERE matricula = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(q)) {
+            ps.setString(1, matricula);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("idEstudiante");
             }
         }
+        return null;
+    }
 
-        throw new SQLException("No se pudo obtener el idEstudiante generado.");
-    }   
-    
-    public static int insertarAsignacionTutorado(Connection con, int idTutor, int idEstudiante) throws SQLException {
-        if (con == null) throw new SQLException("No hay conexión con la base de datos.");
-
-        String q = "INSERT INTO asignacionTutorado (idTutor, idEstudiante) VALUES (?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(q)) {
-            ps.setInt(1, idTutor);
-            ps.setInt(2, idEstudiante);
-            return ps.executeUpdate();
-        }
+    private static Estudiante mapearEstudiante(ResultSet rs) throws SQLException {
+        Estudiante e = new Estudiante();
+        e.setIdEstudiante(rs.getInt("idEstudiante"));
+        e.setMatricula(rs.getString("matricula"));
+        e.setNombre(rs.getString("nombre"));
+        e.setApellidoPaterno(rs.getString("apellidoPaterno"));
+        e.setApellidoMaterno(rs.getString("apellidoMaterno"));
+        e.setCorreoInstitucional(rs.getString("correoInstitucional"));
+        e.setSemestre(rs.getInt("semestre"));
+        e.setIdProgramaEducativo(rs.getInt("idProgramaEducativo"));
+        e.setNombreProgramaEducativo(rs.getString("nombrePrograma"));
+        e.setSituacionRiesgo(rs.getBoolean("situacionRiesgo"));
+        
+        e.setTelefono(rs.getString("telefono"));
+        e.setAnioIngreso(rs.getInt("anioIngreso"));
+        e.setCreditosObtenidos(rs.getInt("creditosObtenidos"));
+        e.setCambioTutor(rs.getInt("cambioTutor"));
+        e.setPerfilActivo(rs.getBoolean("perfilActivo"));
+        
+        return e;
+    }
 }
-
-    
-}
-

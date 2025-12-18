@@ -2,11 +2,9 @@ package gestortutoriasfx.dominio;
 
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.Sesion;
-import gestortutoriasfx.modelo.dao.DocumentoReporteGeneralDAO;
 import gestortutoriasfx.modelo.dao.ListaTutoresComentariosDAO;
 import gestortutoriasfx.modelo.dao.ProblemasAcademicosReportadosGeneralesDAO;
 import gestortutoriasfx.modelo.dao.ReporteGeneralDAO;
-import gestortutoriasfx.modelo.pojo.DocumentoReporteGeneral;
 import gestortutoriasfx.modelo.pojo.ProblemaAcademicoReportadoGeneral;
 import gestortutoriasfx.modelo.pojo.ReporteGeneral;
 import gestortutoriasfx.modelo.pojo.TutorComentarioGeneral;
@@ -51,20 +49,25 @@ public class ReporteGeneralImplementacion {
         if (c != null) {
             try {
                 ReporteGeneral rg = ReporteGeneralDAO.obtenerPorId(c, idReporteGeneral);
-                ArrayList<ProblemaAcademicoReportadoGeneral> problemas =
-                        ProblemasAcademicosReportadosGeneralesDAO.obtenerPorReporte(c, idReporteGeneral);
-                ArrayList<TutorComentarioGeneral> tutores =
-                        ListaTutoresComentariosDAO.obtenerPorReporte(c, idReporteGeneral);
 
-                // opcional: solo metadatos (sin blob)
-                ArrayList<DocumentoReporteGeneral> docs =
-                        DocumentoReporteGeneralDAO.listarMetadatosPorReporte(c, idReporteGeneral);
+                if (rg != null) {
+                    ArrayList<ProblemaAcademicoReportadoGeneral> problemas =
+                            ProblemasAcademicosReportadosGeneralesDAO.obtenerPorReporte(c, idReporteGeneral);
 
-                resp.put("error", false);
-                resp.put("reporte", rg);
-                resp.put("problemas", problemas);
-                resp.put("tutores", tutores);
-                resp.put("documentos", docs);
+                    ArrayList<TutorComentarioGeneral> tutores =
+                            ListaTutoresComentariosDAO.obtenerPorReporte(c, idReporteGeneral);
+
+                    // 4. Obtener Metadatos de Documentos (si aplica)
+                    // ArrayList<DocumentoReporteGeneral> docs = DocumentoReporteGeneralDAO.listarMetadatosPorReporte(c, idReporteGeneral);
+
+                    resp.put("error", false);
+                    resp.put("reporte", rg);
+                    resp.put("problemas", problemas);
+                    resp.put("tutores", tutores);
+                    // resp.put("documentos", docs);
+                } else {
+                    resp.put("mensaje", "No se encontró el reporte con ID: " + idReporteGeneral);
+                }
 
             } catch (SQLException e) {
                 resp.put("mensaje", "Error BD al cargar reporte completo: " + e.getMessage());
@@ -91,24 +94,22 @@ public class ReporteGeneralImplementacion {
             try {
                 c.setAutoCommit(false);
 
-                // 🔹 asegura coordinador del login
-                if (reporte.getIdCoordinador() == null || reporte.getIdCoordinador() <= 0) {
+                if (reporte.getIdCoordinador() <= 0) {
                     int idCoord = Sesion.getIdCoordinador();
                     if (idCoord > 0) reporte.setIdCoordinador(idCoord);
                 }
 
-                int idReporte = (reporte.getIdReporteGeneral() == null) ? 0 : reporte.getIdReporteGeneral();
+                int idReporte = reporte.getIdReporteGeneral(); // Ahora es primitivo int (0 por defecto)
 
-                if (idReporte == 0) {
+                if (idReporte <= 0) {
                     idReporte = ReporteGeneralDAO.insertarReporte(c, reporte);
-                    if (idReporte == 0) throw new SQLException("No se generó el ID del Reporte General.");
+                    if (idReporte <= 0) throw new SQLException("No se generó el ID del Reporte General.");
                     reporte.setIdReporteGeneral(idReporte);
                 } else {
                     int filas = ReporteGeneralDAO.actualizarReporte(c, reporte);
-                    if (filas <= 0) throw new SQLException("No se actualizó el Reporte General (0 filas).");
+                    if (filas <= 0) throw new SQLException("No se actualizó el Reporte General (0 filas afectadas).");
                 }
 
-                // Reemplazar hijos (más simple y consistente)
                 ProblemasAcademicosReportadosGeneralesDAO.eliminarPorReporte(c, idReporte);
                 ListaTutoresComentariosDAO.eliminarPorReporte(c, idReporte);
 
@@ -121,6 +122,7 @@ public class ReporteGeneralImplementacion {
                 }
 
                 c.commit();
+                
                 resp.put("error", false);
                 resp.put("mensaje", "Reporte general guardado correctamente.");
                 resp.put("idReporteGeneral", idReporte);
@@ -139,6 +141,8 @@ public class ReporteGeneralImplementacion {
         return resp;
     }
 
+    /*
+    // Método opcional si tienes la tabla documentoReporteGeneral implementada
     public static HashMap<String, Object> guardarDocumentoReporteGeneral(
             int idReporteGeneral,
             String nombreArchivo,
@@ -165,4 +169,5 @@ public class ReporteGeneralImplementacion {
         }
         return resp;
     }
+    */
 }

@@ -223,7 +223,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
         boolean yaFueAgendada = ocupadas.contains(fecha.getNumSesion());
         if (yaFueAgendada) return false;
         
-        LocalDate fechaCierre = LocalDate.parse(fecha.getFechaCierre());
+        LocalDate fechaCierre = LocalDate.parse(fecha.getFecha());
         boolean estaVencida = fechaCierre.isBefore(hoy);
         
         return !estaVencida;
@@ -250,7 +250,7 @@ public class FXMLRegistrarHorarioController implements Initializable {
     }
     
     private boolean guardarHorarios(List<SesionTutoria> lista) {
-        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.registrarSesion((ArrayList<SesionTutoria>) lista);        
+        HashMap<String, Object> respuesta = SesionTutoriaImplementacion.registrarHorarios((ArrayList<SesionTutoria>) lista);        
         return !(boolean) respuesta.get("error");
     }
     

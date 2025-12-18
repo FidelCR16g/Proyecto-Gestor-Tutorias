@@ -3,11 +3,6 @@ package gestortutoriasfx.dominio;
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.EstudianteDAO;
 import gestortutoriasfx.modelo.pojo.Estudiante;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Nombre de la Clase: EstudianteImplementacion
@@ -25,6 +20,12 @@ import java.util.LinkedHashMap;
  * estudianteudiante de la base de datos.
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 public class EstudianteImplementacion {
 
     public static boolean actualizarAsignaciones(ArrayList<Estudiante> nuevos, ArrayList<Estudiante> removidos, int idTutor) {
@@ -40,6 +41,7 @@ public class EstudianteImplementacion {
                         EstudianteDAO.asignarTutor(conexion, estudiante.getMatricula(), idTutor);
                     }
                 }
+
                 if (removidos != null) {
                     for (Estudiante estudiante : removidos) {
                         EstudianteDAO.desasignarTutor(conexion, estudiante.getMatricula(), idTutor);
@@ -58,6 +60,27 @@ public class EstudianteImplementacion {
             }
         }
         return exito;
+    }
+
+    public static HashMap<String, Object> actualizarFotoTutorado(String matricula, byte[] foto) {
+        HashMap<String, Object> resp = new LinkedHashMap<>();
+        Connection con = null;
+
+        try {
+            con = ConexionBD.abrirConexionBD();
+            int filas = EstudianteDAO.actualizarFoto(con, matricula, foto);
+            
+            resp.put("error", false);
+            resp.put("filas", filas);
+        } catch (SQLException ex) {
+            resp.put("error", true);
+            resp.put("mensaje", "Error BD: " + ex.getMessage());
+            ex.printStackTrace();
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+
+        return resp;
     }
 
     public static HashMap<String, Object> obtenerTutoradosPorTutor(int idTutor) {
@@ -81,8 +104,7 @@ public class EstudianteImplementacion {
 
     public static HashMap<String, Object> obtenerEstudiantesSinTutor() {
         HashMap<String, Object> respuesta = new LinkedHashMap<>();
-        respuesta.put("error", true);
-
+        
         Connection conexion = ConexionBD.abrirConexionBD();
         if (conexion != null) {
             try {
@@ -90,13 +112,15 @@ public class EstudianteImplementacion {
                 respuesta.put("error", false);
                 respuesta.put("estudiantes", estudiantes);
             } catch (SQLException e) {
+                respuesta.put("error", true);
                 respuesta.put("mensaje", "Error BD: " + e.getMessage());
                 e.printStackTrace();
             } finally {
                 ConexionBD.cerrarConexion(conexion);
             }
         } else {
-            respuesta.put("mensaje", "Sin conexión.");
+            respuesta.put("error", true);
+            respuesta.put("mensaje", "Sin conexión con la BD.");
         }
         return respuesta;
     }
@@ -177,7 +201,7 @@ public class EstudianteImplementacion {
 
             if (est == null) {
                 resp.put("error", true);
-                resp.put("mensaje", "No existe tutorado con matrícula: " + matricula);
+                resp.put("mensaje", "No existe estudiante con matrícula: " + matricula);
             } else {
                 resp.put("error", false);
                 resp.put("estudiante", est);
@@ -192,28 +216,8 @@ public class EstudianteImplementacion {
 
         return resp;
     }
-
-    public static HashMap<String, Object> actualizarFotoTutorado(String matricula, byte[] foto) {
-        HashMap<String, Object> resp = new LinkedHashMap<>();
-        Connection con = null;
-
-        try {
-            con = ConexionBD.abrirConexionBD();
-            int filas = EstudianteDAO.actualizarFoto(con, matricula, foto);
-            resp.put("error", false);
-            resp.put("filas", filas);
-        } catch (SQLException ex) {
-            resp.put("error", true);
-            resp.put("mensaje", "Error BD: " + ex.getMessage());
-            ex.printStackTrace();
-        } finally {
-            ConexionBD.cerrarConexion(con);
-        }
-
-        return resp;
-    }
     
-    public static HashMap<String, Object> registrarTutorado(Estudiante e, int idTutor, byte[] foto) {
+    public static HashMap<String, Object> registrarTutorado(Estudiante e, int idTutor) {
         HashMap<String, Object> resp = new LinkedHashMap<>();
         Connection con = null;
 
@@ -222,18 +226,18 @@ public class EstudianteImplementacion {
             con.setAutoCommit(false);
 
             int idEstudiante = EstudianteDAO.insertar(con, e);
-            EstudianteDAO.insertarAsignacionTutorado(con, idTutor, idEstudiante);
-            if (foto != null && foto.length > 0) {
-                EstudianteDAO.actualizarFoto(con, e.getMatricula(), foto);
-            }
+            e.setIdEstudiante(idEstudiante);
+            
+            EstudianteDAO.asignarTutor(con, e.getMatricula(), idTutor);
 
             con.commit();
             resp.put("error", false);
             resp.put("idEstudiante", idEstudiante);
+            resp.put("mensaje", "Tutorado registrado y asignado correctamente.");
 
         } catch (SQLException ex) {
             resp.put("error", true);
-            resp.put("mensaje", "Error BD: " + ex.getMessage());
+            resp.put("mensaje", "Error al registrar: " + ex.getMessage());
             ex.printStackTrace();
             try { if (con != null) con.rollback(); } catch (SQLException ignore) {}
 
@@ -241,8 +245,6 @@ public class EstudianteImplementacion {
             try { if (con != null) con.setAutoCommit(true); } catch (SQLException ignore) {}
             ConexionBD.cerrarConexion(con);
         }
-
         return resp;
     }
-
 }

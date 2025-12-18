@@ -234,7 +234,7 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
 
     private void configurarTabla() {
         tvProblematicas.setItems(listaProblematicas);
-        tcEE.setCellValueFactory(new PropertyValueFactory("nombreNRC"));
+        tcEE.setCellValueFactory(new PropertyValueFactory("nombreExperienciaEducativa"));
         tcProfesor.setCellValueFactory(new PropertyValueFactory("nombreProfesor"));
         tcProblematica.setCellValueFactory(new PropertyValueFactory("problema"));
         tcNumAlumnos.setCellValueFactory(new PropertyValueFactory("numEstudiantes"));

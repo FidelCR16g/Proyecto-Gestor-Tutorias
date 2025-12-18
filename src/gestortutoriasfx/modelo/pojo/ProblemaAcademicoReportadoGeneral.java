@@ -6,7 +6,7 @@ import java.util.Objects;
 public class ProblemaAcademicoReportadoGeneral implements Serializable {
     private int idProblemasAcademicosReportadosGenerales; 
     private int idReporteGeneral;                          
-    private int idExperienciaEducativa;
+    private Integer idExperienciaEducativa;
     private String nombreExperienciaEducativa;            
     private String nombreProfesor;
     private String problema;                                   
@@ -14,7 +14,7 @@ public class ProblemaAcademicoReportadoGeneral implements Serializable {
 
     public ProblemaAcademicoReportadoGeneral() { }
 
-    public ProblemaAcademicoReportadoGeneral(int idReporteGeneral, int idExperienciaEducativa, 
+    public ProblemaAcademicoReportadoGeneral(int idReporteGeneral, Integer idExperienciaEducativa, 
                                              String nombreExperienciaEducativa, String nombreProfesor, 
                                              String problema, int numEstudiantes) {
         this.idReporteGeneral = idReporteGeneral;
@@ -41,11 +41,11 @@ public class ProblemaAcademicoReportadoGeneral implements Serializable {
         this.idReporteGeneral = idReporteGeneral;
     }
 
-    public int getIdExperienciaEducativa() {
+    public Integer getIdExperienciaEducativa() {
         return idExperienciaEducativa;
     }
 
-    public void setIdExperienciaEducativa(int idExperienciaEducativa) {
+    public void setIdExperienciaEducativa(Integer idExperienciaEducativa) {
         this.idExperienciaEducativa = idExperienciaEducativa;
     }
 

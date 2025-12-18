@@ -105,7 +105,7 @@ public class ReporteTutoriaPDF {
             agregarCabeceraTabla(tablaProblemas, "Núm. Alum");
 
             for (ProblematicaAcademica problema : listaProblemas) {
-                tablaProblemas.addCell(crearCeldaNormal(problema.getNombreNRC()));
+                tablaProblemas.addCell(crearCeldaNormal(problema.getNombreExperienciaEducativa()));
                 tablaProblemas.addCell(crearCeldaNormal(problema.getNombreProfesor()));
                 tablaProblemas.addCell(crearCeldaNormal(problema.getProblema()));
                 tablaProblemas.addCell(crearCeldaCentrada(String.valueOf(problema.getNumEstudiantes())));

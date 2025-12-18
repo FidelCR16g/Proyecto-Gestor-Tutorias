@@ -23,19 +23,32 @@ import java.util.ArrayList;
  * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
  */
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
 public class ReporteTutoriaDAO {
 
     public static ReporteTutoria obtenerReporte(Connection conexion, int idTutor, int idPeriodo, int numSesion) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ReporteTutoria reporte = null;
 
-        String consulta =
-                "SELECT idReporteTutoria, idTutor, idPeriodoEscolar, idProgramaEducativo, numSesion, estatus, comentarios, " +
-                "numAlumnosAsistieron, numAlumnosRiesgo, nombreTutor, nombreProgramaEducativo, nombrePeriodoEscolar, " +
-                "fechaPrimeraTutoria, fechaUltimaTutoria, estadoLugar, fechaCreacionReporte " +
-                "FROM reporteTutoria " +
-                "WHERE idTutor = ? AND idPeriodoEscolar = ? AND numSesion = ?";
+        // CAMBIO IMPORTANTE: Agregamos JOINs para obtener los nombres reales
+        // Asumiendo que la estructura es similar a la que hemos trabajado
+        String consulta = "SELECT rt.*, " +
+                          "pe.nombre AS nombrePrograma, " +
+                          "per.nombrePeriodoEscolar, " +
+                          "CONCAT(p.nombre, ' ', p.apellidoPaterno) AS nombreTutor " +
+                          "FROM reporteTutoria rt " +
+                          "INNER JOIN programaEducativo pe ON rt.idProgramaEducativo = pe.idProgramaEducativo " +
+                          "INNER JOIN periodoEscolar per ON rt.idPeriodoEscolar = per.idPeriodoEscolar " +
+                          "INNER JOIN tutor t ON rt.idTutor = t.idTutor " +
+                          "INNER JOIN profesor p ON t.idProfesor = p.idProfesor " +
+                          "WHERE rt.idTutor = ? AND rt.idPeriodoEscolar = ? AND rt.numSesion = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
@@ -46,29 +59,23 @@ public class ReporteTutoriaDAO {
                 if (resultado.next()) {
                     reporte = new ReporteTutoria();
                     reporte.setIdReporteTutoria(resultado.getInt("idReporteTutoria"));
-
-                    // NULL-safe
-                    reporte.setIdTutor((Integer) resultado.getObject("idTutor"));
+                    reporte.setIdTutor(resultado.getInt("idTutor"));
                     reporte.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
-                    reporte.setIdProgramaEducativo((Integer) resultado.getObject("idProgramaEducativo"));
-
+                    reporte.setIdProgramaEducativo(resultado.getInt("idProgramaEducativo"));
                     reporte.setNumSesion(resultado.getInt("numSesion"));
                     reporte.setEstatus(resultado.getString("estatus"));
                     reporte.setComentarios(resultado.getString("comentarios"));
                     reporte.setNumAlumnosAsistieron(resultado.getInt("numAlumnosAsistieron"));
                     reporte.setNumAlumnosRiesgo(resultado.getInt("numAlumnosRiesgo"));
-
-                    reporte.setNombreTutor(resultado.getString("nombreTutor"));
-
-                    reporte.setNombreProgramaEducativo(resultado.getString("nombreProgramaEducativo"));
-
-                    reporte.setNombrePeriodoEscolar(resultado.getString("nombrePeriodoEscolar"));
-
+                    
+                    // Fechas (Mantenemos String según tu diseño, pero validamos null)
                     reporte.setFechaPrimeraTutoria(resultado.getString("fechaPrimeraTutoria"));
                     reporte.setFechaUltimaTutoria(resultado.getString("fechaUltimaTutoria"));
 
-                    reporte.setEstadoLugar(resultado.getString("estadoLugar"));
-                    reporte.setFechaCreacionReporte(resultado.getString("fechaCreacionReporte"));
+                    // Datos obtenidos por JOIN
+                    reporte.setNombreTutor(resultado.getString("nombreTutor"));
+                    reporte.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
+                    reporte.setNombrePeriodoEscolar(resultado.getString("nombrePeriodoEscolar"));
                 }
             }
         }
@@ -76,37 +83,29 @@ public class ReporteTutoriaDAO {
     }
 
     public static int registrarReporte(Connection conexion, ReporteTutoria reporte) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         int idGenerado = 0;
 
-        String consulta = "INSERT INTO reporteTutoria " +
-                "(idTutor, idPeriodoEscolar, idProgramaEducativo, numSesion, estatus, comentarios, " +
-                "numAlumnosAsistieron, numAlumnosRiesgo, fechaPrimeraTutoria, fechaUltimaTutoria, estadoLugar) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String consulta = "INSERT INTO reporteTutoria "
+                        + "(idTutor, idPeriodoEscolar, idProgramaEducativo, numSesion, estatus, comentarios, "
+                        + "numAlumnosAsistieron, numAlumnosRiesgo, fechaPrimeraTutoria, fechaUltimaTutoria, estadoLugar) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta, Statement.RETURN_GENERATED_KEYS)) {
-
-            if (reporte.getIdTutor() == null) sentencia.setNull(1, java.sql.Types.INTEGER);
-            else sentencia.setInt(1, reporte.getIdTutor());
-
+            sentencia.setInt(1, reporte.getIdTutor());
             sentencia.setInt(2, reporte.getIdPeriodoEscolar());
-
-            if (reporte.getIdProgramaEducativo() == null) sentencia.setNull(3, java.sql.Types.INTEGER);
-            else sentencia.setInt(3, reporte.getIdProgramaEducativo());
-
+            sentencia.setInt(3, reporte.getIdProgramaEducativo());
             sentencia.setInt(4, reporte.getNumSesion());
             sentencia.setString(5, reporte.getEstatus());
             sentencia.setString(6, reporte.getComentarios());
             sentencia.setInt(7, reporte.getNumAlumnosAsistieron());
             sentencia.setInt(8, reporte.getNumAlumnosRiesgo());
+            
             sentencia.setString(9, reporte.getFechaPrimeraTutoria());
             sentencia.setString(10, reporte.getFechaUltimaTutoria());
-
-            String estadoLugar = (reporte.getEstadoLugar() == null || reporte.getEstadoLugar().trim().isEmpty())
-                    ? "Sin observaciones"
-                    : reporte.getEstadoLugar();
-            sentencia.setString(11, estadoLugar);
+            
+            sentencia.setString(11, "Sin observaciones");
 
             int filas = sentencia.executeUpdate();
 
@@ -122,77 +121,90 @@ public class ReporteTutoriaDAO {
     }
 
     public static int actualizarReporte(Connection conexion, ReporteTutoria reporte) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        int filas;
+        int filas = 0;
 
-        String consulta = "UPDATE reporteTutoria SET comentarios = ?, estatus = ?, " +
-                "numAlumnosAsistieron = ?, numAlumnosRiesgo = ? " +
-                "WHERE idReporteTutoria = ?";
+        String consulta = "UPDATE reporteTutoria SET comentarios = ?, estatus = ?, "
+                        + "numAlumnosAsistieron = ?, numAlumnosRiesgo = ?, "
+                        + "fechaPrimeraTutoria = ?, fechaUltimaTutoria = ? "
+                        + "WHERE idReporteTutoria = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setString(1, reporte.getComentarios());
             sentencia.setString(2, reporte.getEstatus());
             sentencia.setInt(3, reporte.getNumAlumnosAsistieron());
             sentencia.setInt(4, reporte.getNumAlumnosRiesgo());
-            sentencia.setInt(5, reporte.getIdReporteTutoria());
+            sentencia.setString(5, reporte.getFechaPrimeraTutoria());
+            sentencia.setString(6, reporte.getFechaUltimaTutoria());
+            
+            sentencia.setInt(7, reporte.getIdReporteTutoria());
+            
             filas = sentencia.executeUpdate();
         }
         return filas;
     }
 
     public static ArrayList<ReporteTutoria> obtenerReportesPorPeriodo(Connection conexion, int idTutor, int idPeriodo) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<ReporteTutoria> lista = new ArrayList<>();
-
-        String consulta = "SELECT idReporteTutoria, numSesion, estatus, fechaUltimaTutoria " +
-                "FROM reporteTutoria WHERE idTutor = ? AND idPeriodoEscolar = ? ORDER BY numSesion ASC";
+        
+        String consulta = "SELECT * FROM reporteTutoria WHERE idTutor = ? AND idPeriodoEscolar = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idTutor);
             sentencia.setInt(2, idPeriodo);
-
+            
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
                     ReporteTutoria reporte = new ReporteTutoria();
                     reporte.setIdReporteTutoria(resultado.getInt("idReporteTutoria"));
+                    reporte.setIdTutor(resultado.getInt("idTutor"));
+                    reporte.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
+                    reporte.setIdProgramaEducativo(resultado.getInt("idProgramaEducativo"));
                     reporte.setNumSesion(resultado.getInt("numSesion"));
                     reporte.setEstatus(resultado.getString("estatus"));
                     reporte.setFechaUltimaTutoria(resultado.getString("fechaUltimaTutoria"));
+                    
                     lista.add(reporte);
                 }
             }
         }
         return lista;
     }
-    
+
     public static ArrayList<ReporteTutoria> obtenerReportesParaRevision(Connection c, String busqueda) throws SQLException {
         if (c == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<ReporteTutoria> lista = new ArrayList<>();
         String q = (busqueda == null) ? "" : busqueda.trim();
+        String like = "%" + q + "%";
 
         String sql =
-            "SELECT idReporteTutoria, idTutor, idPeriodoEscolar, idProgramaEducativo, " +
-            "       numSesion, estatus, nombreTutor, nombreProgramaEducativo, nombrePeriodoEscolar, " +
-            "       fechaUltimaTutoria, fechaCreacionReporte " +
-            "FROM reporteTutoria " +
-            "WHERE (estatus = 'Enviado' OR estatus = 'Revisado') " +
+            "SELECT rt.idReporteTutoria, rt.idTutor, rt.idPeriodoEscolar, rt.idProgramaEducativo, " +
+            "       rt.numSesion, rt.estatus, rt.fechaUltimaTutoria, rt.fechaCreacionReporte, " +
+            "       CONCAT(p.nombre, ' ', p.apellidoPaterno) AS nombreTutor, " +
+            "       pe.nombre AS nombreProgramaEducativo, " +
+            "       per.nombrePeriodoEscolar " +
+            "FROM reporteTutoria rt " +
+            "INNER JOIN tutor t ON rt.idTutor = t.idTutor " +
+            "INNER JOIN profesor p ON t.idProfesor = p.idProfesor " +
+            "INNER JOIN programaEducativo pe ON rt.idProgramaEducativo = pe.idProgramaEducativo " +
+            "INNER JOIN periodoEscolar per ON rt.idPeriodoEscolar = per.idPeriodoEscolar " +
+            "WHERE (rt.estatus = 'Enviado' OR rt.estatus = 'Revisado') " +
             "  AND ( ? = '' " +
-            "        OR nombreTutor LIKE ? " +
-            "        OR nombreProgramaEducativo LIKE ? " +
-            "        OR nombrePeriodoEscolar LIKE ? " +
-            "        OR CAST(numSesion AS CHAR) LIKE ? " +
-            "        OR estatus LIKE ? " +
-            "        OR CAST(fechaUltimaTutoria AS CHAR) LIKE ? " +
-            "        OR CAST(fechaCreacionReporte AS CHAR) LIKE ? ) " +
-            "ORDER BY fechaCreacionReporte DESC, numSesion DESC";
+            "        OR CONCAT(p.nombre, ' ', p.apellidoPaterno) LIKE ? " +
+            "        OR pe.nombre LIKE ? " +
+            "        OR per.nombrePeriodoEscolar LIKE ? " +
+            "        OR CAST(rt.numSesion AS CHAR) LIKE ? " +
+            "        OR rt.estatus LIKE ? " +
+            "        OR CAST(rt.fechaUltimaTutoria AS CHAR) LIKE ? " +
+            "        OR CAST(rt.fechaCreacionReporte AS CHAR) LIKE ? ) " +
+            "ORDER BY rt.fechaCreacionReporte DESC, rt.numSesion DESC";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, q);
-
-            String like = "%" + q + "%";
             ps.setString(2, like);
             ps.setString(3, like);
             ps.setString(4, like);
@@ -205,9 +217,9 @@ public class ReporteTutoriaDAO {
                 while (rs.next()) {
                     ReporteTutoria r = new ReporteTutoria();
                     r.setIdReporteTutoria(rs.getInt("idReporteTutoria"));
-                    r.setIdTutor((Integer) rs.getObject("idTutor"));
+                    r.setIdTutor(rs.getInt("idTutor"));
                     r.setIdPeriodoEscolar(rs.getInt("idPeriodoEscolar"));
-                    r.setIdProgramaEducativo((Integer) rs.getObject("idProgramaEducativo"));
+                    r.setIdProgramaEducativo(rs.getInt("idProgramaEducativo"));
 
                     r.setNumSesion(rs.getInt("numSesion"));
                     r.setEstatus(rs.getString("estatus"));
@@ -232,11 +244,16 @@ public class ReporteTutoriaDAO {
         ReporteTutoria reporte = null;
 
         String sql =
-            "SELECT idReporteTutoria, idTutor, idPeriodoEscolar, idProgramaEducativo, numSesion, estatus, comentarios, " +
-            "       numAlumnosAsistieron, numAlumnosRiesgo, nombreTutor, nombreProgramaEducativo, nombrePeriodoEscolar, " +
-            "       fechaPrimeraTutoria, fechaUltimaTutoria, estadoLugar, fechaCreacionReporte " +
-            "FROM reporteTutoria " +
-            "WHERE idReporteTutoria = ?";
+            "SELECT rt.*, " +
+            "       CONCAT(p.nombre, ' ', p.apellidoPaterno) AS nombreTutor, " +
+            "       pe.nombre AS nombreProgramaEducativo, " +
+            "       per.nombrePeriodoEscolar " +
+            "FROM reporteTutoria rt " +
+            "INNER JOIN tutor t ON rt.idTutor = t.idTutor " +
+            "INNER JOIN profesor p ON t.idProfesor = p.idProfesor " +
+            "INNER JOIN programaEducativo pe ON rt.idProgramaEducativo = pe.idProgramaEducativo " +
+            "INNER JOIN periodoEscolar per ON rt.idPeriodoEscolar = per.idPeriodoEscolar " +
+            "WHERE rt.idReporteTutoria = ?";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idReporteTutoria);
@@ -244,10 +261,9 @@ public class ReporteTutoriaDAO {
                 if (rs.next()) {
                     reporte = new ReporteTutoria();
                     reporte.setIdReporteTutoria(rs.getInt("idReporteTutoria"));
-
-                    reporte.setIdTutor((Integer) rs.getObject("idTutor"));
+                    reporte.setIdTutor(rs.getInt("idTutor"));
                     reporte.setIdPeriodoEscolar(rs.getInt("idPeriodoEscolar"));
-                    reporte.setIdProgramaEducativo((Integer) rs.getObject("idProgramaEducativo"));
+                    reporte.setIdProgramaEducativo(rs.getInt("idProgramaEducativo"));
 
                     reporte.setNumSesion(rs.getInt("numSesion"));
                     reporte.setEstatus(rs.getString("estatus"));
@@ -275,11 +291,7 @@ public class ReporteTutoriaDAO {
         if (c == null) throw new SQLException("No hay conexión con la base de datos.");
         if (estatus == null || estatus.trim().isEmpty()) throw new SQLException("Estatus inválido.");
 
-        String sql =
-            "UPDATE reporteTutoria " +
-            "SET estatus = ? " +
-            "WHERE idReporteTutoria = ? " +
-            "  AND estatus = 'Enviado'";
+        String sql = "UPDATE reporteTutoria SET estatus = ? WHERE idReporteTutoria = ? AND estatus = 'Enviado'";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, estatus);
@@ -287,5 +299,4 @@ public class ReporteTutoriaDAO {
             return ps.executeUpdate(); 
         }
     }
-
 }

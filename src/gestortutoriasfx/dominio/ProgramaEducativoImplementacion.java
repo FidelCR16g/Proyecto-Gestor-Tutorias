@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class ProgramaEducativoImplementacion {
-
     public static HashMap<String, Object> obtenerProgramas() {
         HashMap<String, Object> resp = new LinkedHashMap<>();
         Connection con = null;
@@ -18,8 +17,10 @@ public class ProgramaEducativoImplementacion {
         try {
             con = ConexionBD.abrirConexionBD();
             ArrayList<ProgramaEducativo> lista = ProgramaEducativoDAO.obtenerProgramas(con);
+            
             resp.put("error", false);
             resp.put("programas", lista);
+            
         } catch (SQLException ex) {
             resp.put("error", true);
             resp.put("mensaje", "Error BD: " + ex.getMessage());

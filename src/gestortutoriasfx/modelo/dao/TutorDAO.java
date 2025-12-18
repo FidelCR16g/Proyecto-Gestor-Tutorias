@@ -22,13 +22,24 @@ import java.util.ArrayList;
  * Clase encargada del acceso y ejecucion de las consultas dentro de la base de datos.
  */
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class TutorDAO {
 
     public static int obtenerIdTutor(Connection conexion, int idUsuario) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         int idTutor = 0;
-        String consulta = "SELECT idTutor FROM rolTutor WHERE idUsuario = ?";
+        
+        String consulta = "SELECT t.idTutor " +
+                          "FROM tutor t " +
+                          "INNER JOIN profesor p ON t.idProfesor = p.idProfesor " +
+                          "INNER JOIN usuario u ON p.numPersonal = u.numPersonal " +
+                          "WHERE u.idUsuario = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idUsuario);
@@ -43,32 +54,22 @@ public class TutorDAO {
     }
 
     public static ArrayList<Tutor> obtenerTutoresDisponibles(Connection conexion) throws SQLException {
-        if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
+        if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<Tutor> tutores = new ArrayList<>();
+        
         String consulta =
                 "SELECT t.idTutor, t.idProfesor, t.espaciosTutorados, " +
-                "p.numPersonal, p.nombre, p.apellidoPaterno, p.apellidoMaterno, p.email " +
+                "p.numPersonal, p.nombre, p.apellidoPaterno, p.apellidoMaterno, p.email " + 
                 "FROM tutor t " +
-                "INNER JOIN profesor p ON t.idProfesor = p.idProfesor";
+                "INNER JOIN profesor p ON t.idProfesor = p.idProfesor " +
+                "ORDER BY p.nombre, p.apellidoPaterno";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
              ResultSet resultado = sentencia.executeQuery()) {
 
             while (resultado.next()) {
-                Tutor tutor = new Tutor();
-                tutor.setIdTutor(resultado.getInt("idTutor"));
-                tutor.setIdProfesor(resultado.getInt("idProfesor"));
-                tutor.setEspaciosTutorados(resultado.getInt("espaciosTutorados"));
-                tutor.setNumPersonal(resultado.getString("numPersonal"));
-                tutor.setEmail(resultado.getString("email"));
-
-                String nombre = resultado.getString("nombre") + " " +
-                        resultado.getString("apellidoPaterno") + " " +
-                        resultado.getString("apellidoMaterno");
-                tutor.setNombreCompleto(nombre);
-
-                tutores.add(tutor);
+                tutores.add(mapearTutor(resultado));
             }
         }
         return tutores;
@@ -78,6 +79,7 @@ public class TutorDAO {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<Tutor> tutores = new ArrayList<>();
+        
         String consulta =
             "SELECT DISTINCT t.idTutor, t.idProfesor, t.espaciosTutorados, " +
             "p.numPersonal, p.nombre, p.apellidoPaterno, p.apellidoMaterno, p.email " +
@@ -94,19 +96,7 @@ public class TutorDAO {
 
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
-                    Tutor tutor = new Tutor();
-                    tutor.setIdTutor(resultado.getInt("idTutor"));
-                    tutor.setIdProfesor(resultado.getInt("idProfesor"));
-                    tutor.setEspaciosTutorados(resultado.getInt("espaciosTutorados"));
-                    tutor.setNumPersonal(resultado.getString("numPersonal"));
-                    tutor.setEmail(resultado.getString("email"));
-
-                    String nombre = resultado.getString("nombre") + " " +
-                            resultado.getString("apellidoPaterno") + " " +
-                            resultado.getString("apellidoMaterno");
-                    tutor.setNombreCompleto(nombre);
-
-                    tutores.add(tutor);
+                    tutores.add(mapearTutor(resultado));
                 }
             }
         }
@@ -114,4 +104,24 @@ public class TutorDAO {
         return tutores;
     }
 
+    private static Tutor mapearTutor(ResultSet rs) throws SQLException {
+        Tutor tutor = new Tutor();
+        tutor.setIdTutor(rs.getInt("idTutor"));
+        tutor.setIdProfesor(rs.getInt("idProfesor"));
+        tutor.setEspaciosTutorados(rs.getInt("espaciosTutorados"));
+        
+        tutor.setNumPersonal(rs.getString("numPersonal"));
+        tutor.setNombre(rs.getString("nombre"));
+        tutor.setApellidoPaterno(rs.getString("apellidoPaterno"));
+        tutor.setApellidoMaterno(rs.getString("apellidoMaterno"));
+        
+        tutor.setCorreoInstitucional(rs.getString("email")); 
+
+        String nombreCompleto = rs.getString("nombre") + " " +
+                                rs.getString("apellidoPaterno") + " " +
+                                rs.getString("apellidoMaterno");
+        tutor.setNombre(nombreCompleto);
+
+        return tutor;
+    }
 }

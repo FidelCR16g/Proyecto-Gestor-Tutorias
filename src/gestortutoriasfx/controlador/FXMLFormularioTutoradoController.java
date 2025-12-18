@@ -78,7 +78,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
 
         if (cbPrograma != null) {
             cbPrograma.valueProperty().addListener((obs, oldV, nuevo) -> {
-                if (nuevo == null || nuevo.getIdProgramaEducativo() == null) {
+                if (nuevo == null || nuevo.getIdProgramaEducativo() == 0) {
                     limpiarTutoresYSemestres();
                     return;
                 }
@@ -185,7 +185,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
 
         if (cbPrograma != null && e.getIdProgramaEducativo() > 0) {
             for (ProgramaEducativo pe : cbPrograma.getItems()) {
-                if (pe.getIdProgramaEducativo() != null && pe.getIdProgramaEducativo() == e.getIdProgramaEducativo()) {
+                if (pe.getIdProgramaEducativo() != 0 && pe.getIdProgramaEducativo() == e.getIdProgramaEducativo()) {
                     cbPrograma.getSelectionModel().select(pe);
                     cargarTutoresPorPrograma(pe.getIdProgramaEducativo());
                     cargarSemestresPorPrograma(pe.getNumPeriodos());
@@ -196,7 +196,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
 
         if (cbSemestre != null) cbSemestre.getSelectionModel().select(Integer.valueOf(e.getSemestre()));
 
-        if (cbTutor != null && e.getIdTutor() != null) {
+        if (cbTutor != null && e.getIdTutor() != 0) {
             for (Tutor t : cbTutor.getItems()) {
                 if (t.getIdTutor() == e.getIdTutor()) {
                     cbTutor.getSelectionModel().select(t);
@@ -272,6 +272,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
                         : "No se pudieron guardar los cambios.");
             }
         } else {
+            /*
             // ===== ALTA: registrar estudiante + asignaciónTutorado (+foto opcional) =====
             HashMap<String, Object> resp = EstudianteImplementacion.registrarTutorado(est, tutorSel.getIdTutor(), fotoBytes);
 
@@ -284,6 +285,7 @@ public class FXMLFormularioTutoradoController implements Initializable {
                         : "No se pudo registrar el tutorado.";
                 setInfo(msg);
             }
+            */
         }
     }
 

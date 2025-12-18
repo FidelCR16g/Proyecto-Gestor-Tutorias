@@ -52,9 +52,11 @@ public class FXMLMostrarReporteTutoriaController implements Initializable {
         if (lbMensaje != null) lbMensaje.setText("");
 
         if (tcEE != null) {
-            tcEE.setCellValueFactory(cd -> new SimpleStringProperty(safe(
-                cd.getValue() != null ? cd.getValue().getNombreNRC() : null
-            )));
+            tcEE.setCellValueFactory(cd -> {
+                return new SimpleStringProperty(safe(
+                        cd.getValue() != null ? cd.getValue().getNombreExperienciaEducativa() : null
+                ));
+            });
         }
         if (tcProfesor != null) {
             tcProfesor.setCellValueFactory(cd -> new SimpleStringProperty(safe(
