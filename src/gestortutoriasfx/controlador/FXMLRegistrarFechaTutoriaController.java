@@ -1,5 +1,6 @@
 package gestortutoriasfx.controlador;
 
+import gestortutoriasfx.dominio.FechaTutoriaImplementacion;
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.CalendarioDAO;
 import gestortutoriasfx.modelo.dao.FechaTutoriaDAO;
@@ -104,7 +105,7 @@ public class FXMLRegistrarFechaTutoriaController {
             }
 
             int idPeriodo = (idPeriodoEscolar > 0) ? idPeriodoEscolar : periodo.getIdPeriodoEscolar();
-            LocalDate inicio = LocalDate.parse(periodo.getFechaInicio()); // yyyy-MM-dd
+            LocalDate inicio = LocalDate.parse(periodo.getFechaInicio());
 
             if (lbContexto != null) {
                 String ses = (numSesion != null) ? ("Tutoría " + numSesion + " | ") : "";
@@ -114,7 +115,7 @@ public class FXMLRegistrarFechaTutoriaController {
             Map<LocalDate, Set<String>> categorias = CalendarioDAO.obtenerCategoriasPorPeriodo(con, idPeriodo);
             if (categorias == null) categorias = new HashMap<>();
 
-            Set<LocalDate> ocupadas = FechaTutoriaDAO.obtenerFechasOcupadas(con, idPeriodo);
+            Set<LocalDate> ocupadas = (Set<LocalDate>) FechaTutoriaImplementacion.obtenerFechasOcupadas(idPeriodo);
             if (ocupadas == null) ocupadas = new HashSet<>();
 
             if (fechaActualDeLaSesion != null) {

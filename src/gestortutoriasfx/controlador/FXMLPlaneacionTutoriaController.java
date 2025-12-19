@@ -1,5 +1,6 @@
 package gestortutoriasfx.controlador;
 
+import gestortutoriasfx.dominio.FechaTutoriaImplementacion;
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.Sesion;
 import gestortutoriasfx.modelo.dao.FechaTutoriaDAO;
@@ -11,6 +12,7 @@ import gestortutoriasfx.utilidad.Utilidades;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -79,7 +81,7 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
                         + " | Coordinador: " + coordinador);
             }
 
-            cargarSesiones(con);
+            cargarSesiones();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,7 +102,7 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
         }
     }
 
-    private void cargarSesiones(Connection con) {
+    private void cargarSesiones() {
         ponerSesionSinPlanear(1);
         ponerSesionSinPlanear(2);
         ponerSesionSinPlanear(3);
@@ -108,24 +110,23 @@ public class FXMLPlaneacionTutoriaController implements javafx.fxml.Initializabl
 
         if (periodoActual == null) return;
 
-        try {
-            ArrayList<FechaTutoria> fechas = FechaTutoriaDAO.obtenerPorPeriodo(con, periodoActual.getIdPeriodoEscolar());
+        HashMap<String, Object> respuesta = FechaTutoriaImplementacion.obtenerFechasPorPeriodo(periodoActual.getIdPeriodoEscolar());
+
+        if (!(boolean) respuesta.get("error")) {
+            @SuppressWarnings("unchecked")
+            ArrayList<FechaTutoria> fechas = (ArrayList<FechaTutoria>) respuesta.get("fechas");
 
             for (FechaTutoria ft : fechas) {
                 int s = ft.getNumSesion();
                 String desc = ft.getDescripcion();
-
-                String fecha = ft.getFechaInicio();
-                if (fecha == null || fecha.trim().isEmpty()) {
-                    fecha = ft.getFecha();
-                }
+                
+                String fecha = ft.getFecha(); 
 
                 ponerSesionPlaneada(s, fecha, desc);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error", "No se pudo cargar sesiones desde BD.", Alert.AlertType.ERROR);
+        } else {
+            String mensaje = (String) respuesta.get("mensaje");
+            Utilidades.mostrarAlertaSimple("Error", mensaje, Alert.AlertType.ERROR);
         }
     }
 

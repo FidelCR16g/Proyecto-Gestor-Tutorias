@@ -1,5 +1,6 @@
 package gestortutoriasfx.controlador;
 
+import gestortutoriasfx.dominio.FechaTutoriaImplementacion;
 import gestortutoriasfx.modelo.ConexionBD;
 import gestortutoriasfx.modelo.dao.FechaTutoriaDAO;
 import gestortutoriasfx.modelo.pojo.FechaTutoria;
@@ -89,13 +90,12 @@ public class FXMLPlaneacionSesionTutoriaController {
                 return;
             }
 
-            FechaTutoria ft = FechaTutoriaDAO.obtenerPorPeriodoYNumSesion(conn, periodo.getIdPeriodoEscolar(), numSesion);
+            FechaTutoria ft = FechaTutoriaImplementacion.obtenerPorPeriodoYNumSesion(periodo.getIdPeriodoEscolar(), numSesion);
 
             if (ft != null) {
                 idFechaTutoriaEdicion = ft.getIdFechaTutoria();
                 taDescripcion.setText(ft.getDescripcion() != null ? ft.getDescripcion() : "");
 
-                // ft.getFechaInicio viene del DAO mapear()
                 fechaSeleccionada = parseFechaSeguro(ft.getFechaInicio());
                 setFechaUI(fechaSeleccionada);
             } else {

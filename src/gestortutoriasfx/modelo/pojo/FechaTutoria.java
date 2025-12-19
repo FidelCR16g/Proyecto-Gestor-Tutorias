@@ -81,6 +81,10 @@ public class FechaTutoria {
         return fechaInicio;
     }
 
+    public void setFechaInicio(String fecha) {
+        this.fechaInicio = fecha;
+    }
+    
     public void setFechaInicio() {
         this.fechaInicio = this.fecha;
     }
@@ -89,6 +93,10 @@ public class FechaTutoria {
         return fechaCierre;
     }
 
+    public void setFechaCierre(String fecha) {
+        this.fechaCierre = fecha;
+    }
+    
     public void setFechaCierre() {
         this.fechaCierre = this.fecha;
     }

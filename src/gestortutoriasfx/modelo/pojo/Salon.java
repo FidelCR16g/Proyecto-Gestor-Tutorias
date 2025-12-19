@@ -76,6 +76,6 @@ public class Salon {
 
     @Override
     public String toString() {
-        return "Salon: " + nombreSalon + " - " + "Edificio: " + nombreEdificio;
+        return "Salon: " + nombreSalon;
     }
 }
