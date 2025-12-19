@@ -81,7 +81,7 @@ public class FechaTutoriaDAO {
             sentencia.setInt(1, fecha.getIdPeriodoEscolar());
             sentencia.setString(2, fecha.getDescripcion());
             sentencia.setInt(3, fecha.getNumSesion());
-            sentencia.setString(4, fecha.getFecha());
+            sentencia.setString(4, fecha.getFecha());       
             sentencia.setString(5, fecha.getFechaCierre()); 
             
             return sentencia.executeUpdate();
@@ -120,6 +120,7 @@ public class FechaTutoriaDAO {
         if (fechaCierreSql != null) {
             ft.setFechaCierre(fechaCierreSql.toString());
         }
+        
         return ft;
     }
 }

@@ -39,16 +39,14 @@ public class SesionTutoriaDAO {
     public static int actualizarEstadoAsistencia(Connection conexion, int idSesion, boolean asistio) throws SQLException {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
-        int filasAfectadas;
         String estado = asistio ? "Asistio" : "No Asistio";
         String consulta = "UPDATE sesionTutoria SET estado = ? WHERE idSesion = ?";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setString(1, estado);
             sentencia.setInt(2, idSesion);
-            filasAfectadas = sentencia.executeUpdate();
+            return sentencia.executeUpdate();
         }
-        return filasAfectadas;
     }
 
     public static ArrayList<SesionTutoria> obtenerAlumnosPorSesion(Connection conexion, int idTutor, int numSesion) throws SQLException {
@@ -91,7 +89,8 @@ public class SesionTutoriaDAO {
         if(conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ArrayList<FechaTutoria> fechas = new ArrayList<>();
-        String consulta = "SELECT idFechaTutoria, idPeriodoEscolar, numSesion, descripcion, fecha " +
+        
+        String consulta = "SELECT idFechaTutoria, idPeriodoEscolar, numSesion, descripcion, fechaInicio, fechaCierre " +
                           "FROM fechaTutoria WHERE idPeriodoEscolar = ? ORDER BY numSesion ASC";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
@@ -103,13 +102,18 @@ public class SesionTutoriaDAO {
                     ft.setIdPeriodoEscolar(resultado.getInt("idPeriodoEscolar"));
                     ft.setNumSesion(resultado.getInt("numSesion"));
                     ft.setDescripcion(resultado.getString("descripcion"));
-                    ft.setFecha(resultado.getDate("fecha").toString()); 
+                    
+                    java.sql.Date fechaInicio = resultado.getDate("fechaInicio");
+                    ft.setFecha(fechaInicio != null ? fechaInicio.toString() : null);
+                    
+                    java.sql.Date fechaCierre = resultado.getDate("fechaCierre");
+                    ft.setFechaCierre(fechaCierre != null ? fechaCierre.toString() : null);
                     
                     fechas.add(ft);
                 }
             }
         }
-        return fechas;
+        return fechas; 
     }
 
     public static ArrayList<Integer> obtenerSesionesOcupadas(Connection conexion, int idTutor, int idPeriodo) throws SQLException {
