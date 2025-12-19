@@ -29,17 +29,16 @@ public class ProblematicaAcademicaDAO {
 
         int filas = 0;
 
-        String consulta = "INSERT INTO problemasAcademicosReportadosTutoria "
-                + "(idReporteTutoria, idExperienciaEducativa, nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        String consulta = "INSERT INTO problemasAcademicosReportadosTutoria " +
+                  "(idReporteTutoria, nombreExperienciaEducativa, nombreProfesor, problema, numEstudiantes) " +
+                  "VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
             sentencia.setInt(1, idReporte);
-            sentencia.setInt(2, problematicaAcademica.getIdExperienciaEducativa());
-            sentencia.setString(3, problematicaAcademica.getNombreExperienciaEducativa());
-            sentencia.setString(4, problematicaAcademica.getNombreProfesor());
-            sentencia.setString(5, problematicaAcademica.getProblema());
-            sentencia.setInt(6, problematicaAcademica.getNumEstudiantes());
+            sentencia.setString(2, problematicaAcademica.getNombreExperienciaEducativa());
+            sentencia.setString(3, problematicaAcademica.getNombreProfesor());
+            sentencia.setString(4, problematicaAcademica.getProblema());
+            sentencia.setInt(5, problematicaAcademica.getNumEstudiantes());
             filas = sentencia.executeUpdate();
         }
         return filas;

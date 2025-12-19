@@ -13,7 +13,7 @@ public class ProblematicaAcademica {
     
     public ProblematicaAcademica() {
     }
-
+    
     public ProblematicaAcademica(int idProblematicaAcademica, int idReporteTutoria, int idExperienciaEducativa, 
                                  String nombreExperienciaEducativa, String nombreProfesor, 
                                  String problema, int numEstudiantes) {
@@ -31,6 +31,7 @@ public class ProblematicaAcademica {
         this.nombreProfesor = nombreProfesor;
         this.problema = problema;
         this.numEstudiantes = numEstudiantes;
+        this.idExperienciaEducativa = 0;
     }
 
     public int getIdProblematicaAcademica() {

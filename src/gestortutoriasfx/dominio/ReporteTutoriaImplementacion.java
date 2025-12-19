@@ -10,53 +10,46 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class ReporteTutoriaImplementacion {
 
-    public static HashMap<String, Object> guardarReporteCompleto(ReporteTutoria reporte, List<ProblematicaAcademica> problematicas) {
-        HashMap<String, Object> respuesta = new LinkedHashMap<>();
+    public static HashMap<String, Object> guardarReporteCompleto(ReporteTutoria reporte, ArrayList<ProblematicaAcademica> listaProblematicas) {
+        HashMap<String, Object> respuesta = new HashMap<>();
         respuesta.put("error", true);
-
+    
         Connection conexion = ConexionBD.abrirConexionBD();
-        if (conexion != null) {
-            try {
-                conexion.setAutoCommit(false);
+        if (conexion == null) {
+            respuesta.put("mensaje", "No se pudo conectar a la base de datos.");
+            return respuesta;
+        }
 
-                int idReporte = reporte.getIdReporteTutoria();
-
-                if (idReporte <= 0) {
-                    idReporte = ReporteTutoriaDAO.registrarReporte(conexion, reporte);
-                    if (idReporte <= 0) throw new SQLException("No se generó el ID del reporte.");
-                    reporte.setIdReporteTutoria(idReporte);
-                } else {
-                    int filas = ReporteTutoriaDAO.actualizarReporte(conexion, reporte);
-                    if (filas == 0) throw new SQLException("No se actualizó el reporte (ID no encontrado o sin cambios).");
-                }
-
+        try {
+            conexion.setAutoCommit(false);
+            
+            int idReporte;
+            if (reporte.getIdReporteTutoria() > 0) {
+                ReporteTutoriaDAO.actualizarReporte(conexion, reporte);
+                idReporte = reporte.getIdReporteTutoria();
                 ProblematicaAcademicaDAO.eliminarProblematicasPorReporte(conexion, idReporte);
-
-                if (problematicas != null && !problematicas.isEmpty()) {
-                    for (ProblematicaAcademica prob : problematicas) {
-                        ProblematicaAcademicaDAO.registrarProblematica(conexion, prob, idReporte);
-                    }
-                }
-
-                conexion.commit();
-                respuesta.put("error", false);
-                respuesta.put("mensaje", "Reporte guardado exitosamente.");
-                respuesta.put("idReporteTutoria", idReporte);
-
-            } catch (SQLException e) {
-                respuesta.put("mensaje", "Error al guardar: " + e.getMessage());
-                e.printStackTrace();
-                try { conexion.rollback(); } catch (SQLException ex) { }
-            } finally {
-                try { conexion.setAutoCommit(true); } catch (SQLException ex) { }
-                ConexionBD.cerrarConexion(conexion);
+            } else {
+                idReporte = ReporteTutoriaDAO.registrarReporte(conexion, reporte);
+                if (idReporte == 0) throw new SQLException("Error al obtener el ID del reporte generado.");
             }
-        } else {
-            respuesta.put("mensaje", "Sin conexión con la base de datos.");
+
+            for (ProblematicaAcademica prob : listaProblematicas) {
+                ProblematicaAcademicaDAO.registrarProblematica(conexion, prob, idReporte);
+            }
+
+            conexion.commit();
+            respuesta.put("error", false);
+            respuesta.put("mensaje", "El reporte y sus problemáticas se guardaron correctamente.");
+
+        } catch (SQLException e) {
+            try { conexion.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            e.printStackTrace();
+            respuesta.put("mensaje", "Error al procesar el reporte: " + e.getMessage());
+        } finally {
+            ConexionBD.cerrarConexion(conexion);
         }
         return respuesta;
     }

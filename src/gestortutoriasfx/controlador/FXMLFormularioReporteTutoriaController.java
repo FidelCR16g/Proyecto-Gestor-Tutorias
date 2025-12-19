@@ -101,17 +101,17 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
     
     @FXML
     private void clicAgregarProblematica(ActionEvent event) {
-        if (!validarCampos()) return;
-        
-        try {
-            int cantidad = Integer.parseInt(tfNumAlumnos.getText());
-            ProblematicaAcademica problematicaAcademica = new ProblematicaAcademica(
-                    tfEE.getText(), tfProfesor.getText(), tfProblematica.getText(), cantidad
-            );
-            listaProblematicas.add(problematicaAcademica);
-            limpiarCamposProblematica();
-        } catch (NumberFormatException e) {
-            Utilidades.mostrarAlertaSimple("Error", "La cantidad debe ser numérica.", Alert.AlertType.WARNING);
+        if (validarCampos()){
+            try {
+                int cantidad = Integer.parseInt(tfNumAlumnos.getText());
+                ProblematicaAcademica problematicaAcademica = new ProblematicaAcademica(
+                        tfEE.getText(), tfProfesor.getText(), tfProblematica.getText(), cantidad
+                );
+                listaProblematicas.add(problematicaAcademica);
+                limpiarCamposProblematica();
+            } catch (NumberFormatException e) {
+               Utilidades.mostrarAlertaSimple("Error", "La cantidad debe ser numérica.", Alert.AlertType.WARNING);
+            }
         }
     }
 
@@ -254,6 +254,7 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
         
         reporte.setNumAlumnosAsistieron(asistenciasCalculadas);
         reporte.setNumAlumnosRiesgo(riesgoCalculado);
+        
         reporte.setComentarios(taComentarios.getText());
         
         reporte.setEstadoLugar("Sin observaciones"); 
@@ -263,6 +264,10 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
     
     private HashMap<String, Object> ejecutarTransaccionGuardado(ReporteTutoria reporte) {
         ArrayList<ProblematicaAcademica> listaParaGuardar = new ArrayList<>(listaProblematicas);
+        
+        for(ProblematicaAcademica p : listaParaGuardar) {
+            System.out.println("EE: " + p.getNombreExperienciaEducativa()); 
+        }
         
         return ReporteTutoriaImplementacion.guardarReporteCompleto(
                 reporte, 
@@ -407,7 +412,7 @@ public class FXMLFormularioReporteTutoriaController implements Initializable {
             manejarResultadoTransaccion(respuesta);
         } catch (Exception e) {
             e.printStackTrace();
-            Utilidades.mostrarAlertaSimple("Error Crítico", "Ocurrió un error inesperado al guardar.", Alert.AlertType.ERROR);
+            Utilidades.mostrarAlertaSimple("Error Crítico", "Ocurrió un error inesperado al guardar.", Alert.AlertType.WARNING);
         }
     }
     

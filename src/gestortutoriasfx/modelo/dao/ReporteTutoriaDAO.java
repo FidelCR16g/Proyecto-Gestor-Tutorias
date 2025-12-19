@@ -36,9 +36,6 @@ public class ReporteTutoriaDAO {
         if (conexion == null) throw new SQLException("No hay conexión con la base de datos.");
 
         ReporteTutoria reporte = null;
-
-        // CAMBIO IMPORTANTE: Agregamos JOINs para obtener los nombres reales
-        // Asumiendo que la estructura es similar a la que hemos trabajado
         String consulta = "SELECT rt.*, " +
                           "pe.nombre AS nombrePrograma, " +
                           "per.nombrePeriodoEscolar, " +
@@ -68,11 +65,9 @@ public class ReporteTutoriaDAO {
                     reporte.setNumAlumnosAsistieron(resultado.getInt("numAlumnosAsistieron"));
                     reporte.setNumAlumnosRiesgo(resultado.getInt("numAlumnosRiesgo"));
                     
-                    // Fechas (Mantenemos String según tu diseño, pero validamos null)
                     reporte.setFechaPrimeraTutoria(resultado.getString("fechaPrimeraTutoria"));
                     reporte.setFechaUltimaTutoria(resultado.getString("fechaUltimaTutoria"));
 
-                    // Datos obtenidos por JOIN
                     reporte.setNombreTutor(resultado.getString("nombreTutor"));
                     reporte.setNombreProgramaEducativo(resultado.getString("nombrePrograma"));
                     reporte.setNombrePeriodoEscolar(resultado.getString("nombrePeriodoEscolar"));
