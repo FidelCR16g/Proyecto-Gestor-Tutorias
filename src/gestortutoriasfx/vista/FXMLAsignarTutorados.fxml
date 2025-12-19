@@ -53,10 +53,22 @@
                   </Label>
                   
                   <ListView fx:id="lvAsignados" style="-fx-border-color: #2e7d32; -fx-border-width: 2; -fx-background-radius: 5;" VBox.vgrow="ALWAYS" />
-                  
-                  <Label alignment="CENTER_RIGHT" maxWidth="Infinity" text="Arrastre a la derecha para quitar -&gt;" textFill="#ef5350">
-                     <font><Font size="11.0" /></font>
-                  </Label>
+                  <HBox prefHeight="19.0" prefWidth="254.0">
+                     <children>
+                        <Label fx:id="lbConteo" text="0 / 30 Asignados" textFill="#455a64">
+                            <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                        <Pane prefHeight="40.0" prefWidth="122.0" />
+                        
+                        <Label alignment="CENTER_RIGHT" maxWidth="Infinity" text="Arrastre a la derecha para quitar -&gt;" textFill="#ef5350">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
 
@@ -91,10 +103,5 @@
             </Button>
          </children>
       </HBox>
-      <Label fx:id="lbConteo" layoutX="321.0" layoutY="526.0" text="0 / 30 Asignados" textFill="#455a64">
-          <font>
-            <Font name="System Bold" size="13.0" />
-         </font>
-      </Label>
    </children>
 </AnchorPane>
